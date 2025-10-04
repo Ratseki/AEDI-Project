@@ -1,31 +1,32 @@
-// Check availability
-app.post("/check-availability", (req, res) => {
-  const { service_id, date } = req.body;
+// Cancel Booking (#4)
+app.delete("/cancel-booking/:id", (req, res) => {
+  const bookingId = req.params.id;
 
-  db.query("SELECT * FROM bookings WHERE service_id = ? AND date = ?", [service_id, date], (err, results) => {
+  db.query("DELETE FROM bookings WHERE id = ?", [bookingId], (err, result) => {
     if (err) return res.status(500).json({ error: err });
-    if (results.length > 0) {
-      res.json({ available: false, message: "Slot already booked" });
-    } else {
-      res.json({ available: true, message: "Slot available" });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Booking not found" });
     }
+
+    res.json({ message: "Booking canceled successfully." });
   });
 });
 
-// Create booking
-app.post("/book", (req, res) => {
-  const { user_id, service_id, date } = req.body;
+// View Booking History (#5)
+app.get("/booking-history/:user_id", (req, res) => {
+  const userId = req.params.user_id;
 
-  // First check if available
-  db.query("SELECT * FROM bookings WHERE service_id = ? AND date = ?", [service_id, date], (err, results) => {
-    if (results.length > 0) return res.json({ error: "Date already booked" });
+  const query = `
+    SELECT b.id, s.name AS service_name, b.date, b.status
+    FROM bookings b
+    JOIN services s ON b.service_id = s.id
+    WHERE b.user_id = ?
+    ORDER BY b.date DESC
+  `;
 
-    db.query("INSERT INTO bookings (user_id, service_id, date) VALUES (?, ?, ?)",
-      [user_id, service_id, date],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-        res.json({ message: "Booking successful!" });
-      }
-    );
+  db.query(query, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
   });
 });
