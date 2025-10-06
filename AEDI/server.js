@@ -5,7 +5,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
-const app = express();
+const app = express(); // ✅ must come before using routes
+
 app.use(bodyParser.json());
 app.use(cors());
 
@@ -25,9 +26,11 @@ db.connect(err => {
 // Secret key for JWT
 const JWT_SECRET = "supersecretkey";
 
+// Import routes (AFTER express is initialized)
+const adminRoutes = require("./routes/admin");
+app.use("/api/admin", adminRoutes);
 
 // ======================= PAYMENTS =======================
-
 app.post("/payments", (req, res) => {
   const { booking_id, amount, status } = req.body;
   db.query(
@@ -52,9 +55,7 @@ app.put("/payments/:id", (req, res) => {
   );
 });
 
-
 // ======================= NOTIFICATIONS =======================
-
 app.post("/notifications", (req, res) => {
   const { user_id, message } = req.body;
   db.query(
@@ -89,9 +90,7 @@ app.put("/notifications/:id/read", (req, res) => {
   );
 });
 
-
 // ======================= REVIEWS =======================
-
 app.post("/reviews", (req, res) => {
   const { user_id, service_id, rating, comment } = req.body;
   db.query(
@@ -115,6 +114,16 @@ app.get("/reviews/service/:service_id", (req, res) => {
   );
 });
 
+// ✅ Test route to check database
+app.get("/api/test-db", (req, res) => {
+  db.query("SELECT 1 + 1 AS result", (err, results) => {
+    if (err) {
+      console.error("Database test failed:", err);
+      return res.status(500).json({ success: false, message: "Database connection failed" });
+    }
+    res.json({ success: true, message: "✅ Database connected successfully!", data: results });
+  });
+});
 
 // ✅ Start the server LAST
 app.listen(3000, () => {
