@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+
+    .section {
+      background: #fff;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    button {
+      padding: 8px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .loading {
+      color: #666;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+
+  <div class="section">
+    <h2>Users</h2>
+    <button onclick="loadUsers()">Refresh Users</button>
+    <div id="users" class="loading">Loading...</div>
+  </div>
+
+  <div class="section">
+    <h2>Bookings</h2>
+    <button onclick="loadBookings()">Refresh Bookings</button>
+    <div id="bookings" class="loading">Loading...</div>
+  </div>
+
+  <div class="section">
+    <h2>Payments</h2>
+    <button onclick="loadPayments()">Refresh Payments</button>
+    <div id="payments" class="loading">Loading...</div>
+  </div>
+
+  <div class="section">
+    <h2>Notifications</h2>
+    <button onclick="loadNotifications()">Refresh Notifications</button>
+    <div id="notifications" class="loading">Loading...</div>
+  </div>
+
+  <script>
+    const baseUrl = "http://localhost:3000/api/admin";
+
+    async function fetchData(endpoint, elementId, columns) {
+      const container = document.getElementById(elementId);
+      container.innerHTML = "<p class='loading'>Loading...</p>";
+
+      try {
+        const res = await fetch(`${baseUrl}/${endpoint}`);
+        const data = await res.json();
+
+        if (data.length === 0) {
+          container.innerHTML = "<p>No records found.</p>";
+          return;
+        }
+
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const tbody = document.createElement("tbody");
+
+        thead.innerHTML = `<tr>${columns.map(c => `<th>${c}</th>`).join("")}</tr>`;
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          columns.forEach(c => {
+            tr.innerHTML += `<td>${row[c.toLowerCase()] ?? ""}</td>`;
+          });
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.innerHTML = "";
+        container.appendChild(table);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p style='color:red;'>Error loading data.</p>";
+      }
+    }
+
+    function loadUsers() {
+      fetchData("users", "users", ["ID", "Name", "Email"]);
+    }
+
+    function loadBookings() {
+      fetchData("bookings", "bookings", ["ID", "User_ID", "Service_ID", "Status"]);
+    }
+
+    function loadPayments() {
+      fetchData("payments", "payments", ["ID", "Booking_ID", "Amount", "Status"]);
+    }
+
+    function loadNotifications() {
+      fetchData("notifications", "notifications", ["ID", "User_ID", "Message", "Is_Read"]);
+    }
+
+    // Auto load on page start
+    loadUsers();
+    loadBookings();
+    loadPayments();
+    loadNotifications();
+  </script>
+</body>
+</html>
