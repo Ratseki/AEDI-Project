@@ -1,0 +1,14 @@
+# Check what files are new/modified
+git status
+
+# Add all new files
+git add .
+
+# Or add specific files
+git add services.html server.js
+
+# Commit with a message
+git commit -m "Add services page and route"
+
+# Push to GitHub
+git push origin main
