@@ -4,19 +4,29 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const path = require("path");
 const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/booking");
 const serviceRoutes = require("./routes/services");
 
-const app = express(); // ✅ must come before using routes
+const app = express();
+
+// Middleware
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
+
+// ✅ SERVE STATIC FILES (HTML, CSS, JS)
+// If admin.html is in root folder:
+app.use(express.static(__dirname));
+// OR if it's in a 'public' folder, use:
+// app.use(express.static(path.join(__dirname, 'public')));
+
+// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/services", serviceRoutes);
 
-app.listen(3000, () => console.log("Server running on port 3000"));
 // Database connection
 const db = mysql.createConnection({
   host: "localhost",
@@ -132,7 +142,7 @@ app.get("/api/test-db", (req, res) => {
   });
 });
 
-// ✅ Start the server LAST
+// ✅ Start the server LAST (only once!)
 app.listen(3000, () => {
   console.log("🚀 Server running on http://localhost:3000");
 });
