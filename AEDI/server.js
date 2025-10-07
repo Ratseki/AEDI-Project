@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 
 const app = express(); // ✅ must come before using routes
+
 app.use(bodyParser.json());
 app.use(cors());
 
