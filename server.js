@@ -4,11 +4,19 @@ const mysql = require("mysql2");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/booking");
+const serviceRoutes = require("./routes/services");
 
 const app = express(); // ✅ must come before using routes
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json());
+app.use("/api/auth", authRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/services", serviceRoutes);
 
+app.listen(3000, () => console.log("Server running on port 3000"));
 // Database connection
 const db = mysql.createConnection({
   host: "localhost",
