@@ -1,16 +1,18 @@
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = "supersecretkey"; // same as your auth.js key
+require("dotenv").config(); // Make sure to load .env
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Middleware to verify JWT token
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // "Bearer <token>"
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
+  if (!token) return res.status(401).json({ message: "Access denied, token missing" });
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid token." });
-
-    req.user = user; // attach decoded user info to request
+    if (err) return res.status(403).json({ message: "Invalid or expired token" });
+    req.user = user;
     next();
   });
 }

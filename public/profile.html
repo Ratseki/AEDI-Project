@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Profile</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to your profile!</h1>
+    <h2>Welcome, <span id="username">Loading...</span>!</h2>
+    <p>Email: <span id="email">Loading...</span></p>
+    <button id="logout">Logout</button>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
+    alert('You are not logged in!');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  try {
+    const res = await fetch('/auth/verify', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    // handle non-json responses gracefully
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch { throw new Error('Invalid server response'); }
+
+    // Accept multiple response shapes:
+    // 1) { valid: true, user: { id, name, email } }
+    // 2) { valid: true, user: { id, username, email } }
+    // 3) direct user object (id/name/email)
+    if (!data || (data.valid === false)) {
+      alert('Session expired, please log in again.');
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const maybeUser = data.user || data;
+    const name = maybeUser.name || maybeUser.username || maybeUser.name_full || 'User';
+    const email = maybeUser.email || '';
+
+    document.getElementById('username').textContent = name;
+    const emailEl = document.getElementById('email');
+    if (emailEl) emailEl.textContent = email;
+
+  } catch (err) {
+    console.error('Error verifying user:', err);
+    alert('Server error. Please try again later.');
+  }
+});
+
+// Logout handler
+document.getElementById('logout').addEventListener('click', () => {
+  localStorage.removeItem('token');
+  window.location.href = 'login.html';
+});
+</script>
+
+</body>
+</html>

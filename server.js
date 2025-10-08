@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
@@ -5,29 +6,30 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
+
+// === Route Imports ===
 const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/booking");
 const serviceRoutes = require("./routes/services");
+const adminRoutes = require("./routes/admin"); // optional if you already have one
 
 const app = express();
 
-// Middleware
+// === Middleware ===
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ SERVE STATIC FILES (HTML, CSS, JS)
-// If admin.html is in root folder:
+
+// === Static Files ===
+// (so you can load your frontend pages if needed)
 app.use(express.static(__dirname));
-// OR if it's in a 'public' folder, use:
+// or if you have a public folder:
 // app.use(express.static(path.join(__dirname, 'public')));
 
-// API Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/bookings", bookingRoutes);
-app.use("/api/services", serviceRoutes);
-
-// Database connection
+// === Database Connection ===
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -40,14 +42,16 @@ db.connect(err => {
   console.log("✅ MySQL Connected");
 });
 
-// Secret key for JWT
+// === Secret Key for JWT ===
 const JWT_SECRET = "supersecretkey";
 
-// Import routes (AFTER express is initialized)
-const adminRoutes = require("./routes/admin");
-app.use("/api/admin", adminRoutes);
+// === API Routes ===
+app.use("/auth", authRoutes); // ✅ Register/Login/Profile
+app.use("/booking", bookingRoutes); // ✅ Booking system (protected)
+app.use("/services", serviceRoutes); // ✅ Service catalog (soon)
+app.use("/api/admin", adminRoutes); // optional
 
-// ======================= PAYMENTS =======================
+// === Payments API ===
 app.post("/payments", (req, res) => {
   const { booking_id, amount, status } = req.body;
   db.query(
@@ -62,17 +66,13 @@ app.post("/payments", (req, res) => {
 
 app.put("/payments/:id", (req, res) => {
   const { status } = req.body;
-  db.query(
-    "UPDATE payments SET status=? WHERE id=?",
-    [status, req.params.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Payment status updated" });
-    }
-  );
+  db.query("UPDATE payments SET status=? WHERE id=?", [status, req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "Payment status updated" });
+  });
 });
 
-// ======================= NOTIFICATIONS =======================
+// === Notifications API ===
 app.post("/notifications", (req, res) => {
   const { user_id, message } = req.body;
   db.query(
@@ -97,17 +97,13 @@ app.get("/notifications/:user_id", (req, res) => {
 });
 
 app.put("/notifications/:id/read", (req, res) => {
-  db.query(
-    "UPDATE notifications SET is_read = TRUE WHERE id = ?",
-    [req.params.id],
-    (err) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Notification marked as read" });
-    }
-  );
+  db.query("UPDATE notifications SET is_read = TRUE WHERE id = ?", [req.params.id], (err) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "Notification marked as read" });
+  });
 });
 
-// ======================= REVIEWS =======================
+// === Reviews API ===
 app.post("/reviews", (req, res) => {
   const { user_id, service_id, rating, comment } = req.body;
   db.query(
@@ -122,7 +118,11 @@ app.post("/reviews", (req, res) => {
 
 app.get("/reviews/service/:service_id", (req, res) => {
   db.query(
-    "SELECT r.*, u.name AS user_name FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.service_id = ? ORDER BY r.created_at DESC",
+    `SELECT r.*, u.name AS user_name
+     FROM reviews r
+     JOIN users u ON r.user_id = u.id
+     WHERE r.service_id = ?
+     ORDER BY r.created_at DESC`,
     [req.params.service_id],
     (err, results) => {
       if (err) return res.status(500).json({ error: err });
@@ -131,7 +131,7 @@ app.get("/reviews/service/:service_id", (req, res) => {
   );
 });
 
-// ✅ Test route to check database
+// === Database Test ===
 app.get("/api/test-db", (req, res) => {
   db.query("SELECT 1 + 1 AS result", (err, results) => {
     if (err) {
@@ -142,7 +142,6 @@ app.get("/api/test-db", (req, res) => {
   });
 });
 
-// ✅ Start the server LAST (only once!)
-app.listen(3000, () => {
-  console.log("🚀 Server running on http://localhost:3000");
-});
+// === Start Server ===
+const PORT = 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
