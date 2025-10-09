@@ -52,6 +52,23 @@ router.post("/login", (req, res) => {
   });
 });
 
+// 🔒 Forgot Password
+router.post("/forgot-password", (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+
+  db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    if (results.length === 0)
+      return res.status(404).json({ message: "Email not found" });
+
+    // Here you would generate a reset token and send email
+    // e.g., using JWT or a random string stored in DB
+    res.json({ message: "Password reset link sent to your email" });
+  });
+});
+
+
 // Verify Token (GET /api/auth/verify)
 router.get('/verify', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1];
