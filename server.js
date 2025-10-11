@@ -46,7 +46,7 @@ db.connect(err => {
 const JWT_SECRET = "supersecretkey";
 
 // === API Routes ===
-app.use("/auth", authRoutes); // ✅ Register/Login/Profile
+app.use("/api/auth", authRoutes); // ✅ Register/Login/Profile
 app.use("/booking", bookingRoutes); // ✅ Booking system (protected)
 app.use("/services", serviceRoutes); // ✅ Service catalog (soon)
 app.use("/api/admin", adminRoutes); // optional

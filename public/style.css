@@ -1,10 +1,13 @@
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* prevents scrollbars if you want a fixed layout */
+  width: 100%;
+  height: auto;
+  overflow-x: hidden;
+  font-family: Poppins, sans-serif;
+  background: none; /* no solid background color */
+  scroll-behavior: smooth;
 }
-
 /* Reset defaults */
 * {
   margin: 0;
@@ -14,11 +17,7 @@ html, body {
 }
 
 body {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: url('images/homepage_bg.jpg') no-repeat center center/cover; /* Wallpaper placeholder */
+  background: none; /* no white background */
 }
 
 /* Container that holds everything */
@@ -129,13 +128,13 @@ body {
 }
 
 .login-btn:hover {
-  background-color: #b96227;
+  background-color: #F4981E;
 }
 
 /* Forgot Password */
 .options a:hover,
 .register-text a:hover {
-  color: #9b5222;;         /* highlight color on hover */
+  color: #F4981E;       /* highlight color on hover */
   text-decoration: underline; /* optional for extra feedback */
   transition: all 0.2s ease-in-out; /* smooth effect */
 }
@@ -224,7 +223,7 @@ body.forgot-page .login-btn {
 }
 
 body.forgot-page .login-btn:hover {
-  background-color: #b96227;
+  background-color: #F4981E;
 }
 
 body.forgot-page .footer {
@@ -241,4 +240,790 @@ body.forgot-page .footer {
   font-size: 1.0rem;    /* adjust bigger or smaller */
   font-weight: 350;     /* optional: slightly bolder text */
   padding: 0.5rem;      /* optional: adjust button height if text grows */
+}
+
+/* Signup Page CSS */
+body.signup-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.signup-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* vertical centering */
+  padding: 20px;
+}
+
+.signup-box {
+  width: 1100px;
+  max-width: 100%;
+  min-height: 700px; /* increased to fit taller image */
+  background-color: #F9BF5F;
+  padding: 0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch; /* ensures image and form stretch equally */
+  justify-content: center; /* center horizontally */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin: 0 auto; /* center on page */
+}
+
+.signup-image {
+  position: absolute;
+  flex: 0 0 50%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #F9BF5F;
+  padding: 20px;
+  overflow: hidden; /* ensures logo and button are on top */
+}
+
+/* Logo and Back Button */
+.image-header {
+  position: absolute;        /* allows free movement over the image */
+  top: 30px;                 /* distance from top of container */
+  left: 30px;                /* distance from left */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 60px);  /* full width minus left/right margins */
+  z-index: 10;
+}
+
+.image-logo {
+  height: 135px;             /* adjust size freely */
+  width: auto;
+  z-index: 11;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 20;
+  padding: 8px 16px;
+  background-color: rgba(200, 200, 200, 0.9);
+  border-radius: 5px;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.back-button:hover {
+  background-color: rgba(180, 180, 180, 1);
+}
+
+/* Main Image Container */
+.main-image-container {
+  flex: 1;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.signup-image img.main-photo {
+  width: 90%;                 /* fill horizontal */
+  height: 80%;                /* taller vertically */
+  object-fit: cover;           /* maintain crop and aspect ratio */
+  display: block;
+  transform: scale(1.5);       /* zoom effect */
+  transform-origin: center center;
+  padding: 0;
+}
+
+/* Tagline at bottom of image */
+.image-tagline {
+  position: absolute;
+  bottom: 10px; /* move it slightly higher */
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* reduce opacity for less harsh background */
+  padding: 10px;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 2px;
+  font-family: 'Playfair Display', serif; /* changed font */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* smaller and more subtle shadow */
+}
+
+.image-tagline .highlight {
+  font-family: 'Playfair Display', serif; /* only MEMORIES uses Playfair */
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3); /* subtle shadow */
+  color: #F4981E;
+}
+
+/* Form Section */
+.signup-box form {
+  flex: 1;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #F9BF5F;
+
+}
+
+.signup-box h2 {
+  text-align: left;
+  font-weight: 400;
+  font-size: 2.4rem;
+  margin-bottom: 2rem;
+  color: #0A142D;
+}
+
+/* Name fields side by side */
+.name-fields {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.name-fields .input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-box .input-group {
+  margin-bottom: 1rem;
+}
+
+.signup-box .input-group label {
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: #0A142D;
+  font-weight: 500;
+}
+
+.signup-box .input-group input {
+  padding: 0.7rem;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 0.9rem;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.signup-box .input-group input:focus {
+  background-color: white;
+}
+
+/* Checkbox styling */
+.checkbox-group {
+  display: flex;
+  justify-content: flex-start;  /* keep everything left-aligned */
+  align-items: flex-start;      /* align text to top of checkbox */
+  gap: 0.5rem;                  /* space between checkbox and text */
+  font-size: 0.85rem;
+  color: #0A142D;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;                   /* slightly bigger for better spacing */
+  height: 18px;
+  cursor: pointer;
+  margin-right: 10px;            /* extra space between checkbox and text */
+  margin-top: 2px;               /* aligns checkbox better with text */
+}
+
+
+/* Label text */
+.checkbox-group label {
+  display: block;                /* make text take full width */
+  line-height: 1.4;              /* better readability */
+  cursor: pointer;
+}
+
+.checkbox-group a {
+  color: #0A142D;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.checkbox-group a:hover {
+  color: #CE6826;
+}
+
+/* Create Account Button */
+.signup-btn {
+  background-color: #CE6826;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px;
+  padding: 0.8rem;
+  cursor: pointer;
+  width: 50%;
+  margin: 0 auto 1rem auto;
+  display: block;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s;
+}
+
+.signup-btn:hover {
+  background-color: #F4981E;
+}
+
+/* Login link */
+.signup-box .register-text {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #0A142D;
+  font-size: 0.9rem;
+}
+
+.signup-box .register-text a {
+  color: #0A142D;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.signup-box .register-text a:hover {
+  color: #F4981E;
+}
+
+/* Footer */
+.signup-footer {
+  text-align: center;
+  color: #0A142D;
+  font-size: 0.85rem;
+  padding: 1rem 0;
+  background: transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .signup-box {
+    flex-direction: column;
+  }
+  
+  .signup-image {
+    flex: 0 0 auto;
+    min-height: 300px;
+  }
+}
+
+/* ===== GENERAL RESET ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #0A142D;
+  overflow-x: hidden;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 90px; /* fixed navbar height */
+  padding: 0 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transition: padding 0.3s ease;
+  box-shadow: none;
+}
+
+/* Logo placeholder for image */
+.navbar .logo img {
+  height: 110px; /* adjust as needed */
+  width: auto;
+  object-fit: contain;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #FFFFFF;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links .active {
+  color: #FFFFFF;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  font-family: inherit;
+  color: #FFFFFF;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 25px;
+  left: 0;
+  background: rgba(255, 255, 255, 0.95);
+  min-width: 180px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 5px;
+  backdrop-filter: blur(3px);
+}
+
+.dropdown-content a {
+  display: block;
+  padding: 10px 15px;
+  color: #0A142D;
+  text-decoration: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #f6f6f6;
+  color: #F4981E;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* ===== HOME SECTION ===== */
+.home-section {
+  height: 100vh;
+  background: url('images/homepage_bg.jpg') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+
+.home-content {
+  max-width: 900px;
+  margin: 0 auto;
+  color: #0A142D;
+}
+
+/* Main heading */
+.main-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  margin-bottom: 15px;
+  color: #0A142D;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+  padding-bottom: 20px;
+  white-space: nowrap;
+}
+
+.highlight {
+  color: #CE6826;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Subtext properly aligned and centered */
+.subtext {
+  max-width: 800px;
+  margin: 0 auto 40px;
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: #0A142D;
+  text-align: center;
+}
+
+/* Book Now button */
+.book-now {
+  background-color: #CE6826;
+  color: white;
+  border: none;
+  padding: 6px 28px;
+  border-radius: 6px;
+  font-weight: 550;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  transform: translateY(135px)
+}
+
+.book-now:hover {
+  background-color: #F4981E;
+}
+
+/* ===== LOCATIONS SECTION ===== */
+.locations-section {
+  background: #ffffff;
+  padding: 100px 80px;
+  text-align: center;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #0A142D;
+  margin-bottom: 60px;
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  justify-items: center;
+}
+
+.location-box {
+  display: flex;
+  align-items: center;
+  background-color: #E2E5E4;
+  border-radius: 8px;
+  width: 654px;
+  height: 214px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.location-box:hover {
+  transform: translateY(-5px);
+}
+
+.location-image {
+  width: 40%;
+  height: 100%;
+  background-color: #ccc; /* placeholder */
+  background-size: cover;
+  background-position: center;
+}
+
+.location-box:nth-child(1) .location-image {
+  background-image: url('images/image_compilation/sand_dunes/paoay.jpg');
+}
+
+.location-box:nth-child(2) .location-image {
+  background-image: url('images/image_compilation/mayon_skydrive/daraga.jpg');
+}
+
+.location-box:nth-child(3) .location-image {
+  background-image: url('images/image_compilation/chocolate_hills/carmen.jpg');
+}
+
+.location-box:nth-child(4) .location-image {
+  background-image: url('images/image_compilation/sumlang_lake/camalig.jpg');
+}
+
+.location-box:nth-child(5) .location-image {
+  background-image: url('images/image_compilation/kapurpurawan/burgos.jpg');
+}
+
+.location-box:nth-child(6) .location-image {
+  background-image: url('images/image_compilation/hidden_garden/vigan.jpg');
+}
+
+.location-box:nth-child(7) .location-image {
+  background-image: url('images/image_compilation/san_isidro.jpg');
+}
+
+.location-box:nth-child(8) .location-image {
+  background-image: url('images/image_compilation/elyu/san_juan.jpg');
+}
+
+
+.location-info {
+  text-align: left;
+  padding: 20px 25px;
+  flex: 1;
+}
+
+.location-info h3 {
+  font-size: 1.3rem;
+  color: #0A142D;
+  margin-bottom: 8px;
+}
+
+.location-info p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.view-packages {
+  color: #CE6826;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.view-packages:hover {
+  text-decoration: underline;
+}
+
+/* Bottom Button */
+.locations-footer {
+  margin-top: 80px;
+}
+
+.about-locations-btn {
+  background-color: #CE6826;
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.about-locations-btn:hover {
+  background-color: #F4981E;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .locations-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .location-box {
+    width: 90%;
+  }
+}
+
+/* ===== HOW IT WORKS SECTION ===== */
+.how-it-works {
+  background-color: #073449;
+  text-align: center;
+  padding: 80px 40px;
+  color: white;
+}
+
+.how-it-works-title {
+  color: #F4981E;
+  font-family: "Poppins", sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+}
+
+.how-it-works-steps {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 60px;
+  margin-bottom: 50px;
+}
+
+.step {
+  max-width: 320px;
+  text-align: center;
+}
+
+/* === ICONS === */
+.icon {
+  width: 80px; /* Increase or decrease to resize */
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+/* === TEXT === */
+.step h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.2rem;
+  color: #F9BF5F;
+  margin-bottom: 15px;
+}
+
+.step p {
+  font-family: "Inter", sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: white;
+  line-height: 1.5;
+}
+
+/* === BUTTON === */
+.view-packages-btn {
+  display: inline-block;
+  background-color: #CE6826;
+  color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  padding: 12px 30px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.view-packages-btn:hover {
+  background-color: #F4981E;
+  color: white;
+}
+
+.packages-section {
+  background-color: #ffffff;
+  padding: 80px 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* ✅ centers text vertically with cards */
+  flex-wrap: wrap;
+  gap: 30px; /* tighter spacing between text and cards */
+}
+
+@media (max-width: 900px) {
+  .packages-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .packages-content {
+    margin-right: 0;
+    margin-bottom: 40px;
+  }
+}
+
+.packages-content {
+  max-width: 400px;
+  margin-right: 20px; /* moves text closer to cards */
+}
+
+.packages-title {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  font-size: 37px;
+  color: #0A142D;
+  margin-bottom: 20px;
+}
+
+.packages-desc {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #0A142D;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.get-started-btn {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: #F4981E;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.get-started-btn:hover {
+  color: #d87a11;
+}
+
+/* ---- PACKAGES LIST ---- */
+.packages-list {
+  display: flex;
+  gap: 5px; /* keep small spacing between cards */
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-left: 0; /* remove any offset */
+}
+
+/* ---- PACKAGE CARD ---- */
+.package-card {
+  background-color: #e0e0e0; /* ⬅️ darker grey */
+  border-radius: 6px;
+  width: 304px;
+  height: 372px;
+  padding: 25px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease;
+}
+
+.package-card.highlight {
+  background-color: #d5d5d5; /* ⬅️ slightly darker for middle card */
+}
+
+.package-card:hover {
+  transform: translateY(-5px);
+}
+
+/* ---- TEXT STYLES ---- */
+.package-name {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #0A142D;
+}
+
+.package-price {
+  font-family: "DM Serif Text", serif;
+  font-weight: 400;
+  font-size: 72px;
+  color: #0A142D;
+  margin: 10px 0;
+}
+
+.package-subtitle {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.package-details {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #555;
+}
+
+/* ---- BUTTON ---- */
+.book-now-btn {
+  background-color: #F4981E;
+  color: white;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-now-btn:hover {
+  background-color: #d87a11;
 }
