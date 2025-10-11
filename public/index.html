@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>We Create Memories</title>
+  <title>profilepicmultimedia</title>
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -52,17 +52,6 @@
       <button class="book-now">Book Now</button>
     </div>
   </section>
-
-  <!-- ===== JAVASCRIPT ===== -->
-  <script>
-    // Keeps navbar sticky with no shadow or color change
-    window.addEventListener("scroll", function() {
-      const navbar = document.querySelector(".navbar");
-      navbar.classList.toggle("scrolled", window.scrollY > 50);
-    });
-  </script>
-</body>
-</html>
 
 <!-- ===== LOCATIONS SECTION ===== -->
 <section class="locations-section" id="locations">
@@ -166,7 +155,7 @@
     <div class="step">
       <img src="images/icons/calendar.png" alt="Pick Your Date" class="icon">
       <h3>Pick Your Date & Package</h3>
-      <p>Browse our available destinations and select where you’d like to have your photo experience.</p>
+      <p>Set your preferred schedule and choose a package that fits your needs — whether it’s solo, group, or event coverage.</p>
     </div>
 
     <div class="step">
@@ -224,52 +213,118 @@
   </div>
 </section>
 
-<!-- ===== TESTIMONIALS SECTION ===== -->
-<section class="testimonials" id="testimonials">
+<!-- TESTIMONAL -->
+
+<section class="testimonials">
   <h2 class="testimonials-title">Hear from our Visitors</h2>
 
-  <div class="testimonial-container">
-    <div class="testimonial active">
-      <div class="quote-mark">“</div>
-      <p class="testimonial-text">
-        10/10 Mabait ang staff, magaganda ang photos! Kudos sa team kasi kahit mainit matiyaga silang nagttake ng pictures! 
-        Ang ganda din ng quality printed photos.
-      </p>
-      <div class="testimonial-footer">
-        <img src="images/profile1.png" alt="Amber Mcshine" class="profile-pic">
-        <div class="testimonial-info">
-          <h3>Amber Mcshine</h3>
-          <p>Customer</p>
+  <div class="testimonial-carousel">
+    <div class="testimonial-track">
+      <div class="testimonial-box">
+        <div class="quote-mark">“</div>
+        <p>10/10 Mabait ang staff, magaganda ang photos! Kudos sa team kasi kahit mainit matiyaga silang nagttake ng pictures! Ang ganda din ng quality printed photos.</p>
+        <div class="profile">
+          <img src="images/user.png" alt="Amber Mcshine">
+          <div class="info">
+            <h4>Amber Mcshine</h4>
+            <p>Customer</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="testimonial">
-      <div class="quote-mark">“</div>
-      <p class="testimonial-text">
-        Super saya ng experience! Friendly lahat and sobrang smooth ng booking process. Highly recommended sa mga gustong 
-        mag-photoshoot with a view!
-      </p>
-      <div class="testimonial-footer">
-        <img src="images/profile2.png" alt="John Cruz" class="profile-pic">
-        <div class="testimonial-info">
-          <h3>John Cruz</h3>
-          <p>Customer</p>
+      <div class="testimonial-box">
+        <div class="quote-mark">“</div>
+        <p>Ang saya ng experience! Super approachable ng photographers, and sobrang ganda ng outcome. Worth every peso!</p>
+        <div class="profile">
+          <img src="images/user.png" alt="John Cruz">
+          <div class="info">
+            <h4>John Cruz</h4>
+            <p>Customer</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-box">
+        <div class="quote-mark">“</div>
+        <p>Professional service and stunning results. Highly recommend to anyone visiting the area!</p>
+        <div class="profile">
+          <img src="images/user.png" alt="Lara Villanueva">
+          <div class="info">
+            <h4>Lara Villanueva</h4>
+            <p>Customer</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="testimonial-dots">
-    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
     <span class="dot"></span>
   </div>
 
-  <h2 class="as-seen-title">As seen in</h2>
+  <h3 class="as-seen">As Seen In</h3>
   <div class="as-seen-logos">
-    <div class="logo-placeholder"></div>
-    <div class="logo-placeholder"></div>
-    <div class="logo-placeholder"></div>
-    <div class="logo-placeholder"></div>
+    <img src="images/soteras.png" alt="Logo 1">
+    <img src="images/mayonskydrive.png" alt="Logo 2">
+    <img src="images/elyu_c_logo.png" alt="Logo 3">
+    <img src="images/carron.png" alt="Logo 4">
   </div>
 </section>
+
+<!-- ===== CONTENT SECTION (PLACEHOLDER) ===== -->
+<section class="content-section">
+  <div class="content-overlay"></div>
+</section>
+
+<!-- ===== FOOTER SECTION ===== -->
+<footer class="footer-below-box">
+    <div class="footer-container">
+        <!-- LEFT: Logo and Contact -->
+        <div class="footer-logo-section">
+            <div class="footer-logo">
+                <img src="images/logo_wbg.png" alt="ProfilePic Multimedia">
+            </div>
+            <div class="footer-contact">
+                <p>0976 004 2741</p>
+                <p>profilepicmultimedia@gmail.com</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="footer-column">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">Booking</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Follow Us -->
+        <div class="footer-column">
+            <h3>Follow us</h3>
+            <ul>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Tiktok</a></li>
+            </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-column">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="#">Terms & Conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="copyright">Copyright © ProfilePicMultimedia 2025</p>
+        <a href="#" class="back-to-top">Back to top</a>
+    </div>
+</footer>
