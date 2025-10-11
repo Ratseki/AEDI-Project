@@ -1,192 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - AEDI Booking</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        .message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            display: none;
-        }
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        .login-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Profilepicmultimedia</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-    <div class="container">
-        <h1>📸 Create Account</h1>
-        <form id="signupForm">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required minlength="6">
-            </div>
-            <button type="submit">Sign Up</button>
-        </form>
-        <div id="message" class="message"></div>
-        <div class="login-link">
-            Already have an account? <a href="login.html">Login here</a>
-        </div>
+<body class="signup-page">
+  <div class="signup-wrapper">
+    <div class="signup-box">
+      <!-- Left Side: Image Section (cleaned) -->
+<div class="signup-image">
+  <!-- Logo and Back Button (overlay) -->
+  <div class="image-header">
+    <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" class="image-logo" />
+    <a href="index.html" class="back-button">Back to Website &gt;</a>
+  </div>
+
+  <!-- Main Image Container (single tagline INSIDE) -->
+  <div class="main-image-container">
+    <img src="images/image_compilation/kapurpurawan/signup.jpg" alt="Signup" class="main-photo" />
+    <div class="image-tagline">
+      WE CREATE <span class="highlight">MEMORIES</span>
     </div>
-
-    <script>
-        const form = document.getElementById('signupForm');
-        const messageDiv = document.getElementById('message');
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const response = await fetch('http://localhost:3000/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, email, password })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = '✅ Registration successful! Redirecting to login...';
-                    messageDiv.style.display = 'block';
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
-                } else {
-                    throw new Error(data.message || 'Registration failed');
-                }
-            } catch (error) {
-                messageDiv.className = 'message error';
-                messageDiv.textContent = '❌ ' + error.message;
-                messageDiv.style.display = 'block';
-            }
-        });
-    </script>
-
-    <script>
-document.querySelector("form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = document.querySelector("#name").value;
-  const email = document.querySelector("#email").value;
-  const password = document.querySelector("#password").value;
-
-  const response = await fetch("/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
-  });
-
-  const result = await response.json();
-  alert(result.message || "Signup complete!");
-});
-</script>
-
-
+  </div>
+</div>
+      
+      <!-- Right Side: Form Section -->
+      <form>
+        <h2>Create an Account</h2>
+        
+        <div class="name-fields">
+          <div class="input-group">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" placeholder="First Name" required />
+          </div>
+          <div class="input-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" placeholder="Last Name" required />
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="example@gmail.com" required />
+        </div>
+        
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required />
+        </div>
+        
+        <div class="input-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="••••••••" required />
+        </div>
+        
+        <div class="checkbox-group">
+          <label>
+            <input type="checkbox" required />
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> for this site.
+          </label>
+        </div>
+        
+        <button type="submit" class="signup-btn">Create Account</button>
+        
+        <p class="register-text">Already have an account? <a href="login.html">Login</a></p>
+      </form>
+    </div>
+  </div>
+  
+  <footer class="signup-footer">©2025 Profilepicmultimedia</footer>
 </body>
 </html>

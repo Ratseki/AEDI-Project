@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>We Create Memories</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="logo">
+      <!-- Replace this with your actual logo image -->
+      <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
+    </div>
+
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About Us</a>
+
+      <div class="dropdown">
+        <button class="dropbtn">Services ▾</button>
+        <div class="dropdown-content">
+          <a href="#packages">Photography Packages</a>
+          <a href="#locations-section">Locations</a>
+          <a href="#how-it-works">Booking Guide</a>
+        </div>
+      </div>
+
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+      <a href="#account" class="account"><i class="fa fa-user"></i> My Account</a>
+    </nav>
+  </header>
+
+  <!-- ===== HOME SECTION ===== -->
+  <section class="home-section" id="home">
+    <div class="home-content">
+      <h1 class="main-heading">
+        WE CREATE <span class="highlight">MEMORIES</span>
+      </h1>
+      <p class="subtext">
+        Turn every visit into a lasting experience with our professional photography services. 
+        From candid shots to customized souvenirs, we capture your best moments so you can relive them forever.
+      </p>
+      <button class="book-now">Book Now</button>
+    </div>
+  </section>
+
+  <!-- ===== JAVASCRIPT ===== -->
+  <script>
+    // Keeps navbar sticky with no shadow or color change
+    window.addEventListener("scroll", function() {
+      const navbar = document.querySelector(".navbar");
+      navbar.classList.toggle("scrolled", window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
+
+<!-- ===== LOCATIONS SECTION ===== -->
+<section class="locations-section" id="locations">
+    <section id="locations-section"></section>
+  <h2 class="section-title">Explore Our Different Locations</h2>
+
+  <div class="locations-grid">
+    <!-- Location Box -->
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Paoay, Ilocos Norte</h3>
+        <p>Explore the most popular sand dunes in Ilocos Norte – Paoay Sand Dunes riding on a 4x4 and score a free sand boarding activity!</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <!-- Repeat the same structure for 8 boxes total -->
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Daraga, Albay</h3>
+        <p>Explore one of the scenic trails of Mayon Volcano with SkyDrive Adventure, a trusted ATV tour operator in Bicol. </p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Carmen, Bohol</h3>
+        <p>Carmen, Bohol is a top ATV spot, offering packages to explore the Chocolate Hills and its stunning surroundings.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Daraga, Albay</h3>
+        <p>Sumlang Lake offers serene boat rides with a stunning view of Mayon Volcano.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Burgos, Ilocos Norte</h3>
+        <p>Kapurpurawan Rock Formation in Ilocos Norte is famed for its striking white limestone cliffs sculpted by nature.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>Vigan, Ilocos Sur</h3>
+        <p>A lush sanctuary in Vigan known for its tropical plants and rustic charm.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>San Isidro, Nueva Ecija</h3>
+        <p>Carron Dream Park is Nueva Ecija’s top family destination for fun and adventure.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+
+    <div class="location-box">
+      <div class="location-image"></div>
+      <div class="location-info">
+        <h3>San Juan, La Union</h3>
+        <p>La Union, or Elyu, is a classic surf haven and beach getaway in Northern Luzon.</p>
+        <a href="#" class="view-packages">View Packages ></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="locations-footer">
+    <button class="about-locations-btn">About our Locations</button>
+  </div>
+</section>
+
+<!-- ===== GUIDE / HOW IT WORKS SECTION ===== -->
+<section class="how-it-works" id="how-it-works">
+    <section id="how-it-works"></section>
+  <h2 class="how-it-works-title">How It Works</h2>
+
+  <div class="how-it-works-steps">
+    <div class="step">
+      <img src="images/icons/location-pin.png" alt="Choose Location" class="icon">
+      <h3>Choose Your Location</h3>
+      <p>Browse our available destinations and select where you’d like to have your photo experience.</p>
+    </div>
+
+    <div class="step">
+      <img src="images/icons/calendar.png" alt="Pick Your Date" class="icon">
+      <h3>Pick Your Date & Package</h3>
+      <p>Browse our available destinations and select where you’d like to have your photo experience.</p>
+    </div>
+
+    <div class="step">
+      <img src="images/icons/dslr-camera.png" alt="Confirm & Get Ready" class="icon">
+      <h3>Confirm & Get Ready</h3>
+      <p>Submit your booking details and receive a confirmation message. You’re all set for your photo session!</p>
+    </div>
+  </div>
+
+  <a href="#" class="view-packages-btn">View Packages ></a>
+</section>
+
+<section id="packages" class="packages-section">
+    <section id="packages"></section>
+  <div class="packages-content">
+    <h2 class="packages-title">Choose the Perfect Package for Your Experience</h2>
+    <p class="packages-desc">
+      Whether you’re traveling solo, with friends, or in a group — we’ve got you covered.
+      Each package includes professional shots, easy booking, and lasting memories.
+    </p>
+    <a href="#" class="get-started-btn">Get Started &gt;</a>
+  </div>
+
+  <div class="packages-list">
+    <!-- Left (Pro) -->
+    <div class="package-card">
+      <h3 class="package-name">Pro</h3>
+      <p class="package-price">$40</p>
+      <p class="package-subtitle">Best for quick and simple captures.</p>
+      <p class="package-details">
+        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
+      </p>
+    </div>
+
+    <!-- Middle (Plus) -->
+    <div class="package-card highlight">
+      <h3 class="package-name">Plus</h3>
+      <p class="package-price">$25</p>
+      <p class="package-subtitle">Best for quick and simple captures.</p>
+      <p class="package-details">
+        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
+      </p>
+      <button class="book-now-btn">Book Now</button>
+    </div>
+
+    <!-- Right (Standard) -->
+    <div class="package-card">
+      <h3 class="package-name">Standard</h3>
+      <p class="package-price">$10</p>
+      <p class="package-subtitle">Best for quick and simple captures.</p>
+      <p class="package-details">
+        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS SECTION ===== -->
+<section class="testimonials" id="testimonials">
+  <h2 class="testimonials-title">Hear from our Visitors</h2>
+
+  <div class="testimonial-container">
+    <div class="testimonial active">
+      <div class="quote-mark">“</div>
+      <p class="testimonial-text">
+        10/10 Mabait ang staff, magaganda ang photos! Kudos sa team kasi kahit mainit matiyaga silang nagttake ng pictures! 
+        Ang ganda din ng quality printed photos.
+      </p>
+      <div class="testimonial-footer">
+        <img src="images/profile1.png" alt="Amber Mcshine" class="profile-pic">
+        <div class="testimonial-info">
+          <h3>Amber Mcshine</h3>
+          <p>Customer</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial">
+      <div class="quote-mark">“</div>
+      <p class="testimonial-text">
+        Super saya ng experience! Friendly lahat and sobrang smooth ng booking process. Highly recommended sa mga gustong 
+        mag-photoshoot with a view!
+      </p>
+      <div class="testimonial-footer">
+        <img src="images/profile2.png" alt="John Cruz" class="profile-pic">
+        <div class="testimonial-info">
+          <h3>John Cruz</h3>
+          <p>Customer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="testimonial-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+  </div>
+
+  <h2 class="as-seen-title">As seen in</h2>
+  <div class="as-seen-logos">
+    <div class="logo-placeholder"></div>
+    <div class="logo-placeholder"></div>
+    <div class="logo-placeholder"></div>
+    <div class="logo-placeholder"></div>
+  </div>
+</section>
