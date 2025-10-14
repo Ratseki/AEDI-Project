@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clients - Multimedia Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+    <div class="nav-links">
+      <a href="bookings.html">Bookings</a>
+      <a href="clients.html" class="active">Clients</a>
+      <a href="packages.html">Packages</a>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <h2 class="section-title">Clients Directory</h2>
+
+    <div class="action-bar">
+      <button class="book-now-btn">+ Add Client</button>
+      <input type="text" class="search-bar" placeholder="Search clients...">
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Client ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Registered On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="clientTableBody">
+        <!-- Rows fetched from database -->
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProfilePicMultimedia</p>
+  </footer>
+</body>
+</html>

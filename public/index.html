@@ -50,6 +50,12 @@
         From candid shots to customized souvenirs, we capture your best moments so you can relive them forever.
       </p>
       <button class="book-now">Book Now</button>
+
+<script>
+  document.querySelector('.book-now').addEventListener('click', () => {
+    window.location.href = 'bookings.html';
+  });
+</script>
     </div>
   </section>
 
@@ -199,6 +205,12 @@
         Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
       </p>
       <button class="book-now-btn">Book Now</button>
+
+<script>
+  document.querySelector('.book-now-btn').addEventListener('click', () => {
+    window.location.href = 'bookings.html';
+  });
+  </script>
     </div>
 
     <!-- Right (Standard) -->
@@ -213,12 +225,12 @@
   </div>
 </section>
 
-<!-- TESTIMONAL -->
-
+<!-- TESTIMONIAL -->
 <section class="testimonials">
   <h2 class="testimonials-title">Hear from our Visitors</h2>
 
   <div class="testimonial-carousel">
+    <button class="arrow left" id="prevBtn">&#10094;</button>
     <div class="testimonial-track">
       <div class="testimonial-box">
         <div class="quote-mark">“</div>
@@ -256,22 +268,17 @@
         </div>
       </div>
     </div>
+    <button class="arrow right" id="nextBtn">&#10095;</button>
   </div>
 
   <div class="testimonial-dots">
+    <span class="dot active"></span>
     <span class="dot"></span>
     <span class="dot"></span>
-    <span class="dot"></span>
-  </div>
-
-  <h3 class="as-seen">As Seen In</h3>
-  <div class="as-seen-logos">
-    <img src="images/soteras.png" alt="Logo 1">
-    <img src="images/mayonskydrive.png" alt="Logo 2">
-    <img src="images/elyu_c_logo.png" alt="Logo 3">
-    <img src="images/carron.png" alt="Logo 4">
   </div>
 </section>
+
+
 
 <!-- ===== CONTENT SECTION (PLACEHOLDER) ===== -->
 <section class="content-section">
@@ -328,3 +335,10 @@
         <a href="#" class="back-to-top">Back to top</a>
     </div>
 </footer>
+
+<!-- ===== JS FILES ===== -->
+<script src="js/testimonials.js"></script>
+
+
+</body>
+</html>

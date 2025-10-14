@@ -12,6 +12,11 @@ const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/booking");
 const serviceRoutes = require("./routes/services");
 const adminRoutes = require("./routes/admin"); // optional if you already have one
+const paymentRoutes = require("./routes/payments");
+const cancellationRoutes = require("./routes/cancellations");
+const analyticsRoutes = require("./routes/analytics");
+const bookingExtrasRoutes = require("./routes/bookings_extras");
+
 
 const app = express();
 
@@ -50,6 +55,11 @@ app.use("/api/auth", authRoutes); // ✅ Register/Login/Profile
 app.use("/booking", bookingRoutes); // ✅ Booking system (protected)
 app.use("/services", serviceRoutes); // ✅ Service catalog (soon)
 app.use("/api/admin", adminRoutes); // optional
+app.use("/api/payments", paymentRoutes);
+app.use("/api/cancellations", cancellationRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/bookings", bookingExtrasRoutes);
+
 
 // === Payments API ===
 app.post("/payments", (req, res) => {
