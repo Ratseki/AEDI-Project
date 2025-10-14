@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packages - Multimedia Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+    <div class="nav-links">
+      <a href="bookings.html">Bookings</a>
+      <a href="clients.html">Clients</a>
+      <a href="packages.html" class="active">Packages</a>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <h2 class="section-title">Packages Overview</h2>
+
+    <div class="action-bar">
+      <button class="book-now-btn">+ Add Package</button>
+      <input type="text" class="search-bar" placeholder="Search packages...">
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Package ID</th>
+          <th>Package Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Category</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="packageTableBody">
+        <!-- Rows fetched from database -->
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2025 ProfilePicMultimedia</p>
+  </footer>
+</body>
+</html>

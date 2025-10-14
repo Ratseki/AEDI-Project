@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookings - Multimedia Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo"><img src="images/logo.png" alt="Logo"></div>
+    <div class="nav-links">
+      <a href="bookings.html" class="active">Bookings</a>
+      <a href="clients.html">Clients</a>
+      <a href="packages.html">Packages</a>
+    </div>
+  </div>
+
+  <section class="page-section">
+    <h2 class="section-title">Bookings Management</h2>
+
+    <div class="action-bar">
+      <button class="book-now-btn" onclick="openBookingModal()">+ New Booking</button>
+      <input type="text" class="search-bar" placeholder="Search bookings...">
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Booking ID</th>
+          <th>Client Name</th>
+          <th>Package</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="bookingTableBody">
+        <!-- Rows from database -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Modal for Downpayment -->
+<div id="downpaymentModal" class="modal">
+  <div class="modal-content">
+    <h3>Confirm Downpayment</h3>
+    <input type="number" id="downpaymentAmount" placeholder="Enter downpayment amount">
+    <button onclick="submitDownpayment()">Confirm</button>
+    <button onclick="closeModal('downpaymentModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Modal for Cancellation -->
+<div id="cancelModal" class="modal">
+  <div class="modal-content">
+    <h3>Cancel Booking</h3>
+    <p>Are you sure you want to cancel this booking?</p>
+    <button onclick="confirmCancel()">Yes, Cancel</button>
+    <button onclick="closeModal('cancelModal')">No</button>
+  </div>
+</div>
+
+<script>
+let selectedBookingId = null;
+
+function openDownpaymentModal(id) {
+  selectedBookingId = id;
+  document.getElementById("downpaymentModal").style.display = "flex";
+}
+
+function openCancelModal(id) {
+  selectedBookingId = id;
+  document.getElementById("cancelModal").style.display = "flex";
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+async function submitDownpayment() {
+  const amount = document.getElementById("downpaymentAmount").value;
+  const res = await fetch("/api/bookings/downpayment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ booking_id: selectedBookingId, amount })
+  });
+  const data = await res.json();
+  alert(data.message);
+  closeModal('downpaymentModal');
+}
+
+async function confirmCancel() {
+  const res = await fetch(`/api/bookings/cancel/${selectedBookingId}`, { method: "PUT" });
+  const data = await res.json();
+  alert(data.message);
+  closeModal('cancelModal');
+}
+</script>
+
+
+  <footer class="footer">
+    <p>&copy; 2025 ProfilePicMultimedia</p>
+  </footer>
+
+  <script src="js/bookings.js"></script>
+</body>
+</html>
