@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign Up | Profilepicmultimedia</title>
@@ -10,25 +10,24 @@
 <body class="auth">
   <div class="signup-wrapper">
     <div class="signup-box">
-      <!-- Left Side: Image Section (cleaned) -->
-<div class="signup-image">
-  <!-- Logo and Back Button (overlay) -->
-  <div class="image-header">
-    <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" class="image-logo" />
-    <a href="index.html" class="back-button">Back to Website &gt;</a>
-  </div>
 
-  <!-- Main Image Container (single tagline INSIDE) -->
-  <div class="main-image-container">
-    <img src="images/image_compilation/kapurpurawan/signup.jpg" alt="Signup" class="main-photo" />
-    <div class="image-tagline">
-      WE CREATE <span class="highlight">MEMORIES</span>
-    </div>
-  </div>
-</div>
-      
+      <!-- Left Side: Image Section -->
+      <div class="signup-image">
+        <div class="image-header">
+          <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" class="image-logo" />
+          <a href="index.html" class="back-button">Back to Website &gt;</a>
+        </div>
+
+        <div class="main-image-container">
+          <img src="images/image_compilation/kapurpurawan/signup.jpg" alt="Signup" class="main-photo" />
+          <div class="image-tagline">
+            WE CREATE <span class="highlight">MEMORIES</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Right Side: Form Section -->
-      <form>
+      <form id="signupForm">
         <h2>Create an Account</h2>
         
         <div class="name-fields">
@@ -60,7 +59,7 @@
         <div class="checkbox-group">
           <label>
             <input type="checkbox" required />
-            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> for this site.
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
           </label>
         </div>
         
@@ -72,5 +71,44 @@
   </div>
   
   <footer class="signup-footer">©2025 Profilepicmultimedia</footer>
+
+  <!-- ✅ Fixed JavaScript -->
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Combine first and last name for the backend "name" field
+      const name = `${firstName} ${lastName}`.trim();
+
+      try {
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const data = await response.json();
+        alert(data.message || "Something went wrong");
+
+        if (response.ok) {
+          window.location.href = "login.html";
+        }
+      } catch (error) {
+        console.error("Signup failed:", error);
+        alert("An error occurred while creating your account.");
+      }
+    });
+  </script>
 </body>
 </html>
