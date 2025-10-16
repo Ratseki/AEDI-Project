@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../models/User"); // MySQL connection
+const db = require("../config/db"); // MySQL connection
 
 const router = express.Router();
 const JWT_SECRET = "supersecretkey";
