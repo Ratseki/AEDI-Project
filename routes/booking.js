@@ -1,76 +1,83 @@
-const express = require("express");
-const mysql = require("mysql2");
-const authenticateToken = require("../middleware/authMiddleware"); // ✅ Import middleware
-
+// routes/bookings.js
+const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middleware/authMiddleware'); // uses same JWT secret
+const db = require('../models/User'); // <-- your project uses this for mysql connection (adjust path if different)
+const bcrypt = require('bcrypt');
 
-const db = mysql.createConnection({ 
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "multimedia_booking"
-});
+// Create booking (protected)
+router.post('/', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const {
+    first_name, last_name, email, phone_area, phone_number,
+    date, time, location, package: pkg, note, num_people
+  } = req.body;
 
-// ✅ Create booking (protected)
-router.post("/", authenticateToken, (req, res) => {
-  const { service_id, date, time } = req.body;
-  const user_id = req.user.id; // ✅ get from JWT, not body
+  if (!date || !time || !location || !pkg) return res.status(400).json({ message: 'Missing required booking fields' });
 
-  db.query(
-    "INSERT INTO bookings (user_id, service_id, date, time, status) VALUES (?, ?, ?, ?, 'pending')",
-    [user_id, service_id, date, time],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Booking created successfully", booking_id: result.insertId });
+  const query = `INSERT INTO bookings
+    (user_id, first_name, last_name, email, phone_area, phone_number, date, time, location, package_name, note, num_people, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  const params = [userId, first_name, last_name, email, phone_area, phone_number, date, time, location, pkg, note || '', num_people || 1, 'pending'];
+
+  db.query(query, params, (err, result) => {
+    if (err) {
+      console.error('Create booking error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
     }
-  );
-});
-
-// ✅ Get all bookings (admin only — optional)
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM bookings", (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
+    res.json({ message: 'Booking created', booking_id: result.insertId });
   });
 });
 
-// ✅ Update booking status (admin/staff)
-router.put("/:id/status", authenticateToken, (req, res) => {
-  const { status } = req.body;
-  db.query("UPDATE bookings SET status=? WHERE id=?", [status, req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "Booking status updated" });
+// Record downpayment (protected)
+router.post('/downpayment', authenticateToken, (req, res) => {
+  const { booking_id, amount } = req.body;
+  if (!booking_id || !amount) return res.status(400).json({ message: 'booking_id and amount required' });
+
+  db.query('INSERT INTO payments (booking_id, amount, status) VALUES (?, ?, ?)', [booking_id, amount, 'downpayment'], (err, result) => {
+    if (err) {
+      console.error('Downpayment error:', err);
+      return res.status(500).json({ message: 'Database error', error: err });
+    }
+    // Optionally update booking status to 'partially_paid'
+    db.query('UPDATE bookings SET status = ? WHERE id = ?', ['partially_paid', booking_id], () => {});
+    res.json({ message: 'Downpayment recorded', payment_id: result.insertId });
   });
 });
 
-// ✅ Cancel booking (user only)
-router.delete("/cancel-booking/:id", authenticateToken, (req, res) => {
+// Cancel booking (protected)
+router.put('/cancel/:id', authenticateToken, (req, res) => {
   const bookingId = req.params.id;
   const userId = req.user.id;
 
-  // ✅ ensure user only deletes their own booking
-  db.query("DELETE FROM bookings WHERE id = ? AND user_id = ?", [bookingId, userId], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "Booking not found or unauthorized." });
+  // Only user who created booking or admin can cancel. Simple check: match user_id
+  db.query('SELECT user_id FROM bookings WHERE id = ?', [bookingId], (err, rows) => {
+    if (err) return res.status(500).json({ message: 'Database error', error: err });
+    if (!rows.length) return res.status(404).json({ message: 'Booking not found' });
+    if (rows[0].user_id !== userId) return res.status(403).json({ message: 'Unauthorized' });
 
-    res.json({ message: "Booking canceled successfully." });
+    db.query('UPDATE bookings SET status = ? WHERE id = ?', ['cancelled', bookingId], (err2) => {
+      if (err2) return res.status(500).json({ message: 'Database error', error: err2 });
+      res.json({ message: 'Booking cancelled' });
+    });
   });
 });
 
-// ✅ Booking history (protected)
-router.get("/booking-history", authenticateToken, (req, res) => {
+// Admin: list bookings
+router.get('/', (req, res) => {
+  db.query('SELECT b.*, u.name as client_name FROM bookings b LEFT JOIN users u ON b.user_id = u.id ORDER BY b.id DESC', (err, rows) => {
+    if (err) return res.status(500).json({ message: 'Database error', error: err });
+    res.json(rows);
+  });
+});
+
+// User bookings (protected)
+router.get('/mine', authenticateToken, (req, res) => {
   const userId = req.user.id;
-  const query = `
-    SELECT b.id, s.name AS service_name, b.date, b.status
-    FROM bookings b
-    JOIN services s ON b.service_id = s.id
-    WHERE b.user_id = ?
-    ORDER BY b.date DESC
-  `;
-  db.query(query, [userId], (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
+  db.query('SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {
+    if (err) return res.status(500).json({ message: 'Database error', error: err });
+    res.json(rows);
   });
 });
 

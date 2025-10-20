@@ -1,17 +1,41 @@
 console.log("✅ bookings.js loaded");
 
 let selectedBookingId = null;
+const token = localStorage.getItem("token");
+
+// === Helper: Authorized Fetch ===
+async function authorizedFetch(url, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+
+  const res = await fetch(url, { ...options, headers });
+
+  // If unauthorized, redirect to login
+  if (res.status === 401 || res.status === 403) {
+    alert("Your session has expired. Please log in again.");
+    localStorage.removeItem("token");
+    window.location.href = "/login.html";
+    return null;
+  }
+
+  return res;
+}
 
 // === Load All Bookings ===
 async function loadBookings() {
   try {
-    const res = await fetch("/booking");
+    const res = await authorizedFetch("/booking");
+    if (!res) return;
     const data = await res.json();
 
     const tbody = document.getElementById("bookingTableBody");
     tbody.innerHTML = "";
 
-    data.forEach(b => {
+    data.forEach((b) => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${b.id}</td>
@@ -49,13 +73,14 @@ async function submitDownpayment() {
   if (!amount) return alert("⚠️ Please enter an amount.");
 
   try {
-    const res = await fetch("/payments", {
+    const res = await authorizedFetch("/payments", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ booking_id: selectedBookingId, amount })
+      body: JSON.stringify({ booking_id: selectedBookingId, amount }),
     });
 
+    if (!res) return;
     const data = await res.json();
+
     if (res.ok) {
       alert(`✅ ${data.message}`);
       closeModal("downpaymentModal");
@@ -77,12 +102,13 @@ function openCancelModal(id) {
 
 async function confirmCancel() {
   try {
-    const res = await fetch(`/booking/cancel-booking/${selectedBookingId}`, {
+    const res = await authorizedFetch(`/booking/cancel-booking/${selectedBookingId}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" }
     });
 
+    if (!res) return;
     const data = await res.json();
+
     if (res.ok) {
       alert(`❌ ${data.message}`);
       closeModal("cancelModal");

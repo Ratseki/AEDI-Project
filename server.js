@@ -9,7 +9,7 @@ const path = require("path");
 
 // === Route Imports ===
 const authRoutes = require("./routes/auth");
-const bookingRoutes = require("./routes/booking");
+const bookingRoutes = require("./routes/booking")
 const serviceRoutes = require("./routes/services");
 const adminRoutes = require("./routes/admin"); // optional if you already have one
 const paymentRoutes = require("./routes/payments");
@@ -26,6 +26,7 @@ app.use(cors());
 app.use(express.json());
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/api/bookings", bookingRoutes);
 
 
 // === Static Files ===
