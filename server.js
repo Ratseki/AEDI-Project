@@ -7,152 +7,70 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
 
-// === Route Imports ===
-const authRoutes = require("./routes/auth");
-const bookingRoutes = require("./routes/booking")
-const serviceRoutes = require("./routes/services");
-const adminRoutes = require("./routes/admin"); // optional if you already have one
-const paymentRoutes = require("./routes/payments");
-const cancellationRoutes = require("./routes/cancellations");
-const analyticsRoutes = require("./routes/analytics");
-const bookingExtrasRoutes = require("./routes/bookings_extras");
-
+// === Middleware + JWT ===
+const authenticateToken = require("./middleware/authMiddleware");
 
 const app = express();
 
 // === Middleware ===
-app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({ origin: "http://127.0.0.1:5500" })); // frontend address (adjust if needed)
 app.use(express.json());
-// Serve static frontend files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use("/api/bookings", bookingRoutes);
-
-
-// === Static Files ===
-// (so you can load your frontend pages if needed)
-app.use(express.static(__dirname));
-// or if you have a public folder:
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "public")));
 
 // === Database Connection ===
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "multimedia_booking"
+  database: "multimedia_booking",
 });
 
-db.connect(err => {
+db.connect((err) => {
   if (err) throw err;
   console.log("✅ MySQL Connected");
 });
 
-// === Secret Key for JWT ===
-const JWT_SECRET = "supersecretkey";
+// === JWT Secret Debug ===
+console.log("🔐 JWT_SECRET loaded:", process.env.JWT_SECRET);
 
-// === API Routes ===
-app.use("/api/auth", authRoutes); // ✅ Register/Login/Profile
-app.use("/booking", bookingRoutes); // ✅ Booking system (protected)
-app.use("/services", serviceRoutes); // ✅ Service catalog (soon)
-app.use("/api/admin", adminRoutes); // optional
-app.use("/api/payments", paymentRoutes);
-app.use("/api/cancellations", cancellationRoutes);
-app.use("/api/analytics", analyticsRoutes);
-app.use("/api/bookings", bookingExtrasRoutes);
+// === JWT Secret (from .env) ===
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
+// === Route Imports ===
+const authRoutes = require("./routes/auth");
+const bookingRoutes = require("./routes/booking");
+const serviceRoutes = require("./routes/services");
+const adminRoutes = require("./routes/admin");
+const paymentRoutes = require("./routes/payments");
+const cancellationRoutes = require("./routes/cancellations");
+const analyticsRoutes = require("./routes/analytics");
+const bookingExtrasRoutes = require("./routes/bookings_extras");
 
-// === Payments API ===
-app.post("/payments", (req, res) => {
-  const { booking_id, amount, status } = req.body;
-  db.query(
-    "INSERT INTO payments (booking_id, amount, status) VALUES (?, ?, ?)",
-    [booking_id, amount, status || 'pending'],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Payment recorded successfully", payment_id: result.insertId });
-    }
-  );
-});
+// ======================================================
+// ✅ #3 — Route Mounting
+// ======================================================
 
-app.put("/payments/:id", (req, res) => {
-  const { status } = req.body;
-  db.query("UPDATE payments SET status=? WHERE id=?", [status, req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "Payment status updated" });
-  });
-});
+// --- Public Routes ---
+app.use("/api/auth", authRoutes);          // Register / Login / Profile
+app.use("/api/services", serviceRoutes);   // Public service list
 
-// === Notifications API ===
-app.post("/notifications", (req, res) => {
-  const { user_id, message } = req.body;
-  db.query(
-    "INSERT INTO notifications (user_id, message) VALUES (?, ?)",
-    [user_id, message],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Notification sent", notification_id: result.insertId });
-    }
-  );
-});
+// --- Protected Routes (JWT Required) ---
+app.use("/api/bookings", authenticateToken, bookingRoutes); 
+app.use("/api/payments", authenticateToken, paymentRoutes);
+app.use("/api/cancellations", authenticateToken, cancellationRoutes);
+app.use("/api/analytics", authenticateToken, analyticsRoutes);
+app.use("/api/bookings_extras", authenticateToken, bookingExtrasRoutes);
+app.use("/api/admin", authenticateToken, adminRoutes);
 
-app.get("/notifications/:user_id", (req, res) => {
-  db.query(
-    "SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC",
-    [req.params.user_id],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json(results);
-    }
-  );
-});
-
-app.put("/notifications/:id/read", (req, res) => {
-  db.query("UPDATE notifications SET is_read = TRUE WHERE id = ?", [req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "Notification marked as read" });
-  });
-});
-
-// === Reviews API ===
-app.post("/reviews", (req, res) => {
-  const { user_id, service_id, rating, comment } = req.body;
-  db.query(
-    "INSERT INTO reviews (user_id, service_id, rating, comment) VALUES (?, ?, ?, ?)",
-    [user_id, service_id, rating, comment],
-    (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: "Review submitted", review_id: result.insertId });
-    }
-  );
-});
-
-app.get("/reviews/service/:service_id", (req, res) => {
-  db.query(
-    `SELECT r.*, u.name AS user_name
-     FROM reviews r
-     JOIN users u ON r.user_id = u.id
-     WHERE r.service_id = ?
-     ORDER BY r.created_at DESC`,
-    [req.params.service_id],
-    (err, results) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json(results);
-    }
-  );
-});
-
-// === Database Test ===
-app.get("/api/test-db", (req, res) => {
-  db.query("SELECT 1 + 1 AS result", (err, results) => {
-    if (err) {
-      console.error("Database test failed:", err);
-      return res.status(500).json({ success: false, message: "Database connection failed" });
-    }
-    res.json({ success: true, message: "✅ Database connected successfully!", data: results });
-  });
+// ======================================================
+// === 404 Fallback ===
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
 });
 
 // === Start Server ===
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});

@@ -57,11 +57,6 @@ async function loadBookings() {
 
 document.addEventListener("DOMContentLoaded", loadBookings);
 
-// === Booking Modal (Placeholder for + New Booking) ===
-function openBookingModal() {
-  alert("📝 Booking form coming soon!");
-}
-
 // === Downpayment Modal ===
 function openDownpaymentModal(id) {
   selectedBookingId = id;
@@ -73,7 +68,7 @@ async function submitDownpayment() {
   if (!amount) return alert("⚠️ Please enter an amount.");
 
   try {
-    const res = await authorizedFetch("/payments", {
+    const res = await authorizedFetch("/booking/downpayment", {
       method: "POST",
       body: JSON.stringify({ booking_id: selectedBookingId, amount }),
     });
@@ -94,7 +89,7 @@ async function submitDownpayment() {
   }
 }
 
-// === Cancellation Modal ===
+// === Cancel Booking ===
 function openCancelModal(id) {
   selectedBookingId = id;
   document.getElementById("cancelModal").style.display = "flex";
@@ -122,7 +117,6 @@ async function confirmCancel() {
   }
 }
 
-// === Close Modal ===
 function closeModal(id) {
   document.getElementById(id).style.display = "none";
 }

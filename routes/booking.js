@@ -5,7 +5,7 @@ const authenticateToken = require('../middleware/authMiddleware'); // uses same 
 const db = require('../models/User'); // <-- your project uses this for mysql connection (adjust path if different)
 const bcrypt = require('bcrypt');
 
-// Create booking (protected)
+// === Create booking (protected)
 router.post('/', authenticateToken, (req, res) => {
   const userId = req.user.id;
   const {
@@ -13,7 +13,8 @@ router.post('/', authenticateToken, (req, res) => {
     date, time, location, package: pkg, note, num_people
   } = req.body;
 
-  if (!date || !time || !location || !pkg) return res.status(400).json({ message: 'Missing required booking fields' });
+  if (!date || !time || !location || !pkg)
+    return res.status(400).json({ message: 'Missing required booking fields' });
 
   const query = `INSERT INTO bookings
     (user_id, first_name, last_name, email, phone_area, phone_number, date, time, location, package_name, note, num_people, status)
@@ -30,28 +31,39 @@ router.post('/', authenticateToken, (req, res) => {
   });
 });
 
-// Record downpayment (protected)
-router.post('/downpayment', authenticateToken, (req, res) => {
-  const { booking_id, amount } = req.body;
-  if (!booking_id || !amount) return res.status(400).json({ message: 'booking_id and amount required' });
+// === Record downpayment (protected)
+router.post('/', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const {
+    first_name, last_name, email, phone_area, phone_number,
+    date, time, location, package: pkg, note, num_people, service_id
+  } = req.body;
 
-  db.query('INSERT INTO payments (booking_id, amount, status) VALUES (?, ?, ?)', [booking_id, amount, 'downpayment'], (err, result) => {
+  if (!date || !time || !location || !pkg || !service_id)
+    return res.status(400).json({ message: 'Missing required booking fields' });
+
+  const query = `INSERT INTO bookings
+    (user_id, first_name, last_name, email, phone_area, phone_number, date, time, location, package_name, note, num_people, status, service_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  const params = [userId, first_name, last_name, email, phone_area, phone_number,
+                  date, time, location, pkg, note || '', num_people || 1, 'pending', service_id];
+
+  db.query(query, params, (err, result) => {
     if (err) {
-      console.error('Downpayment error:', err);
+      console.error('Create booking error:', err);
       return res.status(500).json({ message: 'Database error', error: err });
     }
-    // Optionally update booking status to 'partially_paid'
-    db.query('UPDATE bookings SET status = ? WHERE id = ?', ['partially_paid', booking_id], () => {});
-    res.json({ message: 'Downpayment recorded', payment_id: result.insertId });
+    res.json({ message: 'Booking created', booking_id: result.insertId });
   });
 });
 
-// Cancel booking (protected)
+
+// === Cancel booking (protected)
 router.put('/cancel/:id', authenticateToken, (req, res) => {
   const bookingId = req.params.id;
   const userId = req.user.id;
 
-  // Only user who created booking or admin can cancel. Simple check: match user_id
   db.query('SELECT user_id FROM bookings WHERE id = ?', [bookingId], (err, rows) => {
     if (err) return res.status(500).json({ message: 'Database error', error: err });
     if (!rows.length) return res.status(404).json({ message: 'Booking not found' });
@@ -64,15 +76,18 @@ router.put('/cancel/:id', authenticateToken, (req, res) => {
   });
 });
 
-// Admin: list bookings
+// === Admin: list bookings
 router.get('/', (req, res) => {
-  db.query('SELECT b.*, u.name as client_name FROM bookings b LEFT JOIN users u ON b.user_id = u.id ORDER BY b.id DESC', (err, rows) => {
-    if (err) return res.status(500).json({ message: 'Database error', error: err });
-    res.json(rows);
-  });
+  db.query(
+    'SELECT b.*, u.name AS client_name FROM bookings b LEFT JOIN users u ON b.user_id = u.id ORDER BY b.id DESC',
+    (err, rows) => {
+      if (err) return res.status(500).json({ message: 'Database error', error: err });
+      res.json(rows);
+    }
+  );
 });
 
-// User bookings (protected)
+// === User bookings (protected)
 router.get('/mine', authenticateToken, (req, res) => {
   const userId = req.user.id;
   db.query('SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC', [userId], (err, rows) => {

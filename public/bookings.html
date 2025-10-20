@@ -120,9 +120,9 @@
             <label class="bk-label">Package <span class="bk-required">*</span></label>
             <select id="package" class="bk-select" required>
               <option value="">Please select</option>
-              <option value="pro">Pro — $40</option>
-              <option value="plus">Plus — $25</option>
-              <option value="standard">Standard — $10</option>
+              <option value="1">Pro — $40</option>
+              <option value="2">Plus — $25</option>
+              <option value="3">Standard — $10</option>
             </select>
           </div>
         </div>
@@ -210,8 +210,9 @@
       const date = document.getElementById('date').value;
       const time = document.getElementById('time').value;
       const location = document.getElementById('location').value;
-      const pkg = document.getElementById('package').value;
+      const serviceId = document.getElementById('package').value; // <-- this is the service_id
       const agree = document.getElementById('agree').checked;
+      
 
       if (!firstName || !lastName || !email || !phoneNumber || !date || !time || !location || !pkg || !agree) {
         showError('Please fill all required fields and accept the agreement.');
@@ -230,18 +231,19 @@
 
       // Build payload
       const payload = {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone_area: phoneArea,
-        phone_number: phoneNumber,
-        date,
-        time,
-        location,
-        package: pkg,
-        note: document.getElementById('note').value || '',
-        num_people: document.getElementById('numPeople').value || 1
-      };
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone_area: phoneArea,
+      phone_number: phoneNumber,
+      date,
+      time,
+      location,
+      package: pkg,           // optional, can keep for display
+      note: document.getElementById('note').value || '',
+      num_people: document.getElementById('numPeople').value || 1,
+      service_id: serviceId    // <-- ADD THIS
+    };
 
       try {
         const res = await fetch('/api/bookings', {
@@ -296,28 +298,39 @@
       document.getElementById('bkDownModal').style.display = 'none';
       bkModalBookingId = null;
     }
-    async function submitDownpaymentModal(){
-      const amount = document.getElementById('bkDownAmount').value;
-      if (!amount || Number(amount) <= 0) { alert('Enter a valid amount'); return; }
-
-      const token = localStorage.getItem('token');
-      if (!token) { alert('Please login first'); window.location.href='/login.html'; return; }
-
-      try {
-        const res = await fetch('/api/bookings/downpayment', {
-          method: 'POST',
-          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
-          body: JSON.stringify({ booking_id: bkModalBookingId, amount })
-        });
-        const result = await res.json();
-        if (!res.ok) { alert(result.message || 'Downpayment failed'); return; }
-        alert(result.message);
-        closeDownModal();
-      } catch (err) {
-        console.error(err);
-        alert('Server error.');
-      }
+    async function submitDownpayment(bkModalBookingId, amount) {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You must be logged in to make a downpayment.');
+      return;
     }
+
+    const res = await fetch('http://localhost:3000/api/bookings/downpayment', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  },
+  body: JSON.stringify({ booking_id: bkModalBookingId, amount })
+});
+
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      alert(result.message || 'Downpayment failed');
+      return;
+    }
+
+    alert(result.message || 'Downpayment successful!');
+    closeDownModal();
+
+  } catch (err) {
+    console.error('❌ Downpayment error:', err);
+    alert('Server error. Please try again later.');
+  }
+}
 
     // close modal on background click
     document.getElementById('bkDownModal').addEventListener('click', (e)=> {

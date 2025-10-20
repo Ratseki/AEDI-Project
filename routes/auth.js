@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 const db = require("../config/db"); // MySQL connection
 
 const router = express.Router();
-const JWT_SECRET = "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+
 
 // 🧍 Register
 router.post("/register", (req, res) => {
