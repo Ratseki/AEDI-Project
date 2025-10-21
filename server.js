@@ -39,7 +39,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 // === Route Imports ===
 const authRoutes = require("./routes/auth");
-const bookingRoutes = require("./routes/booking");
+const bookingRoutes = require("./routes/bookings");
 const serviceRoutes = require("./routes/services");
 const adminRoutes = require("./routes/admin");
 const paymentRoutes = require("./routes/payments");
@@ -52,16 +52,14 @@ const bookingExtrasRoutes = require("./routes/bookings_extras");
 // ======================================================
 
 // --- Public Routes ---
-app.use("/api/auth", authRoutes);          // Register / Login / Profile
-app.use("/api/services", serviceRoutes);   // Public service list
-
-// --- Protected Routes (JWT Required) ---
-app.use("/api/bookings", authenticateToken, bookingRoutes); 
-app.use("/api/payments", authenticateToken, paymentRoutes);
-app.use("/api/cancellations", authenticateToken, cancellationRoutes);
-app.use("/api/analytics", authenticateToken, analyticsRoutes);
-app.use("/api/bookings_extras", authenticateToken, bookingExtrasRoutes);
-app.use("/api/admin", authenticateToken, adminRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/services", serviceRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/cancellations", cancellationRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/bookings_extras", bookingExtrasRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ======================================================
 // === 404 Fallback ===

@@ -161,17 +161,17 @@
     </div>
   </main>
 
-  <!-- Downpayment modal (for admin/optional) -->
-  <div id="bkDownModal" class="bk-modal" role="dialog" aria-hidden="true">
-    <div class="bk-modal-content">
-      <h3>Confirm Downpayment</h3>
-      <input id="bkDownAmount" class="bk-input" type="number" placeholder="Enter amount" />
-      <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
-        <button class="bk-btn" onclick="submitDownpaymentModal()">Confirm</button>
-        <button class="bk-btn secondary" onclick="closeDownModal()">Cancel</button>
-      </div>
+  <!-- Downpayment modal -->
+<div id="bkDownModal" class="bk-modal" role="dialog" aria-hidden="true">
+  <div class="bk-modal-content">
+    <h3>Confirm Downpayment</h3>
+    <input id="bkDownAmount" class="bk-input" type="number" placeholder="Enter amount" />
+    <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
+      <button id="bkDownConfirmBtn" class="bk-btn">Confirm</button>
+      <button class="bk-btn secondary" onclick="closeDownModal()">Cancel</button>
     </div>
   </div>
+</div>
 
   <footer style="padding:40px; text-align:center; color:#777;">&copy; 2025 ProfilePicMultimedia</footer>
 
