@@ -28,10 +28,9 @@ async function authorizedFetch(url, options = {}) {
 // === Load All Bookings ===
 async function loadBookings() {
   try {
-    const res = await authorizedFetch("/booking");
+    const res = await authorizedFetch("/api/bookings");
     if (!res) return;
     const data = await res.json();
-
     const tbody = document.getElementById("bookingTableBody");
     tbody.innerHTML = "";
 
@@ -68,7 +67,7 @@ async function submitDownpayment() {
   if (!amount) return alert("⚠️ Please enter an amount.");
 
   try {
-    const res = await authorizedFetch("/booking/downpayment", {
+    const res = await authorizedFetch("/api/bookings/downpayment", {
       method: "POST",
       body: JSON.stringify({ booking_id: selectedBookingId, amount }),
     });
@@ -97,7 +96,7 @@ function openCancelModal(id) {
 
 async function confirmCancel() {
   try {
-    const res = await authorizedFetch(`/booking/cancel-booking/${selectedBookingId}`, {
+    const res = await authorizedFetch(`/api/bookings/cancel-booking/${selectedBookingId}`, {
       method: "DELETE",
     });
 

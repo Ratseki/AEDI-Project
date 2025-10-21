@@ -210,8 +210,11 @@
       const date = document.getElementById('date').value;
       const time = document.getElementById('time').value;
       const location = document.getElementById('location').value;
-      const serviceId = document.getElementById('package').value; // <-- this is the service_id
+      const service_id = document.getElementById('package').value; // package dropdown value is your service_id
+      const pkg = document.getElementById('package').selectedOptions[0].text; // optional: store name for display
       const agree = document.getElementById('agree').checked;
+
+
       
 
       if (!firstName || !lastName || !email || !phoneNumber || !date || !time || !location || !pkg || !agree) {
@@ -239,10 +242,10 @@
       date,
       time,
       location,
-      package: pkg,           // optional, can keep for display
+      package_name: pkg,        // clearer name than just “package”
       note: document.getElementById('note').value || '',
       num_people: document.getElementById('numPeople').value || 1,
-      service_id: serviceId    // <-- ADD THIS
+      service_id                 // properly included foreign key
     };
 
       try {

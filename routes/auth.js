@@ -46,7 +46,7 @@ router.post("/login", (req, res) => {
 
     const token = jwt.sign(
   { id: user.id, name: user.name, email: user.email },
-  JWT_SECRET,
+   process.env.JWT_SECRET,
   { expiresIn: "2h" }
 );
     res.json({ message: "Login successful", token });
@@ -203,7 +203,7 @@ router.get('/verify', (req, res) => {
 const User = require('../models/User'); // adjust path if needed
 
 
-// 👤 Get user profile (protected)
+// 👤 Get user profile (protected) authenticateToken
 const authenticateToken = require("../middleware/authMiddleware");
 router.get("/profile", authenticateToken, (req, res) => {
   const userId = req.user.id;
