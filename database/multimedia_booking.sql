@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2025 at 07:54 AM
+-- Generation Time: Oct 22, 2025 at 06:16 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,9 +32,29 @@ CREATE TABLE `bookings` (
   `user_id` int(11) NOT NULL,
   `service_id` int(11) NOT NULL,
   `date` date NOT NULL,
-  `status` enum('pending','confirmed','cancelled') DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `status` enum('pending','confirmed','cancelled','partial','paid') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `phone_area` varchar(10) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `package_name` varchar(100) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `num_people` int(11) DEFAULT 1,
+  `time` varchar(10) DEFAULT NULL,
+  `location` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bookings`
+--
+
+INSERT INTO `bookings` (`id`, `user_id`, `service_id`, `date`, `status`, `created_at`, `first_name`, `last_name`, `email`, `phone_area`, `phone_number`, `package_name`, `note`, `num_people`, `time`, `location`) VALUES
+(11, 4, 2, '2025-10-15', 'pending', '2025-10-21 10:59:49', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 4, '15:00', NULL),
+(12, 4, 2, '2025-10-15', 'pending', '2025-10-21 11:00:12', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 4, '15:00', NULL),
+(13, 4, 1, '2025-10-23', 'pending', '2025-10-21 11:07:59', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '17:00', NULL),
+(14, 4, 1, '2025-10-23', 'pending', '2025-10-21 11:08:25', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '17:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -89,7 +109,7 @@ CREATE TABLE `payments` (
   `id` int(11) NOT NULL,
   `booking_id` int(11) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
-  `status` enum('pending','paid','failed') DEFAULT 'pending',
+  `status` enum('downpayment','full','paid') DEFAULT 'downpayment',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `is_downpayment` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -123,6 +143,15 @@ CREATE TABLE `services` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `services`
+--
+
+INSERT INTO `services` (`id`, `name`, `description`, `price`, `created_at`) VALUES
+(1, 'Pro', NULL, 40.00, '2025-10-21 10:59:34'),
+(2, 'Plus', NULL, 25.00, '2025-10-21 10:59:34'),
+(3, 'Standard', NULL, 10.00, '2025-10-21 10:59:34');
+
 -- --------------------------------------------------------
 
 --
@@ -146,7 +175,9 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `reset_token`, `reset_token_expires`) VALUES
 (1, 'KC', 'kc@gmail.com', '$2b$10$BxU8kmtJ2X/URsxLLDPAle.pAoNaONvrMuHlJdccAPEgYBEBETNfi', 'customer', '2025-10-07 10:03:35', NULL, NULL),
-(2, 'Test', 'test@gmail.com', '$2b$10$hSNtF2GTP1W5uXci57Oy9e0ghm4kow06iIjmLsluN4q/3Cn.NH5Bi', 'customer', '2025-10-08 08:16:10', NULL, NULL);
+(2, 'Test', 'test@gmail.com', '$2b$10$hSNtF2GTP1W5uXci57Oy9e0ghm4kow06iIjmLsluN4q/3Cn.NH5Bi', 'customer', '2025-10-08 08:16:10', NULL, NULL),
+(3, 'Kester Clarence Abella', 'kcabella1611@gmail.com', '$2b$10$GnBCNbHvUHgnlxrnpAR7kOR5jwGLX1fX.69mtGyHRHuGjJsSwGz3m', 'customer', '2025-10-16 06:22:11', 'eabc84621a74e894017e3f78a578c98d061a80cff341b48605d9db3e6cd079e5', '2025-10-16 15:26:22'),
+(4, 'testaccount testes', 'rayseki1337@gmail.com', '$2b$10$PVZPqfl9WwKiBw5Uujh3o.uljwhhcbRhEqMHSCuxNRbnbZfA.iyaW', 'customer', '2025-10-21 05:53:13', NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -215,7 +246,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `clients`
@@ -251,13 +282,13 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
