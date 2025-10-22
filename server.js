@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql2");
@@ -13,7 +13,7 @@ const authenticateToken = require("./middleware/authMiddleware");
 const app = express();
 
 // === Middleware ===
-app.use(cors({ origin: "http://127.0.0.1:5500" })); // frontend address (adjust if needed)
+app.use(cors({ origin: "http://127.0.0.1:5500" })); // frontend address
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -33,8 +33,6 @@ db.connect((err) => {
 
 // === JWT Secret Debug ===
 console.log("🔐 JWT_SECRET loaded:", process.env.JWT_SECRET);
-
-// === JWT Secret (from .env) ===
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 // === Route Imports ===
@@ -42,16 +40,16 @@ const authRoutes = require("./routes/auth");
 const bookingRoutes = require("./routes/bookings");
 const serviceRoutes = require("./routes/services");
 const adminRoutes = require("./routes/admin");
-const paymentRoutes = require("./routes/payments");
+const paymentRoutes = require("./routes/payments"); // 👈 this now includes PayMongo route
 const cancellationRoutes = require("./routes/cancellations");
 const analyticsRoutes = require("./routes/analytics");
 const bookingExtrasRoutes = require("./routes/bookings_extras");
+const paymongoRoutes = require("./routes/paymongo");
+
 
 // ======================================================
-// ✅ #3 — Route Mounting
+// ✅ Route Mounting
 // ======================================================
-
-// --- Public Routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
@@ -60,6 +58,9 @@ app.use("/api/cancellations", cancellationRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/bookings_extras", bookingExtrasRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/paymongo", paymongoRoutes);
+
+
 
 // ======================================================
 // === 404 Fallback ===

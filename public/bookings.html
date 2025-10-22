@@ -271,13 +271,13 @@
         s.innerHTML = `
           <strong>Booking created ✅</strong><br>
           Booking ID: ${data.booking_id}<br>
-          Package: ${payload.package}<br>
+          Package: ${payload.package_name}<br>
           Date: ${payload.date} ${payload.time}<br>
           <div style="margin-top:8px;">
             <button class="bk-btn" onclick="gotoPayment(${data.booking_id})">Proceed to Payment</button>
             <button class="bk-btn secondary" onclick="openDownModal(${data.booking_id})">Add Downpayment</button>
           </div>
-        `;
+  `;
         // optionally clear form
       } catch (err) {
         console.error(err);
@@ -286,10 +286,13 @@
     });
 
     // Payment navigation placeholder
-    function gotoPayment(bookingId){
-      // For now just alert — you should create a proper payments page or modal
-      window.location.href = `/payments.html?booking_id=${bookingId}`;
+    function gotoPayment(bookingId) {
+    if (!bookingId) {
+    alert("Booking ID is missing!");
+    return;
     }
+  window.location.href = `/payments.html?booking_id=${bookingId}`;
+}
 
     // Downpayment modal
     let bkModalBookingId = null;

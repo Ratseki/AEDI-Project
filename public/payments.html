@@ -1,4 +1,3 @@
-<!-- payments.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,21 +5,213 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Payment — ProfilePicMultimedia</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .pay-page {
+      padding: 140px 40px 80px;
+      background: #f4f4f4;
+      min-height: 100vh;
+      color: #0A142D;
+    }
+    .pay-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.95);
+      border-left: 6px solid #CE6826;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.08);
+    }
+    .pay-title { font-size: 28px; font-weight:700; color:#0A142D; margin-bottom: 20px; }
+    .pay-field { margin-bottom: 14px; }
+    .pay-label { font-size:14px; font-weight:600; color:#0A142D; display:block; margin-bottom:6px; }
+    .pay-input, .pay-select {
+      padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:100%;
+    }
+    .pay-btn { background:#CE6826; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:600; }
+    .pay-btn.secondary { background:#F9BF5F; color:#0A142D; }
+    .pay-error { background:#ffecec; color:#a80000; border:1px solid #e03b3b; padding:8px; border-radius:6px; margin-top:6px; display:none; }
+    .pay-summary { background:#F9BF5F20; padding:12px; border-radius:6px; margin-top:10px; display:none; }
+  </style>
 </head>
 <body>
-  <header> ... your navbar ... </header>
+  <header class="navbar">
+    <div class="logo"><img src="images/logo_test.png" alt="logo" style="height:64px;"></div>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="bookings.html">Bookings</a>
+      <a href="payments.html" class="active">Payment</a>
+    </nav>
+  </header>
 
-  <main class="bk-page">
-    <div class="bk-container">
-      <h1>Payment</h1>
-      <input id="paymentAmount" type="number" placeholder="Enter amount" />
-      <button id="payBtn">Pay Now</button>
-      <button id="cancelPaymentBtn">Cancel</button>
+  <main class="pay-page">
+    <div class="pay-container">
+      <h1 class="pay-title">Payment</h1>
+
+      <div id="payError" class="pay-error"></div>
+
+      <div id="bookingDetails" class="pay-summary"></div>
+
+      <div class="pay-field">
+        <label class="pay-label">Amount</label>
+        <input id="paymentAmount" type="number" placeholder="Enter amount" class="pay-input" />
+      </div>
+
+      <div class="pay-field">
+        <label class="pay-label">Payment Method</label>
+        <select id="paymentMethod" class="pay-select">
+          <option value="">Select method</option>
+          <option value="gcash">GCash</option>
+          <option value="credit">Credit Card</option>
+          <option value="paypal">PayPal</option>
+        </select>
+      </div>
+
+      <button id="payBtn" class="pay-btn">Pay Now</button>
+      <button id="cancelBtn" class="pay-btn secondary">Cancel</button>
     </div>
   </main>
 
-  <footer> ... </footer>
-  
-  <script src="payments.js"></script>
+  <footer style="padding:40px; text-align:center; color:#777;">&copy; 2025 ProfilePicMultimedia</footer>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const payError = document.getElementById("payError");
+    const bookingDetails = document.getElementById("bookingDetails");
+
+    // === Helper: Show error ===
+    function showPayError(msg) {
+      payError.style.display = "block";
+      payError.textContent = msg;
+    }
+
+    // === Get booking_id from URL ===
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get("booking_id");
+
+    if (!bookingId) {
+      showPayError("Invalid booking. Please start again.");
+    }
+
+    // === Token check ===
+    if (!token) {
+      alert("Please log in again to continue your payment.");
+      window.location.href = "/login.html";
+    }
+
+    // === Load booking details ===
+    async function loadBookingDetails() {
+      try {
+        const res = await fetch(`/api/bookings/${bookingId}`, {
+          headers: { Authorization: "Bearer " + token }
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          showPayError(err.message || "Failed to load booking details. Token may be expired.");
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem("token");
+            window.location.href = "/login.html";
+          }
+          return;
+        }
+
+        const data = await res.json();
+        bookingDetails.style.display = "block";
+        bookingDetails.innerHTML = `
+          <strong>Booking ID:</strong> ${data.id}<br>
+          <strong>Package:</strong> ${data.package || data.package_name || "N/A"}<br>
+          <strong>Date:</strong> ${data.date} ${data.time || ""}<br>
+          <strong>Location:</strong> ${data.location}<br>
+        `;
+      } catch (err) {
+        console.error("❌ Error loading booking:", err);
+        showPayError("Network error. Please try again.");
+      }
+    }
+
+    loadBookingDetails();
+
+    // === Submit payment ===
+    document.getElementById("payBtn").addEventListener("click", async () => {
+      const amount = document.getElementById("paymentAmount").value.trim();
+      const method = document.getElementById("paymentMethod").value.trim();
+
+      if (!amount || !method) {
+        showPayError("Please fill in all fields.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3000/api/payments/create-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount }),
+        });
+
+        const data = await res.json();
+
+        if (!data.data) {
+          showPayError("Payment creation failed.");
+          console.error(data);
+          return;
+        }
+
+        const clientKey = data.data.attributes.client_key;
+
+        // Redirect user to PayMongo checkout (optional)
+        window.location.href = `https://checkout.paymongo.com/${clientKey}`;
+      } catch (err) {
+        console.error("Payment error:", err);
+        showPayError("Something went wrong with the payment.");
+      }
+    });
+
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+      window.location.href = "/bookings.html";
+    });
+
+     // === PayMongo Integration (Example Setup) ===
+  async function createPayMongoLink(amount, method) {
+    try {
+      const res = await fetch("/api/create-paymongo-link", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          booking_id: bookingId,
+          amount,
+          method
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to create PayMongo link.");
+
+      // Redirect user to PayMongo checkout page
+      window.location.href = data.checkout_url;
+    } catch (err) {
+      console.error("PayMongo error:", err);
+      showPayError(err.message);
+    }
+  }
+
+  document.getElementById("payBtn").addEventListener("click", async () => {
+    const amount = document.getElementById("paymentAmount").value.trim();
+    const method = document.getElementById("paymentMethod").value.trim();
+
+    if (!amount || !method) {
+      showPayError("Please fill in all fields.");
+      return;
+    }
+
+    // Instead of directly calling /api/payments
+    // You now call your backend route that connects to PayMongo
+    await createPayMongoLink(amount, method);
+  });
+
+  </script>
 </body>
 </html>

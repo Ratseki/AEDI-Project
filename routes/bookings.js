@@ -30,7 +30,7 @@ router.get("/", authenticateToken, (req, res) => {
 router.post("/", authenticateToken, (req, res) => {
   const userId = req.user.id;
   const {
-    service_id,      // ✅ ADD THIS LINE
+    service_id,
     first_name,
     last_name,
     email,
@@ -43,33 +43,39 @@ router.post("/", authenticateToken, (req, res) => {
     num_people
   } = req.body;
 
-  db.query(
-    `INSERT INTO bookings 
+  const sql = `
+    INSERT INTO bookings 
     (user_id, service_id, first_name, last_name, email, phone_area, phone_number, date, time, package_name, note, num_people, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
-    [
-      userId,
-      service_id, // ✅ make sure this is passed correctly from frontend
-      first_name,
-      last_name,
-      email,
-      phone_area,
-      phone_number,
-      date,
-      time,
-      package_name,
-      note,
-      num_people
-    ],
-    (err) => {
-      if (err) {
-        console.error("❌ Error creating booking:", err);
-        return res.status(500).json({ message: "Failed to create booking" });
-      }
-      res.json({ message: "✅ Booking created successfully!" });
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')
+  `;
+
+  db.query(sql, [
+    userId,
+    service_id,
+    first_name,
+    last_name,
+    email,
+    phone_area,
+    phone_number,
+    date,
+    time,
+    package_name,
+    note,
+    num_people
+  ], (err, result) => {
+    if (err) {
+      console.error("❌ Error creating booking:", err);
+      return res.status(500).json({ message: "Failed to create booking" });
     }
-  );
+
+    // ✅ Return the inserted booking ID
+    res.json({
+      message: "✅ Booking created successfully!",
+      booking_id: result.insertId
+    });
+  });
 });
+
 
 
 // ============================
