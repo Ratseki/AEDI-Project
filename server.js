@@ -44,7 +44,7 @@ const paymentRoutes = require("./routes/payments"); // 👈 this now includes Pa
 const cancellationRoutes = require("./routes/cancellations");
 const analyticsRoutes = require("./routes/analytics");
 const bookingExtrasRoutes = require("./routes/bookings_extras");
-const paymongoRoutes = require("./routes/paymongo");
+
 
 
 // ======================================================
@@ -58,7 +58,6 @@ app.use("/api/cancellations", cancellationRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/bookings_extras", bookingExtrasRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/paymongo", paymongoRoutes);
 
 
 

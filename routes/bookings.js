@@ -8,18 +8,23 @@ const router = express.Router();
 // ============================
 // 🧾 Get all bookings for logged-in user
 // ============================
-router.get("/", authenticateToken, (req, res) => {
-  const userId = req.user.id; // comes from JWT
+// Get single booking by ID
+router.get("/:id", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const bookingId = req.params.id;
 
   db.query(
-    "SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC",
-    [userId],
+    "SELECT * FROM bookings WHERE id = ? AND user_id = ?",
+    [bookingId, userId],
     (err, results) => {
       if (err) {
-        console.error("❌ Error fetching bookings:", err);
+        console.error("❌ Error fetching booking:", err);
         return res.status(500).json({ message: "Server error" });
       }
-      res.json(results);
+      if (results.length === 0) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+      res.json(results[0]);
     }
   );
 });

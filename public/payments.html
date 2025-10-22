@@ -24,9 +24,7 @@
     .pay-title { font-size: 28px; font-weight:700; color:#0A142D; margin-bottom: 20px; }
     .pay-field { margin-bottom: 14px; }
     .pay-label { font-size:14px; font-weight:600; color:#0A142D; display:block; margin-bottom:6px; }
-    .pay-input, .pay-select {
-      padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:100%;
-    }
+    .pay-input, .pay-select { padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; width:100%; }
     .pay-btn { background:#CE6826; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:600; }
     .pay-btn.secondary { background:#F9BF5F; color:#0A142D; }
     .pay-error { background:#ffecec; color:#a80000; border:1px solid #e03b3b; padding:8px; border-radius:6px; margin-top:6px; display:none; }
@@ -61,8 +59,8 @@
         <select id="paymentMethod" class="pay-select">
           <option value="">Select method</option>
           <option value="gcash">GCash</option>
-          <option value="credit">Credit Card</option>
-          <option value="paypal">PayPal</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="paymaya">PayMaya</option>
         </select>
       </div>
 
@@ -77,28 +75,22 @@
     const token = localStorage.getItem("token");
     const payError = document.getElementById("payError");
     const bookingDetails = document.getElementById("bookingDetails");
+    const bookingId = new URLSearchParams(window.location.search).get("booking_id");
 
-    // === Helper: Show error ===
     function showPayError(msg) {
       payError.style.display = "block";
       payError.textContent = msg;
     }
 
-    // === Get booking_id from URL ===
-    const urlParams = new URLSearchParams(window.location.search);
-    const bookingId = urlParams.get("booking_id");
-
-    if (!bookingId) {
-      showPayError("Invalid booking. Please start again.");
-    }
-
-    // === Token check ===
+    if (!bookingId) showPayError("Invalid booking. Please start again.");
     if (!token) {
       alert("Please log in again to continue your payment.");
       window.location.href = "/login.html";
     }
 
-    // === Load booking details ===
+    // ----------------------------
+    // Load booking details
+    // ----------------------------
     async function loadBookingDetails() {
       try {
         const res = await fetch(`/api/bookings/${bookingId}`, {
@@ -107,7 +99,7 @@
 
         if (!res.ok) {
           const err = await res.json();
-          showPayError(err.message || "Failed to load booking details. Token may be expired.");
+          showPayError(err.message || "Failed to load booking details.");
           if (res.status === 401 || res.status === 403) {
             localStorage.removeItem("token");
             window.location.href = "/login.html";
@@ -121,7 +113,7 @@
           <strong>Booking ID:</strong> ${data.id}<br>
           <strong>Package:</strong> ${data.package || data.package_name || "N/A"}<br>
           <strong>Date:</strong> ${data.date} ${data.time || ""}<br>
-          <strong>Location:</strong> ${data.location}<br>
+          <strong>Location:</strong> ${data.location || "N/A"}<br>
         `;
       } catch (err) {
         console.error("❌ Error loading booking:", err);
@@ -131,7 +123,50 @@
 
     loadBookingDetails();
 
-    // === Submit payment ===
+    // ----------------------------
+    // Valid PayMongo methods
+    // ----------------------------
+    const validMethods = ["gcash", "card", "grabpay", "paymaya"];
+
+    // ----------------------------
+    // Create PayMongo checkout
+    // ----------------------------
+    async function createPayMongoLink(amount, method) {
+      if (!validMethods.includes(method)) {
+        showPayError("Invalid payment method selected.");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/payments/create-checkout-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({ booking_id: bookingId, amount, method })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.checkout_url) {
+          showPayError(data.message || "Failed to create PayMongo checkout session.");
+          console.error(data);
+          return;
+        }
+
+        // Redirect to PayMongo checkout page
+        window.location.href = data.checkout_url;
+
+      } catch (err) {
+        console.error("❌ PayMongo error:", err);
+        showPayError("Something went wrong with the payment.");
+      }
+    }
+
+    // ----------------------------
+    // Event listeners
+    // ----------------------------
     document.getElementById("payBtn").addEventListener("click", async () => {
       const amount = document.getElementById("paymentAmount").value.trim();
       const method = document.getElementById("paymentMethod").value.trim();
@@ -141,77 +176,12 @@
         return;
       }
 
-      try {
-        const res = await fetch("http://localhost:3000/api/payments/create-intent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount }),
-        });
-
-        const data = await res.json();
-
-        if (!data.data) {
-          showPayError("Payment creation failed.");
-          console.error(data);
-          return;
-        }
-
-        const clientKey = data.data.attributes.client_key;
-
-        // Redirect user to PayMongo checkout (optional)
-        window.location.href = `https://checkout.paymongo.com/${clientKey}`;
-      } catch (err) {
-        console.error("Payment error:", err);
-        showPayError("Something went wrong with the payment.");
-      }
+      await createPayMongoLink(amount, method);
     });
-
 
     document.getElementById("cancelBtn").addEventListener("click", () => {
       window.location.href = "/bookings.html";
     });
-
-     // === PayMongo Integration (Example Setup) ===
-  async function createPayMongoLink(amount, method) {
-    try {
-      const res = await fetch("/api/create-paymongo-link", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-          booking_id: bookingId,
-          amount,
-          method
-        })
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to create PayMongo link.");
-
-      // Redirect user to PayMongo checkout page
-      window.location.href = data.checkout_url;
-    } catch (err) {
-      console.error("PayMongo error:", err);
-      showPayError(err.message);
-    }
-  }
-
-  document.getElementById("payBtn").addEventListener("click", async () => {
-    const amount = document.getElementById("paymentAmount").value.trim();
-    const method = document.getElementById("paymentMethod").value.trim();
-
-    if (!amount || !method) {
-      showPayError("Please fill in all fields.");
-      return;
-    }
-
-    // Instead of directly calling /api/payments
-    // You now call your backend route that connects to PayMongo
-    await createPayMongoLink(amount, method);
-  });
-
   </script>
 </body>
 </html>
