@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 22, 2025 at 06:16 AM
+-- Generation Time: Oct 24, 2025 at 12:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -54,7 +54,24 @@ INSERT INTO `bookings` (`id`, `user_id`, `service_id`, `date`, `status`, `create
 (11, 4, 2, '2025-10-15', 'pending', '2025-10-21 10:59:49', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 4, '15:00', NULL),
 (12, 4, 2, '2025-10-15', 'pending', '2025-10-21 11:00:12', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 4, '15:00', NULL),
 (13, 4, 1, '2025-10-23', 'pending', '2025-10-21 11:07:59', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '17:00', NULL),
-(14, 4, 1, '2025-10-23', 'pending', '2025-10-21 11:08:25', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '17:00', NULL);
+(14, 4, 1, '2025-10-23', 'pending', '2025-10-21 11:08:25', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '17:00', NULL),
+(15, 3, 2, '2025-10-16', 'pending', '2025-10-22 07:17:06', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 2, '09:00', NULL),
+(16, 3, 2, '2025-10-15', 'pending', '2025-10-22 08:05:56', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 4, '09:00', NULL),
+(17, 3, 1, '2025-10-16', 'pending', '2025-10-22 09:00:42', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 5, '12:00', NULL),
+(18, 3, 1, '2025-10-16', 'pending', '2025-10-22 09:01:26', 'KC', 'AB', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 5, '12:00', NULL),
+(22, 3, 2, '2025-10-16', 'pending', '2025-10-22 09:56:47', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 3, '15:00', NULL),
+(23, 3, 2, '2025-10-24', 'pending', '2025-10-22 10:52:36', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', 'yes', 3, '10:00', NULL),
+(24, 3, 1, '2025-10-15', 'pending', '2025-10-22 14:18:25', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '15:00', NULL),
+(25, 3, 1, '2025-10-24', 'pending', '2025-10-22 14:54:36', 'KC', 'AB', 'test123@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 4, '16:00', NULL),
+(26, 3, 1, '2025-10-14', 'pending', '2025-10-22 14:55:19', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 3, '16:00', NULL),
+(27, 3, 3, '2025-10-17', 'pending', '2025-10-22 15:30:23', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Standard — $10', 'yes', 3, '13:00', NULL),
+(28, 3, 1, '2025-10-14', 'pending', '2025-10-22 16:01:42', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 2, '13:00', NULL),
+(29, 3, 1, '2025-10-10', 'pending', '2025-10-22 16:02:54', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 3, '14:00', NULL),
+(30, 1, 1, '2025-10-23', 'confirmed', '2025-10-23 16:06:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(31, 4, 2, '2025-10-23', 'confirmed', '2025-10-23 16:08:16', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(32, 4, 1, '2025-10-23', 'confirmed', '2025-10-23 16:10:05', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(33, 4, 1, '2025-10-23', 'confirmed', '2025-10-23 16:10:12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
+(34, 4, 1, '2025-10-15', 'pending', '2025-10-23 16:31:31', 'KC', 'Abella', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 1, '09:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -177,7 +194,7 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `r
 (1, 'KC', 'kc@gmail.com', '$2b$10$BxU8kmtJ2X/URsxLLDPAle.pAoNaONvrMuHlJdccAPEgYBEBETNfi', 'customer', '2025-10-07 10:03:35', NULL, NULL),
 (2, 'Test', 'test@gmail.com', '$2b$10$hSNtF2GTP1W5uXci57Oy9e0ghm4kow06iIjmLsluN4q/3Cn.NH5Bi', 'customer', '2025-10-08 08:16:10', NULL, NULL),
 (3, 'Kester Clarence Abella', 'kcabella1611@gmail.com', '$2b$10$GnBCNbHvUHgnlxrnpAR7kOR5jwGLX1fX.69mtGyHRHuGjJsSwGz3m', 'customer', '2025-10-16 06:22:11', 'eabc84621a74e894017e3f78a578c98d061a80cff341b48605d9db3e6cd079e5', '2025-10-16 15:26:22'),
-(4, 'testaccount testes', 'rayseki1337@gmail.com', '$2b$10$PVZPqfl9WwKiBw5Uujh3o.uljwhhcbRhEqMHSCuxNRbnbZfA.iyaW', 'customer', '2025-10-21 05:53:13', NULL, NULL);
+(4, 'testaccount testes', 'rayseki1337@gmail.com', '$2b$10$PVZPqfl9WwKiBw5Uujh3o.uljwhhcbRhEqMHSCuxNRbnbZfA.iyaW', 'customer', '2025-10-21 05:53:13', 'dd44e78244b446ba64c992121e69d712a52f5765fdefc31f6017ffdc34f70c6f', '2025-10-22 19:52:03');
 
 --
 -- Indexes for dumped tables
@@ -246,7 +263,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `clients`
