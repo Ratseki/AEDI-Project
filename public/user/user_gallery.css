@@ -1,0 +1,148 @@
+/* ===== BODY ===== */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #fafafa;
+  color: #333;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 40px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.logo span {
+  font-weight: bold;
+  margin-left: 6px;
+}
+nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #333;
+}
+.account {
+  font-weight: 600;
+}
+
+/* ===== LAYOUT ===== */
+.main {
+  display: flex;
+  margin-top: 20px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 250px;
+  background: white;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+.sidebar h3 { margin-top: 0; }
+.sidebar a, .sidebar li {
+  display: block;
+  color: #444;
+  margin: 5px 0;
+  text-decoration: none;
+}
+.sidebar a.active, .sidebar li.active {
+  font-weight: bold;
+}
+
+/* ===== GALLERY ===== */
+.content {
+  flex: 1;
+  padding: 30px;
+}
+.gallery-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  color: #777;
+}
+
+/* Grid for photos */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+/* Individual photo card */
+.photo-card {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: border 0.2s;
+}
+
+/* Photo images */
+.photo-card img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Buttons under each photo */
+.photo-card button {
+  margin: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #333;
+  transition: background 0.2s;
+}
+
+.photo-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.photo-card button:hover:not(:disabled) {
+  background-color: #555;
+}
+.photo-card button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Status labels */
+.status {
+  margin-top: 5px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+  color: #fff;
+  display: inline-block;
+}
+.status.purchased { background-color: #4caf50; }
+.status.available { background-color: orange; }
+.status.expired { background-color: #aaa; }
+
+/* Purchase button below gallery (optional) */
+.purchase-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px;
+  background: #ddd;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.purchase-btn:hover {
+  background: #ccc;
+}

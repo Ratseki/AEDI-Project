@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Purchased Photos</title>
+</head>
+<body>
+  <h1>My Purchased Photos</h1>
+  <div id="photos"></div>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    async function loadPurchased() {
+      const res = await fetch("http://localhost:3000/api/photo-purchases/my-photos", {
+        headers: { "Authorization": "Bearer " + token }
+      });
+      const photos = await res.json();
+
+      const div = document.getElementById("photos");
+      div.innerHTML = "";
+      for (const p of photos) {
+        const img = document.createElement("img");
+        img.src = `http://localhost:3000/${p.file_path}`;
+        img.style = "width:200px;height:200px;margin:10px;border-radius:8px;border:2px solid #4CAF50";
+        div.appendChild(img);
+      }
+    }
+
+    loadPurchased();
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Gallery</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+    .photo-card { background: white; border-radius: 8px; box-shadow: 0 0 5px #aaa; padding: 10px; width: 200px; }
+    .photo-card img { width: 100%; border-radius: 5px; }
+    button { margin-top: 8px; padding: 5px 10px; }
+  </style>
+</head>
+<body>
+  <h2>My Gallery</h2>
+  <div id="gallery" class="gallery"></div>
+
+  <script>
+    const userId = localStorage.getItem('user_id') || 1; // Example user
+    const galleryContainer = document.getElementById('gallery');
+
+    async function loadGallery() {
+      const res = await fetch(`/photos/gallery/${userId}`);
+      const photos = await res.json();
+      galleryContainer.innerHTML = '';
+
+      photos.forEach(p => {
+        const div = document.createElement('div');
+        div.classList.add('photo-card');
+        div.innerHTML = `
+          <img src="${p.file_path}" />
+          <p>Status: ${p.status}</p>
+          ${
+            p.status === 'available'
+              ? `<button onclick="purchasePhoto(${p.id})">Buy ₱${p.price}</button>`
+              : p.status === 'purchased'
+              ? `<button onclick="downloadPhoto(${p.id})">Download</button>`
+              : `<p>Expired</p>`
+          }
+        `;
+        galleryContainer.appendChild(div);
+      });
+    }
+
+    async function purchasePhoto(id) {
+      const res = await fetch(`/photos/purchase/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      const data = await res.json();
+      alert(data.message);
+      loadGallery();
+    }
+
+    async function downloadPhoto(id) {
+      window.location.href = `/photos/download/${id}`;
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
