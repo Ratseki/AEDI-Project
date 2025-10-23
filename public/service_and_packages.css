@@ -1,0 +1,148 @@
+body {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  background: #fafafa;
+  color: #333;
+}
+
+.header {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 40px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header .logo span {
+  font-weight: bold;
+  color: #CE6826;
+}
+
+.header nav a {
+  margin: 0 10px;
+  text-decoration: none;
+  color: #333;
+}
+
+.header .account {
+  font-weight: 600;
+}
+
+.packages-section {
+  background-color: #ffffff;
+  padding: 80px 80px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.packages-content {
+  max-width: 400px;
+  margin-right: 20px;
+}
+
+.packages-title {
+  font-weight: 700;
+  font-size: 37px;
+  color: #0A142D;
+  margin-bottom: 20px;
+}
+
+.packages-desc {
+  font-weight: 400;
+  font-size: 16px;
+  color: #0A142D;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.packages-list {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.package-card {
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  width: 300px;
+  padding: 25px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+.package-card.highlight {
+  border: 3px solid #CE6826;
+}
+
+.package-card.selected {
+  border: 3px solid #F4981E;
+}
+
+.package-card:hover {
+  transform: translateY(-5px);
+}
+
+.package-name {
+  font-weight: 700;
+  font-size: 20px;
+  color: #0A142D;
+}
+
+.package-price {
+  font-family: "DM Serif Text", serif;
+  font-weight: 400;
+  font-size: 48px;
+  color: #0A142D;
+  margin: 10px 0;
+}
+
+.package-subtitle {
+  font-weight: 500;
+  color: #444;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.package-details {
+  font-weight: 400;
+  font-size: 14px;
+  color: #555;
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 15px;
+}
+
+.package-details li::before {
+  content: "✓ ";
+  color: #0A142D;
+}
+
+.book-now-btn {
+  background-color: #CE6826;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-now-btn:hover {
+  background-color: #F4981E;
+}
+
+.downloads-section {
+  text-align: center;
+  margin: 30px 0;
+  font-weight: 500;
+  font-size: 18px;
+}
