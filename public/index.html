@@ -10,6 +10,8 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -35,8 +37,13 @@
 
       <a href="#gallery">Gallery</a>
       <a href="#contact">Contact</a>
-      <a href="/user/user_gallery.html" class="auth-section"><i class="fa fa-user"></i> My Account</a>
-    </nav>
+      
+<div class="account-icon">
+  <a href="account.html"><i class="fa-solid fa-user"></i> My Account </a>
+</div>
+
+
+      
   </header>
 
   <!-- ===== HOME SECTION ===== -->
@@ -46,11 +53,13 @@
         WE CREATE <span class="highlight">MEMORIES</span>
       </h1>
       <p class="subtext">
-        Turn every visit into a lasting experience with our professional photography services. 
-        From candid shots to customized souvenirs, we capture your best moments so you can relive them forever.
+        We don’t just take photos — we capture stories that live forever. Every frame is a heartbeat of your journey, frozen in time and filled with emotion.
       </p>
-      <button class="book-now" onclick="window.location.href='bookings.html'">Book Now</button>
-
+  
+      <div class="hero-buttons">
+      <a href="#book" class="btn-primary">Explore</a>
+      <a href="#story" class="btn-outline">Learn <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
 
 <script>
   document.querySelector('.book-now').addEventListener('click', () => {
@@ -59,6 +68,56 @@
 </script>
     </div>
   </section>
+
+<!-- ===== YOUR JOURNEY SECTION ===== -->
+<section class="your-journey">
+  <div class="journey-container">
+    <!-- Left Text Column -->
+    <div class="journey-text">
+      <h2>Your journey deserves the <span class="highlight-script">perfect shot.</span></h2>
+      <p class="subtext">From stunning natural landscapes to awe-inspiring views, we turn your moments into timeless visuals.
+  Whether it’s a romantic escape, an outdoor adventure, or a cinematic journey, our creative team captures
+  the essence of every story in vibrant detail — transforming experiences into memories that last a lifetime.</p>
+      <div class="rating">
+  <div class="stars">
+    <i class="fa-solid fa-star"></i>
+    <i class="fa-solid fa-star"></i>
+    <i class="fa-solid fa-star"></i>
+    <i class="fa-solid fa-star"></i>
+    <i class="fa-regular fa-star"></i>
+  </div>
+  <span class="rating-text">4.4 Rated by 12,000+ Clients</span>
+</div>
+
+    <!-- Right Image Column -->
+    <div class="journey-images">
+      <img src="images/journey1.jpg" alt="ATV adventure">
+      <img src="images/journey2.jpg" alt="Travel group">
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXPLORE OUR LOCATIONS SECTION ===== -->
+<section class="locations">
+  <h2 class="locations-title">Explore Our Locations</h2>
+  <div class="carousel">
+    <button class="carousel-btn prev">&#10094;</button>
+    <div class="carousel-track">
+      <div class="card"><img src="images/location1.jpg" alt="Beach Paradise"></div>
+      <div class="card"><img src="images/location2.jpg" alt="Mountain Trail"></div>
+      <div class="card"><img src="images/location3.jpg" alt="ATV Adventure"></div>
+      <div class="card"><img src="images/location4.jpg" alt="Sunset View"></div>
+      <div class="card"><img src="images/location5.jpg" alt="Nature Escape"></div>
+    </div>
+    <button class="carousel-btn next">&#10095;</button>
+  </div>
+  <div class="carousel-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</section>
+
 
 <!-- ===== LOCATIONS SECTION ===== -->
 <section class="locations-section" id="locations">
@@ -339,6 +398,36 @@
 
 <!-- ===== JS FILES ===== -->
 <script src="js/testimonials.js"></script>
+
+<script>
+const track = document.querySelector('.carousel-track');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+const dots = document.querySelectorAll('.dot');
+let currentIndex = 0;
+
+function updateCarousel() {
+  track.style.transform = `translateX(-${currentIndex * 270}px)`;
+  dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+}
+
+nextBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex + 1) % dots.length;
+  updateCarousel();
+});
+
+prevBtn.addEventListener('click', () => {
+  currentIndex = (currentIndex - 1 + dots.length) % dots.length;
+  updateCarousel();
+});
+
+dots.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    currentIndex = i;
+    updateCarousel();
+  });
+});
+</script>
 
 
 </body>

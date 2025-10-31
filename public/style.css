@@ -540,11 +540,11 @@ body {
   left: 0;
   width: 100%;
   height: 90px; /* fixed navbar height */
-  padding: 0 70px;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.781);
   backdrop-filter: blur(10px);
   z-index: 1000;
   transition: padding 0.3s ease;
@@ -562,19 +562,20 @@ body {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 50px;
 }
 
 .nav-links a {
   text-decoration: none;
-  color: #FFFFFF;
+  color: #000000;
   font-weight: 500;
   transition: color 0.3s ease;
+  font-size: 1.2rem; /* bigger text */
 }
 
 .nav-links a:hover,
 .nav-links .active {
-  color: #FFFFFF;
+  color: #000000;
 }
 
 /* Dropdown */
@@ -586,10 +587,10 @@ body {
   background: none;
   border: none;
   font-family: inherit;
-  color: #FFFFFF;
+  color: #000000;
   font-weight: 500;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem; /* bigger text */
 }
 
 .dropdown-content {
@@ -630,6 +631,16 @@ body {
   position: relative;
 }
 
+.account-icon i {
+  font-size: 15px;
+  color: #000; /* black icon */
+  transition: color 0.3s ease;
+}
+
+.account-icon i:hover {
+  color: #F4981E; /* hover color */
+}
+
 /* ===== HOME SECTION ===== */
 .home-section {
   height: 100vh;
@@ -640,6 +651,22 @@ body {
   text-align: center;
   position: relative;
 }
+
+/* Overlay layer */
+.home-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.home-section > * {
+  position: relative;
+  z-index: 2;
+}
+
 
 .home-content {
   max-width: 900px;
@@ -652,44 +679,256 @@ body {
   font-family: 'Playfair Display', serif;
   font-size: 5rem;
   margin-bottom: 15px;
-  color: #0A142D;
+  color: #ffffff;
   text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
   padding-bottom: 20px;
   white-space: nowrap;
 }
 
 .highlight {
-  color: #CE6826;
+  color: #F4981E;
   font-family: 'Playfair Display', serif;
 }
 
 /* Subtext properly aligned and centered */
 .subtext {
   max-width: 800px;
-  margin: 0 auto 40px;
-  font-size: 1.15rem;
-  line-height: 1.7;
-  color: #0A142D;
+  margin: 0 auto 60px;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #ffffff;
   text-align: center;
+  letter-spacing: 1px;
+  font-weight: 300; /* less bold */
 }
 
-/* Book Now button */
-.book-now {
+/* ===== HERO BUTTONS ===== */
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 135px; /* instead of transform */
+}
+
+/* Shared button styles */
+.hero-buttons a {
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 550;
+  font-size: 1.5rem;
+  padding: 10px 32px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* space between text and arrow */
+}
+
+/* Explore Button (Book Now style) */
+.btn-primary {
   background-color: #CE6826;
   color: white;
   border: none;
-  padding: 6px 28px;
-  border-radius: 6px;
-  font-weight: 550;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  transform: translateY(135px)
 }
 
-.book-now:hover {
+.btn-primary:hover {
   background-color: #F4981E;
 }
+
+/* Learn Button (white outline, see-through) */
+.btn-outline {
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-outline:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+/* ===== YOUR JOURNEY SECTION ===== */
+.your-journey {
+  background-color: #fff;
+  padding: 100px 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.journey-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.journey-text {
+  flex: 1 1 450px;
+}
+
+.journey-text h2 {
+  font-size: 3rem;
+  color: #000;
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 20px;
+}
+
+.highlight-script {
+  font-family: 'Playfair Display', serif;
+  color: #F4981E;
+}
+
+.journey-text p {
+  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+/* Rating Section */
+.rating {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
+.rating-text {
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+
+.features {
+  list-style: none;
+  padding: 0;
+}
+
+.features li {
+  font-size: 1rem;
+  color: #000;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.features i {
+  color: #F4981E;
+  margin-right: 10px;
+  font-size: 1.2rem;
+}
+
+.journey-images {
+  flex: 1 1 450px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.journey-images img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  object-fit: cover;
+}
+
+/* ===== LOCATIONS SECTION ===== */
+.locations {
+  background: #fff;
+  text-align: center;
+  padding: 100px 5%;
+  position: relative;
+}
+
+.locations-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 50px;
+}
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.5s ease;
+}
+
+.card {
+  flex: 0 0 250px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.carousel-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  color: #CE6826;
+  transition: color 0.3s ease;
+}
+
+.carousel-btn:hover {
+  color: #F4981E;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.carousel-dots {
+  margin-top: 20px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 6px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.dot.active,
+.dot:hover {
+  background-color: #F4981E;
+}
+
+
 
 /* ===== LOCATIONS SECTION ===== */
 .locations-section {
