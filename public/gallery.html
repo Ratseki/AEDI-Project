@@ -2,62 +2,115 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>My Gallery</title>
-  <style>
-    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
-    .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
-    .photo-card { background: white; border-radius: 8px; box-shadow: 0 0 5px #aaa; padding: 10px; width: 200px; }
-    .photo-card img { width: 100%; border-radius: 5px; }
-    button { margin-top: 8px; padding: 5px 10px; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery | ProfilePic</title>
+
+  <!-- ✅ Tailwind CDN (safe to use only on this page) -->
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <h2>My Gallery</h2>
-  <div id="gallery" class="gallery"></div>
+<body class="bg-gray-50 text-gray-800">
 
+  <!-- ===== HEADER ===== -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="max-w-7xl mx-auto flex justify-between items-center p-4">
+      <a href="index.html" class="text-2xl font-bold text-blue-600">ProfilePic</a>
+      <ul class="flex space-x-6">
+        <li><a href="index.html" class="hover:text-blue-600">Home</a></li>
+        <li><a href="about.html" class="hover:text-blue-600">About</a></li>
+        <li><a href="package_booking.html" class="hover:text-blue-600">Packages</a></li>
+        <li><a href="gallery.html" class="text-blue-600 font-semibold">Gallery</a></li>
+        <li><a href="contact.html" class="hover:text-blue-600">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20 text-center">
+    <h1 class="text-4xl font-bold mb-4">Capture Memories. Relive Moments.</h1>
+    <p class="text-lg max-w-2xl mx-auto">
+      Browse our best shots from tourist adventures across the Philippines — each one a story waiting to be yours.
+    </p>
+  </section>
+
+  <!-- ===== FILTER BAR ===== -->
+  <section class="max-w-6xl mx-auto mt-10 px-4">
+    <div class="flex flex-wrap justify-center gap-3">
+      <button class="filter-btn bg-blue-500 text-white px-4 py-2 rounded-full" data-category="all">All</button>
+      <button class="filter-btn bg-gray-200 hover:bg-blue-100 px-4 py-2 rounded-full" data-category="beach">Beach</button>
+      <button class="filter-btn bg-gray-200 hover:bg-blue-100 px-4 py-2 rounded-full" data-category="desert">Sand Dunes</button>
+      <button class="filter-btn bg-gray-200 hover:bg-blue-100 px-4 py-2 rounded-full" data-category="mountain">Mountain</button>
+      <button class="filter-btn bg-gray-200 hover:bg-blue-100 px-4 py-2 rounded-full" data-category="city">Cityscape</button>
+    </div>
+  </section>
+
+  <!-- ===== GALLERY GRID ===== -->
+  <section class="max-w-6xl mx-auto py-10 px-4">
+    <div id="photoGrid" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </section>
+
+  <!-- ===== CTA SECTION ===== -->
+  <section class="bg-blue-600 text-white py-16 text-center">
+    <h2 class="text-3xl font-semibold mb-4">Already had your photo session?</h2>
+    <p class="mb-6">Access your private gallery using your QR code or by logging into your account.</p>
+    <div class="flex justify-center gap-4">
+      <a href="login.html" class="bg-white text-blue-600 font-semibold px-6 py-3 rounded-md hover:bg-gray-100">
+        Log In
+      </a>
+      <a href="user/user_gallery.html" class="bg-blue-800 font-semibold px-6 py-3 rounded-md hover:bg-blue-900">
+        Scan QR / View My Gallery
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="bg-gray-900 text-gray-300 py-10 text-center text-sm">
+    <p>&copy; 2025 ProfilePic. All rights reserved.</p>
+  </footer>
+
+  <!-- ===== SCRIPT ===== -->
   <script>
-    const userId = localStorage.getItem('user_id') || 1; // Example user
-    const galleryContainer = document.getElementById('gallery');
+    // Sample static data for now (we’ll replace with /api/photos/public later)
+    const samplePhotos = [
+      { file_path: '/uploads/sample1.jpg', category: 'beach' },
+      { file_path: '/uploads/sample2.jpg', category: 'desert' },
+      { file_path: '/uploads/sample3.jpg', category: 'mountain' },
+      { file_path: '/uploads/sample4.jpg', category: 'city' },
+      { file_path: '/uploads/sample5.jpg', category: 'beach' },
+      { file_path: '/uploads/sample6.jpg', category: 'desert' },
+      { file_path: '/uploads/sample7.jpg', category: 'mountain' },
+      { file_path: '/uploads/sample8.jpg', category: 'city' }
+    ];
 
-    async function loadGallery() {
-      const res = await fetch(`/photos/gallery/${userId}`);
-      const photos = await res.json();
-      galleryContainer.innerHTML = '';
+    const grid = document.getElementById('photoGrid');
+    const buttons = document.querySelectorAll('.filter-btn');
 
-      photos.forEach(p => {
+    function displayPhotos(category = 'all') {
+      grid.innerHTML = '';
+      const filtered = category === 'all'
+        ? samplePhotos
+        : samplePhotos.filter(p => p.category === category);
+      filtered.forEach(p => {
         const div = document.createElement('div');
-        div.classList.add('photo-card');
+        div.className = "rounded-lg overflow-hidden shadow hover:shadow-lg bg-white transition";
         div.innerHTML = `
-          <img src="${p.file_path}" />
-          <p>Status: ${p.status}</p>
-          ${
-            p.status === 'available'
-              ? `<button onclick="purchasePhoto(${p.id})">Buy ₱${p.price}</button>`
-              : p.status === 'purchased'
-              ? `<button onclick="downloadPhoto(${p.id})">Download</button>`
-              : `<p>Expired</p>`
-          }
+          <img src="${p.file_path}" alt="Photo" class="w-full h-48 object-cover">
         `;
-        galleryContainer.appendChild(div);
+        grid.appendChild(div);
       });
     }
 
-    async function purchasePhoto(id) {
-      const res = await fetch(`/photos/purchase/${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: userId }),
+    // Filter button handling
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('bg-blue-500', 'text-white'));
+        btn.classList.add('bg-blue-500', 'text-white');
+        displayPhotos(btn.dataset.category);
       });
-      const data = await res.json();
-      alert(data.message);
-      loadGallery();
-    }
+    });
 
-    async function downloadPhoto(id) {
-      window.location.href = `/photos/download/${id}`;
-    }
-
-    loadGallery();
+    // Initial load
+    displayPhotos();
   </script>
+
 </body>
 </html>
