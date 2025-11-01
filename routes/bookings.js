@@ -29,6 +29,18 @@ router.get("/:id", authenticateToken, (req, res) => {
   );
 });
 
+// Get all bookings for logged in user
+router.get("/", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  db.query("SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC", [userId], (err, results) => {
+    if (err) {
+      console.error("❌ Error fetching user bookings:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+    res.json(results);
+  });
+});
+
 // ============================
 // 📅 Create a new booking
 // ============================

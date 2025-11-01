@@ -63,9 +63,9 @@ router.post("/confirm", async (req, res) => {
     const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
     await dbPromise.query(
-      "INSERT INTO photo_purchases (photo_id, user_id, price, expires_at) VALUES (?, ?, ?, ?)",
-      [photo_id, user_id, price, expires_at]
-    );
+  `UPDATE photos SET status='purchased', purchased_at=NOW(), expires_at=? WHERE id=?`,
+  [expires_at, photo_id]
+  );
 
     res.json({ message: "Photo purchase recorded successfully!" });
   } catch (err) {

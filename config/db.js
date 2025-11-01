@@ -9,21 +9,17 @@ const DB_CONFIG = {
   database: "multimedia_booking",
 };
 
-// --- Callback-style connection (for legacy code) ---
+// original callback-style connection (keeps existing code working)
 const db = mysql.createConnection(DB_CONFIG);
 db.connect(err => {
   if (err) {
-    console.error("❌ MySQL Connection Error (config/db.js):", err);
+    console.error("❌ MySQL Connection Error:", err);
     throw err;
   }
-  console.log("✅ MySQL Connected (callback-style)");
+  console.log("✅ MySQL Connected");
 });
 
-// --- Promise-style pool (for async/await) ---
+// optional promise-based pool for newer async code
 const dbPromise = mysqlPromise.createPool(DB_CONFIG);
 
-// --- Export both ---
-module.exports = {
-  db,         // callback-style
-  dbPromise,  // promise-style
-};
+module.exports = { db, dbPromise };
