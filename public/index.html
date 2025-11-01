@@ -38,9 +38,10 @@
       <a href="#gallery">Gallery</a>
       <a href="#contact">Contact</a>
       
-<div class="account-icon">
-  <a href="account.html"><i class="fa-solid fa-user"></i> My Account </a>
+<div class="account-icon" id="account-nav">
+  <!-- This will be updated by JS -->
 </div>
+
 
 
       
@@ -426,6 +427,35 @@ dots.forEach((dot, i) => {
     currentIndex = i;
     updateCarousel();
   });
+});
+
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const accountNav = document.getElementById("account-nav");
+  const token = localStorage.getItem("token"); // token stored after login
+
+  if (token) {
+    // User is logged in
+    accountNav.innerHTML = `
+      <a href="account.html"><i class="fa-solid fa-user"></i> My Account</a>
+      <a href="#" id="logout-btn" style="margin-left:10px; color:#ff4d4d;">Logout</a>
+    `;
+
+    // Logout functionality
+    document.getElementById("logout-btn").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("token");
+      window.location.reload();
+    });
+  } else {
+    // User not logged in
+    accountNav.innerHTML = `
+      <a href="login.html">Login</a> /
+      <a href="signup.html">Signup</a>
+    `;
+  }
 });
 </script>
 

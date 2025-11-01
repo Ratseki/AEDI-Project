@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../config/db"); // MySQL connection
+const { db, pool } = require("../config/db");  // MySQL connection
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
@@ -45,11 +45,15 @@ router.post("/login", (req, res) => {
     if (!isValid) return res.status(401).json({ message: "Invalid password" });
 
     const token = jwt.sign(
-  { id: user.id, name: user.name, email: user.email },
-   process.env.JWT_SECRET,
-  { expiresIn: "2h" }
-);
-    res.json({ message: "Login successful", token });
+      {
+        id: user.id,
+        email: user.email,
+        role: user.role, // ✅ make sure this line exists
+      },
+      JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+    res.json({ message: "Login successful", token, role: user.role, });
   });
 });
 
