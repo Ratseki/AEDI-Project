@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Profilepicmultimedia</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body class="auth-page">
   <section class="auth-section">
@@ -67,8 +67,18 @@
         if (response.ok) {
           // Save token to localStorage
           localStorage.setItem("token", data.token);
-          alert("Login successful!");
-          window.location.href = "index.html"; // Redirect to home
+localStorage.setItem("role", data.role); // store role locally for quick access
+
+alert("Login successful!");
+
+      // Redirect based on role
+      if (data.role === "admin" || data.role === "staff") {
+      window.location.href = "/staff/dashboard-secure";
+    } else {
+      window.location.href = "/index.html"; // ✅ Fixed absolute path
+    }
+
+
         } else {
           alert(data.message || "Invalid credentials");
         }

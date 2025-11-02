@@ -4,23 +4,34 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
 const cron = require("node-cron");
+const cookieParser = require("cookie-parser");
 
 // === Database (Single Source of Truth) ===
 const { db, dbPromise } = require("./config/db");
 
 // === Middleware + JWT ===
 const authenticateToken = require("./middleware/authMiddleware");
+const authorizeRoles = require("./middleware/roleMiddleware");
 
 const app = express();
 
 // ======================================================
 // === Middleware
 // ======================================================
-app.use(cors({ origin: "http://127.0.0.1:5500" })); // frontend address
+app.use(cors({
+  origin: "http://localhost:3000", // Node server origin
+  credentials: true
+}));
+ // frontend address
 app.use(express.json());
 app.use(bodyParser.json());
+// Serve everything in public
 app.use(express.static(path.join(__dirname, "public")));
+
+// Optional: explicitly serve /user if needed
+app.use("/user", express.static(path.join(__dirname, "public/user")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // serve uploaded photos
+app.use(cookieParser());
 
 // ======================================================
 // === JWT Secret Debug
@@ -72,6 +83,37 @@ cron.schedule("0 0 * * *", async () => {
     console.error("❌ Cron error:", err);
   }
 });
+
+// ======================================================
+// === Serve Staff Login Page (static from /public)
+// ======================================================
+app.get("/staff/login.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/login.html"));
+});
+
+// ======================================================
+// === Protected Staff Dashboard Route (Final Version)
+// ======================================================
+app.get(
+  "/staff/dashboard-secure",
+  authenticateToken,
+  authorizeRoles("staff", "admin"),
+  (req, res) => {
+    console.log("✅ Authorized access by:", req.user.email, "Role:", req.user.role);
+    res.sendFile(path.join(__dirname, "views/staff/dashboard.html"));
+  }
+);
+
+// Protected User Gallery
+app.get('/user/gallery', authenticateToken, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/user/user_gallery.html'));
+});
+
+// Redirect manual access of user_gallery.html to protected gallery route
+app.get('/user/user_gallery.html', (req, res) => {
+  res.redirect('/user/gallery');
+});
+
 
 // ======================================================
 // === 404 Fallback

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Dashboard — ProfilePIC</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px #ccc; max-width: 800px; margin: auto; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    select, input, button { padding: 8px; margin: 5px 0; width: 100%; }
+    img { max-width: 200px; border-radius: 8px; margin-top: 10px; }
+    .section { margin-bottom: 25px; }
+    .qr-display { text-align: center; margin-top: 15px; }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ Role + Token Check -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+
+      // if not logged in
+      if (!token) {
+        alert("You must be logged in.");
+        window.location.href = "/login.html";
+        return;
+      }
+
+      // check role
+      if (role !== "admin" && role !== "staff") {
+        alert("Access denied.");
+        window.location.href = "/forbidden.html";
+        return;
+      }
+
+      // Optionally verify token with backend
+      try {
+        const res = await fetch("/api/auth/verify", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (!data.valid) {
+          localStorage.clear();
+          window.location.href = "/login.html";
+        }
+      } catch (err) {
+        console.error("Verification failed", err);
+        localStorage.clear();
+        window.location.href = "/login.html";
+      }
+    });
+  </script>
+
+  <div class="container">
+    <h2>📸 Staff Dashboard</h2>
+
+    <!-- Logout Button -->
+    <button id="logoutBtn" style="float: right; background: #e74c3c; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+      Logout
+    </button>
+    <div style="clear: both;"></div>
+
+    <!-- Select Customer -->
+    <div class="section">
+      <h3>👥 Select Customer</h3>
+      <select id="customerSelect">
+        <option value="">Loading customers...</option>
+      </select>
+    </div>
+
+    <!-- ✅ Unified Bulk Upload (for single or multiple photos) -->
+    <div class="section">
+      <h3>📸 Upload Photos for Selected Customer</h3>
+      <form id="bulkUploadForm" enctype="multipart/form-data">
+        <input type="file" id="bulkPhotos" name="photos" multiple accept="image/*" required />
+        <button type="submit">Upload Selected Photos</button>
+      </form>
+      <p id="uploadStatus"></p>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div id="photoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
+      <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+    </div>
+
+    <!-- Generate QR -->
+    <div class="section">
+      <h3>🔗 Generate QR for Selected Customer</h3>
+      <button id="generateQRBtn">Generate QR Code</button>
+      <div class="qr-display" id="qrResult"></div>
+    </div>
+
+    <!-- Uploaded Photos -->
+    <div class="section">
+      <h3>🗂️ Uploaded Photos for Selected Customer</h3>
+      <div id="photoList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard JS -->
+  <script src="/js/dashboard.js"></script>
+
+  <script>
+    function logout() {
+      const role = localStorage.getItem("role");
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+
+      if (role === "staff" || role === "admin") {
+        window.location.href = "/staff/login.html";
+      } else {
+        window.location.href = "/login.html";
+      }
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", logout);
+  </script>
+</body>
+</html>

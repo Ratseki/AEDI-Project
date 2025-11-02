@@ -46,8 +46,8 @@
     <!-- GALLERY CONTENT -->
     <section class="content">
       <div class="gallery-header">
-        <span>Thu, October 10, 2025</span>
-        <span>Remaining Downloads 3/5</span>
+      <span id="gallery-date"></span>
+      <span>Remaining Downloads <span id="remaining-downloads">0</span>/<span id="total-downloads">0</span></span>
       </div>
 
       <div id="gallery-grid" class="gallery-grid">
@@ -57,6 +57,30 @@
       <button id="purchase-btn" class="purchase-btn">Purchase Photos</button>
     </section>
   </main>
+
+  <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/auth/verify", {
+      method: "GET",
+      credentials: "include" // sends cookie
+    });
+    const data = await res.json();
+
+    if (!data.valid) {
+      alert("Please log in first");
+      window.location.href = "/login.html"; // redirect if not logged in
+    } else {
+      console.log("✅ User verified:", data.user);
+      document.querySelector(".sidebar h3").textContent = data.user.name || "User";
+    }
+  } catch (err) {
+    console.error(err);
+    window.location.href = "/login.html";
+  }
+});
+</script>
+
 
   <script src="user_gallery.js"></script>
 </body>
