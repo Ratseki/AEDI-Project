@@ -28,7 +28,7 @@ router.post("/register", (req, res) => {
   );
 });
 
-// 🔑 Login
+// 🔑 Login (Production Ready)
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
 
@@ -48,14 +48,34 @@ router.post("/login", (req, res) => {
       {
         id: user.id,
         email: user.email,
-        role: user.role, // ✅ make sure this line exists
+        role: user.role,
       },
       JWT_SECRET,
       { expiresIn: "2h" }
     );
-    res.json({ message: "Login successful", token, role: user.role, });
+
+    // auth.js -> login route
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,      // must be false for localhost
+    sameSite: "lax",    // works for same-origin
+    maxAge: 2*60*60*1000,
+    path: "/"
+  });
+
+
+
+
+    // ✅ Send confirmation (token still returned for debugging)
+    res.json({
+      message: "Login successful",
+      role: user.role,
+      token, // optional (can remove later)
+      cookieSent: !!req.headers.cookie
+    });
   });
 });
+
 
 
 const nodemailer = require("nodemailer");
@@ -182,27 +202,18 @@ router.post("/reset-password", (req, res) => {
 });
 
 // Verify Token (GET /api/auth/verify)
-router.get('/verify', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ valid: false, message: 'No token provided' });
+router.get("/verify", (req, res) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).json({ valid: false, message: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET); // same key
-    res.json({
-      valid: true,
-      user: {
-        id: decoded.id,
-        name: decoded.name,   // ✅ added name
-        email: decoded.email
-      }
-    });
+    const decoded = jwt.verify(token, JWT_SECRET);
+    res.json({ valid: true, user: decoded });
   } catch (err) {
     console.error("Token verify failed:", err);
-    res.status(401).json({ valid: false, message: 'Invalid or expired token' });
+    res.status(401).json({ valid: false, message: "Invalid or expired token" });
   }
 });
-
-
 
 const User = require('../models/User'); // adjust path if needed
 

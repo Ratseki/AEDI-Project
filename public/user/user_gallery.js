@@ -1,13 +1,68 @@
-const userId = 4; // logged-in user
+let userId = null;
 let selectedPhotos = new Set();
-let remainingDownloads = 3; // optional: fetch dynamically if needed
+let remainingDownloads = 0;
 
-// Load gallery
-async function loadGallery() {
+// Initialize gallery
+async function initGallery() {
   try {
-    const res = await fetch(`/api/photos/gallery/${userId}`);
-    const photos = await res.json();
+    // Verify logged-in user
+    const res = await fetch('/api/auth/verify', { credentials: 'include' });
+    if (!res.ok) throw new Error('Not logged in');
 
+    const data = await res.json();
+    if (!data.valid) throw new Error('Invalid session');
+
+    userId = data.user.id;
+
+    // Set sidebar username
+    document.querySelector(".sidebar h3").textContent = data.user.name || "User";
+
+    // Load remaining downloads
+    await loadDownloadInfo();
+
+    // Load gallery photos
+    await loadGallery();
+
+    // Set gallery date
+    const dateElem = document.getElementById('gallery-date');
+    dateElem.textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'short', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+  } catch (err) {
+    console.error('Gallery init error:', err);
+    alert('Please log in first.');
+    window.location.href = '/login.html';
+  }
+}
+
+// Fetch download info
+async function loadDownloadInfo() {
+  try {
+    const res = await fetch('/api/gallery/downloads', { credentials: 'include' });
+    if (!res.ok) throw new Error('Failed to fetch downloads');
+
+    const { remaining, total } = await res.json();
+    remainingDownloads = remaining;
+
+    document.getElementById('remaining-downloads').textContent = remaining;
+    document.getElementById('total-downloads').textContent = total;
+  } catch (err) {
+    console.error('Download info error:', err);
+  }
+}
+
+// Load gallery photos (Production Ready)
+// Load gallery photos (live/update-ready)
+async function loadGallery(userId = null) {
+  try {
+    // Append user_id if provided (for admin/staff selecting a customer)
+    const url = userId ? `/api/gallery/gallery?user_id=${userId}` : '/api/gallery/gallery';
+    const res = await fetch(url, { credentials: 'include' });
+    if (!res.ok) throw new Error('Failed to load gallery');
+
+    const data = await res.json();
+    const photos = data.photos || [];
     const galleryGrid = document.getElementById('gallery-grid');
     galleryGrid.innerHTML = '';
 
@@ -18,159 +73,141 @@ async function loadGallery() {
 
     photos.forEach(photo => {
       const card = document.createElement('div');
-      card.className = 'photo-card';
-      card.style.border = '1px solid #ccc';
-      card.style.padding = '10px';
-      card.style.position = 'relative';
+      card.className = `photo-card ${photo.status === 'expired' ? 'expired' : ''}`;
 
       // Image
       const img = document.createElement('img');
       img.src = photo.file_path;
-      img.alt = 'Gallery Photo';
-      img.style.width = '100%';
-      img.style.height = '200px';
+      img.alt = photo.file_name || 'Gallery Photo';
       img.style.objectFit = 'cover';
-      img.className = 'selectable-photo';
       card.appendChild(img);
 
-      // Checkbox for selection
+      // Status badge
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = photo.status.charAt(0).toUpperCase() + photo.status.slice(1);
+      card.appendChild(badge);
+
+      // Checkbox for bulk purchase
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
-      checkbox.style.position = 'absolute';
-      checkbox.style.top = '10px';
-      checkbox.style.left = '10px';
+      checkbox.disabled = photo.status !== 'available';
       checkbox.onclick = () => {
-        if (checkbox.checked) {
-          selectedPhotos.add(photo.id);
-          card.style.border = '3px solid #CE6826';
-        } else {
-          selectedPhotos.delete(photo.id);
-          card.style.border = '1px solid #ccc';
-        }
+        if (checkbox.checked) selectedPhotos.add(photo.id);
+        else selectedPhotos.delete(photo.id);
+        card.classList.toggle('selected', checkbox.checked);
       };
       card.appendChild(checkbox);
 
-      // Status / action button
+      // Action button
       const btn = document.createElement('button');
-      btn.style.marginTop = '10px';
       btn.style.width = '100%';
       btn.style.padding = '10px';
       btn.style.borderRadius = '6px';
       btn.style.cursor = 'pointer';
 
       if (photo.status === 'available') {
-        btn.textContent = `Buy $${photo.price}`;
+        btn.textContent = `Buy ₱${photo.price}`;
         btn.style.backgroundColor = '#CE6826';
-        btn.style.color = 'white';
+        btn.style.color = '#fff';
         btn.onclick = () => purchasePhoto(photo.id);
       } else if (photo.status === 'purchased') {
         btn.textContent = 'Download';
         btn.style.backgroundColor = '#4CAF50';
-        btn.style.color = 'white';
-        btn.onclick = () => downloadPhoto(photo.id); // pass photo.id for API
+        btn.onclick = () => downloadPhoto(photo.id);
       } else {
         btn.textContent = 'Expired';
         btn.disabled = true;
-        btn.style.backgroundColor = '#ddd';
       }
-      card.appendChild(btn);
 
+      card.appendChild(btn);
       galleryGrid.appendChild(card);
     });
-
-    // Update remaining downloads
-    const remainingElem = document.getElementById('remaining-downloads');
-    if (remainingElem) remainingElem.textContent = remainingDownloads;
-
   } catch (err) {
-    console.error('Error loading gallery:', err);
+    console.error('Load gallery error:', err);
+    const galleryGrid = document.getElementById('gallery-grid');
+    galleryGrid.innerHTML = '<p style="color:red">Error loading gallery.</p>';
   }
 }
 
-// Purchase single photo
+
+
+// Purchase a single photo
 async function purchasePhoto(photoId) {
-  const photo = { photo_id: photoId, price: 100, method: 'card' }; // example
   try {
     const res = await fetch('/api/photo-purchases/buy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(photo)
+      credentials: 'include',
+      body: JSON.stringify({ photo_id: photoId, method: 'card' })
     });
+
     const data = await res.json();
-    if (res.ok) {
-      window.location.href = data.checkout_url; // redirect to PayMongo checkout
+    if (res.ok && data.checkout_url) {
+      window.location.href = data.checkout_url;
     } else {
-      alert(`Error: ${data.message}`);
+      alert(data.message || 'Purchase failed');
     }
   } catch (err) {
     console.error('Purchase error:', err);
   }
 }
 
-// Purchase all selected photos
+// Purchase multiple selected photos
 async function purchaseSelectedPhotos() {
-  if (!selectedPhotos.size) {
-    alert('Select at least one photo to purchase.');
-    return;
-  }
+  if (!selectedPhotos.size) return alert('Select at least one photo.');
 
-  const photoIds = Array.from(selectedPhotos);
   try {
     const res = await fetch('/api/photo-purchases/purchase-bulk', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, photo_ids: photoIds })
+      credentials: 'include',
+      body: JSON.stringify({ user_id: userId, photo_ids: Array.from(selectedPhotos) })
     });
-    const data = await res.json();
 
+    const data = await res.json();
     if (res.ok) {
-      alert('Selected photos purchased!');
       selectedPhotos.clear();
-      loadGallery();
+      await loadGallery();
+      await loadDownloadInfo();
+      alert('Photos purchased successfully!');
     } else {
-      alert(`Error: ${data.message}`);
+      alert(data.message || 'Bulk purchase failed');
     }
   } catch (err) {
     console.error('Bulk purchase error:', err);
   }
 }
 
-// Download photo
+// Download a photo
 async function downloadPhoto(photoId) {
-  if (remainingDownloads <= 0) {
-    alert('No remaining downloads left!');
-    return;
-  }
+  if (remainingDownloads <= 0) return alert('No remaining downloads left!');
 
   try {
-    const res = await fetch(`/api/photo-purchases/download/${photoId}`);
-    if (res.ok) {
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'photo.jpg';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      remainingDownloads--;
-      const remainingElem = document.getElementById('remaining-downloads');
-      if (remainingElem) remainingElem.textContent = remainingDownloads;
-    } else {
+    const res = await fetch(`/api/photo-purchases/download/${photoId}`, { credentials: 'include' });
+    if (!res.ok) {
       const data = await res.json();
-      alert(`Error downloading photo: ${data.message}`);
+      return alert(data.message || 'Download failed');
     }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'photo.jpg';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    remainingDownloads--;
+    document.getElementById('remaining-downloads').textContent = remainingDownloads;
   } catch (err) {
     console.error('Download error:', err);
   }
 }
 
-// Initialize gallery and bulk purchase button
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  loadGallery();
-
-  const purchaseBtn = document.getElementById('purchase-btn');
-  if (purchaseBtn) {
-    purchaseBtn.addEventListener('click', purchaseSelectedPhotos);
-  }
+  initGallery();
+  document.getElementById('purchase-btn')?.addEventListener('click', purchaseSelectedPhotos);
 });
