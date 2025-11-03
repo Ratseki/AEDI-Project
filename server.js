@@ -28,6 +28,8 @@ app.use(bodyParser.json());
 // Serve everything in public
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/api/webhooks", require("./routes/webhooks"));
+
 // Optional: explicitly serve /user if needed
 app.use("/user", express.static(path.join(__dirname, "public/user")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // serve uploaded photos
