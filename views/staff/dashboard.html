@@ -1,122 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Staff Dashboard — ProfilePIC</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Profilepicmultimedia</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    .container { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 8px #ccc; max-width: 800px; margin: auto; }
-    h2 { text-align: center; margin-bottom: 20px; }
-    select, input, button { padding: 8px; margin: 5px 0; width: 100%; }
-    img { max-width: 200px; border-radius: 8px; margin-top: 10px; }
-    .section { margin-bottom: 25px; }
-    .qr-display { text-align: center; margin-top: 15px; }
+    body { font-family: "Poppins", sans-serif; background: #f4f4f4; color: #333; margin: 0; padding: 0; }
+    header { background-color: #073449; color: white; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 1.5rem; font-weight: 600; }
+    main { padding: 30px; }
+    h2 { margin-top: 0; }
+    .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px; }
+    .card { background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; text-align: center; transition: 0.3s; }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 6px 10px rgba(0,0,0,0.15); }
+    .card h3 { color: #073449; font-weight: 600; margin-bottom: 8px; }
+    .card .value { font-size: 1.8rem; color: #ce6826; font-weight: bold; }
+    .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 50px; }
+    .chart-container { background: white; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); padding: 20px; }
+    .chart-container h3 { margin-bottom: 10px; color: #073449; font-weight: 600; }
+    .section { background: #fff; padding: 15px; margin: 20px 0; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #007bff; color: white; }
+    button { padding: 8px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-bottom: 10px; }
+    button:hover { background: #0056b3; }
+    .loading { color: #666; font-style: italic; }
+    footer { text-align: center; padding: 15px; background: #073449; color: white; margin-top: 30px; }
+    /* Admin-only elements */
+    .admin-only { display: none; }
   </style>
 </head>
-
 <body>
-  <!-- ✅ Role + Token Check -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      const token = localStorage.getItem("token");
-      const role = localStorage.getItem("role");
+<header>
+  <h1>Dashboard</h1>
+  <nav>
+    <button id="logoutBtn" style="background:red;">Logout</button>
+  </nav>
+</header>
 
-      // if not logged in
-      if (!token) {
-        alert("You must be logged in.");
-        window.location.href = "/login.html";
-        return;
-      }
-
-      // check role
-      if (role !== "admin" && role !== "staff") {
-        alert("Access denied.");
-        window.location.href = "/forbidden.html";
-        return;
-      }
-
-      // Optionally verify token with backend
-      try {
-        const res = await fetch("/api/auth/verify", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        if (!data.valid) {
-          localStorage.clear();
-          window.location.href = "/login.html";
-        }
-      } catch (err) {
-        console.error("Verification failed", err);
-        localStorage.clear();
-        window.location.href = "/login.html";
-      }
-    });
-  </script>
-
-  <div class="container">
-    <h2>📸 Staff Dashboard</h2>
-
-    <!-- Logout Button -->
-    <button id="logoutBtn" style="float: right; background: #e74c3c; color: #fff; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">
-      Logout
-    </button>
-    <div style="clear: both;"></div>
-
-    <!-- Select Customer -->
-    <div class="section">
-      <h3>👥 Select Customer</h3>
-      <select id="customerSelect">
-        <option value="">Loading customers...</option>
-      </select>
-    </div>
-
-    <!-- ✅ Unified Bulk Upload (for single or multiple photos) -->
-    <div class="section">
-      <h3>📸 Upload Photos for Selected Customer</h3>
-      <form id="bulkUploadForm" enctype="multipart/form-data">
-        <input type="file" id="bulkPhotos" name="photos" multiple accept="image/*" required />
-        <button type="submit">Upload Selected Photos</button>
-      </form>
-      <p id="uploadStatus"></p>
-    </div>
-
-    <!-- Image Preview Modal -->
-    <div id="photoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
-      <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
-    </div>
-
-    <!-- Generate QR -->
-    <div class="section">
-      <h3>🔗 Generate QR for Selected Customer</h3>
-      <button id="generateQRBtn">Generate QR Code</button>
-      <div class="qr-display" id="qrResult"></div>
-    </div>
-
-    <!-- Uploaded Photos -->
-    <div class="section">
-      <h3>🗂️ Uploaded Photos for Selected Customer</h3>
-      <div id="photoList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;"></div>
-    </div>
+<main>
+  <!-- ANALYTICS -->
+  <h2>Analytics Overview</h2>
+  <div class="dashboard-cards">
+    <div class="card"><h3>Total Bookings</h3><div class="value" id="totalBookings">0</div></div>
+    <div class="card"><h3>Revenue (₱)</h3><div class="value" id="totalRevenue">0</div></div>
+    <div class="card"><h3>Active Clients</h3><div class="value" id="totalClients">0</div></div>
+    <div class="card"><h3>Popular Package</h3><div class="value" id="popularPackage">-</div></div>
   </div>
 
-  <!-- Dashboard JS -->
-  <script src="/js/dashboard.js"></script>
+  <div class="charts">
+    <div class="chart-container"><h3>Monthly Bookings</h3><canvas id="bookingsChart"></canvas></div>
+    <div class="chart-container"><h3>Top Booking Locations</h3><canvas id="locationChart"></canvas></div>
+  </div>
 
-  <script>
-    function logout() {
-      const role = localStorage.getItem("role");
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
+  <!-- USERS (Admin only) -->
+  <div class="section admin-only">
+    <h2>Users</h2>
+    <button onclick="loadUsers()">Refresh Users</button>
+    <div id="users" class="loading">Loading...</div>
+  </div>
 
-      if (role === "staff" || role === "admin") {
-        window.location.href = "/staff/login.html";
-      } else {
-        window.location.href = "/login.html";
-      }
-    }
+  <!-- BOOKINGS -->
+  <div class="section">
+    <h2>Bookings</h2>
+    <button onclick="loadBookings()">Refresh Bookings</button>
+    <div id="bookings" class="loading">Loading...</div>
+  </div>
 
-    document.getElementById("logoutBtn").addEventListener("click", logout);
-  </script>
+  <!-- PAYMENTS -->
+  <div class="section">
+    <h2>Payments</h2>
+    <button onclick="loadPayments()">Refresh Payments</button>
+    <div id="payments" class="loading">Loading...</div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="section">
+    <h2>Notifications</h2>
+    <button onclick="loadNotifications()">Refresh Notifications</button>
+    <div id="notifications" class="loading">Loading...</div>
+  </div>
+
+  <!-- PHOTO GALLERY + UPLOAD -->
+  <div class="section">
+    <h2>Photo Gallery / Upload</h2>
+    <select id="customerSelect"></select>
+    <form id="bulkUploadForm" enctype="multipart/form-data">
+      <input type="file" id="bulkPhotos" name="photos" multiple accept="image/*" required />
+      <button type="submit">Upload Selected Photos</button>
+    </form>
+    <p id="uploadStatus"></p>
+    <div id="photoList"></div>
+    <button id="generateQRBtn">Generate QR</button>
+    <div id="qrResult"></div>
+  </div>
+</main>
+
+<!-- ============================= -->
+<!-- 💰 Transactions Section -->
+<!-- ============================= -->
+<section class="transactions-section mt-8">
+  <h2 class="text-xl font-semibold mb-3">Recent Transactions</h2>
+  <table id="transactionsTable" class="w-full border-collapse border border-gray-300 text-sm">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="border px-3 py-2">#</th>
+        <th class="border px-3 py-2">Customer</th>
+        <th class="border px-3 py-2">Reference ID</th>
+        <th class="border px-3 py-2">Type</th>
+        <th class="border px-3 py-2">Amount</th>
+        <th class="border px-3 py-2">Payment Method</th>
+        <th class="border px-3 py-2">Status</th>
+        <th class="border px-3 py-2">Date</th>
+        <th class="border px-3 py-2">Action</th>
+      </tr>
+    </thead>
+    <tbody id="transactionsBody"></tbody>
+  </table>
+</section>
+
+
+
+<footer>© 2025 Profilepicmultimedia</footer>
+
+<script src="/js/dashboard.js"></script>
+<script>
+  // Logout
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    localStorage.clear();
+    window.location.href = "/login.html";
+  });
+</script>
+
+
 </body>
 </html>

@@ -6,44 +6,47 @@ const QRCode = require("qrcode");
 const authenticateToken = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
-// === Generate QR Code (Staff + Admin Only) ===
+// ===============================
+// ✅ Generate QR Code (Staff + Admin)
+// ===============================
 router.post("/generate", authenticateToken, authorizeRoles("staff", "admin"), async (req, res) => {
   try {
     const { user_id } = req.body;
     if (!user_id) return res.status(400).json({ message: "Missing user_id" });
 
-    // generate a 12-character code
+    // generate a 12-character hex code
     const code = crypto.randomBytes(6).toString("hex");
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // expires in 7 days
 
-    // save to DB
+    // save QR code to DB
     await dbPromise.query(
       "INSERT INTO qr_codes (code, user_id, created_at, expires_at, generated_by) VALUES (?, ?, NOW(), ?, ?)",
       [code, user_id, expiresAt, req.user.id]
     );
 
-    // generate the actual QR image (as a base64 data URL)
-    const galleryUrl = `http://localhost:3000/gallery.html?code=${code}`; // or your domain in production
+    // generate QR image (base64)
+    const galleryUrl = `http://localhost:3000/gallery.html?code=${code}`;
     const qrDataURL = await QRCode.toDataURL(galleryUrl);
 
-    // send both text and QR image
+    // send response
     res.json({
       success: true,
       message: "QR code generated successfully",
       code,
       gallery_link: galleryUrl,
-      qr_image: qrDataURL, // 👈 base64 image for display
+      qr_image: qrDataURL,
       expires_at: expiresAt
     });
+
   } catch (err) {
     console.error("Error generating QR:", err);
     res.status(500).json({ message: "Error generating QR code" });
   }
 });
 
-module.exports = router;
-
-// === Verify QR Code (Client Side) ===
+// ===============================
+// ✅ Verify QR Code (Client Side)
+// ===============================
 router.get("/verify", async (req, res) => {
   try {
     const { code } = req.query;
@@ -63,7 +66,9 @@ router.get("/verify", async (req, res) => {
   }
 });
 
-// === Get All Customers (for Staff Dropdown) ===
+// ===============================
+// ✅ Get All Customers (for Staff Dropdown)
+// ===============================
 router.get("/customers", authenticateToken, authorizeRoles("staff", "admin"), async (req, res) => {
   try {
     const [customers] = await dbPromise.query(

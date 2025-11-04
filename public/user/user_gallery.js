@@ -5,7 +5,6 @@ let remainingDownloads = 0;
 // Initialize gallery
 async function initGallery() {
   try {
-    // Verify logged-in user
     const res = await fetch('/api/auth/verify', { credentials: 'include' });
     if (!res.ok) throw new Error('Not logged in');
 
@@ -13,17 +12,11 @@ async function initGallery() {
     if (!data.valid) throw new Error('Invalid session');
 
     userId = data.user.id;
-
-    // Set sidebar username
     document.querySelector(".sidebar h3").textContent = data.user.name || "User";
 
-    // Load remaining downloads
     await loadDownloadInfo();
-
-    // Load gallery photos
     await loadGallery();
 
-    // Set gallery date
     const dateElem = document.getElementById('gallery-date');
     dateElem.textContent = new Date().toLocaleDateString('en-US', {
       weekday: 'short', year: 'numeric', month: 'long', day: 'numeric'
@@ -36,7 +29,6 @@ async function initGallery() {
   }
 }
 
-// Fetch download info
 async function loadDownloadInfo() {
   try {
     const res = await fetch('/api/gallery/downloads', { credentials: 'include' });
@@ -52,11 +44,8 @@ async function loadDownloadInfo() {
   }
 }
 
-// Load gallery photos (Production Ready)
-// Load gallery photos (live/update-ready)
 async function loadGallery(userId = null) {
   try {
-    // Append user_id if provided (for admin/staff selecting a customer)
     const url = userId ? `/api/gallery/gallery?user_id=${userId}` : '/api/gallery/gallery';
     const res = await fetch(url, { credentials: 'include' });
     if (!res.ok) throw new Error('Failed to load gallery');
@@ -75,20 +64,17 @@ async function loadGallery(userId = null) {
       const card = document.createElement('div');
       card.className = `photo-card ${photo.status === 'expired' ? 'expired' : ''}`;
 
-      // Image
       const img = document.createElement('img');
       img.src = photo.file_path;
       img.alt = photo.file_name || 'Gallery Photo';
       img.style.objectFit = 'cover';
       card.appendChild(img);
 
-      // Status badge
       const badge = document.createElement('div');
       badge.className = 'badge';
       badge.textContent = photo.status.charAt(0).toUpperCase() + photo.status.slice(1);
       card.appendChild(badge);
 
-      // Checkbox for bulk purchase
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.disabled = photo.status !== 'available';
@@ -99,7 +85,6 @@ async function loadGallery(userId = null) {
       };
       card.appendChild(checkbox);
 
-      // Action button
       const btn = document.createElement('button');
       btn.style.width = '100%';
       btn.style.padding = '10px';
@@ -110,7 +95,8 @@ async function loadGallery(userId = null) {
         btn.textContent = `Buy ₱${photo.price}`;
         btn.style.backgroundColor = '#CE6826';
         btn.style.color = '#fff';
-        btn.onclick = () => purchasePhoto(photo.id);
+        // Pass price into purchasePhoto
+        btn.onclick = () => purchasePhoto(photo.id, photo.price);
       } else if (photo.status === 'purchased') {
         btn.textContent = 'Download';
         btn.style.backgroundColor = '#4CAF50';
@@ -130,16 +116,22 @@ async function loadGallery(userId = null) {
   }
 }
 
+// Get the selected payment method from dropdown
+function getSelectedPaymentMethod() {
+  const select = document.getElementById("payment-method-select");
+  return select?.value || "card"; // defaults to card
+}
 
-
-// Purchase a single photo
-async function purchasePhoto(photoId) {
+// Purchase a single photo (with price)
+async function purchasePhoto(photoId, price) {
   try {
+    const method = getSelectedPaymentMethod();
+
     const res = await fetch('/api/photo-purchases/buy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ photo_id: photoId, method: 'card' })
+      body: JSON.stringify({ photo_id: photoId, price, method })
     });
 
     const data = await res.json();
@@ -153,16 +145,18 @@ async function purchasePhoto(photoId) {
   }
 }
 
-// Purchase multiple selected photos
+// Bulk purchase remains the same
 async function purchaseSelectedPhotos() {
   if (!selectedPhotos.size) return alert('Select at least one photo.');
+
+  const method = getSelectedPaymentMethod();
 
   try {
     const res = await fetch('/api/photo-purchases/purchase-bulk', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ user_id: userId, photo_ids: Array.from(selectedPhotos) })
+      body: JSON.stringify({ user_id: userId, photo_ids: Array.from(selectedPhotos), method })
     });
 
     const data = await res.json();

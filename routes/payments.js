@@ -63,4 +63,28 @@ router.post("/create-checkout-session", authenticateToken, async (req, res) => {
   }
 });
 
+// routes/payments.js (add this)
+router.post("/webhook", express.json({ type: "application/json" }), async (req, res) => {
+  try {
+    const event = req.body;
+    console.log("📦 Webhook event received:", event.type);
+
+    if (event.data && event.data.attributes) {
+      const { type, data } = event;
+      // Example: handle successful payments
+      if (type === "checkout.session.paid") {
+        const bookingId = data.attributes.metadata.booking_id;
+        console.log(`✅ Booking ${bookingId} payment confirmed!`);
+        // You can update your DB booking status here
+      }
+    }
+
+    res.status(200).send("Webhook received");
+  } catch (err) {
+    console.error("❌ Webhook error:", err);
+    res.status(400).send("Webhook handling error");
+  }
+});
+
+
 module.exports = router;

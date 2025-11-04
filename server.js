@@ -16,6 +16,12 @@ const authorizeRoles = require("./middleware/roleMiddleware");
 const app = express();
 
 // ======================================================
+// === RAW Webhook (Must be before express.json())
+// ======================================================
+app.use("/api/photo-purchases/webhook", express.raw({ type: "application/json" }));
+
+
+// ======================================================
 // === Middleware
 // ======================================================
 app.use(cors({
@@ -24,6 +30,7 @@ app.use(cors({
 }));
  // frontend address
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // Serve everything in public
 app.use(express.static(path.join(__dirname, "public")));
@@ -55,6 +62,8 @@ const qrRoutes = require("./routes/qr");
 const galleryAccessRoutes = require("./routes/galleryAccess");
 const photoRoutes = require("./routes/photos"); // upload + gallery
 const photoPurchaseRoutes = require("./routes/photoPurchases"); // purchase + download
+const transactionsRoutes = require("./routes/transactions");
+
 
 // ======================================================
 // === Route Mounting
@@ -70,6 +79,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/qr", qrRoutes);
 app.use("/api/gallery", galleryAccessRoutes);
 app.use("/api/photos", photoRoutes);
+app.use("/api/transactions", transactionsRoutes);
+
 app.use("/api/photo-purchases", photoPurchaseRoutes);
 
 // ======================================================
