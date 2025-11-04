@@ -1,6 +1,6 @@
 // routes/bookings.js
 const express = require("express");
-const db = require("../config/db"); // your DB connection
+const { db } = require("../config/db"); // your DB connection
 const authenticateToken = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -93,6 +93,62 @@ router.post("/", authenticateToken, (req, res) => {
   });
 });
 
+// ============================
+// 💳 Downpayment Route
+// ============================
+router.post("/downpayment", authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { booking_id, amount } = req.body;
+
+  if (!booking_id || !amount) {
+    return res.status(400).json({ error: "Missing booking ID or amount" });
+  }
+
+  // Verify booking belongs to the user
+  db.query(
+    "SELECT * FROM bookings WHERE id = ? AND user_id = ?",
+    [booking_id, userId],
+    (err, results) => {
+      if (err) {
+        console.error("❌ Error verifying booking:", err);
+        return res.status(500).json({ error: "Server error" });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Booking not found or unauthorized" });
+      }
+
+      // Simulate payment processing (this is where PayMongo will integrate)
+      const paymentStatus = "success"; // you’ll replace this with actual API response
+
+      // Record payment in the database
+      db.query(
+        "INSERT INTO payments (booking_id, user_id, amount, status) VALUES (?, ?, ?, ?)",
+        [booking_id, userId, amount, paymentStatus],
+        (err, result) => {
+          if (err) {
+            console.error("❌ Error recording payment:", err);
+            return res.status(500).json({ error: "Failed to record payment" });
+          }
+
+          // Update booking status if needed
+          db.query(
+            "UPDATE bookings SET status = 'paid' WHERE id = ?",
+            [booking_id],
+            (err2) => {
+              if (err2) {
+                console.error("❌ Error updating booking status:", err2);
+              }
+              res.json({
+                message: "✅ Downpayment recorded successfully!",
+                payment_id: result.insertId,
+              });
+            }
+          );
+        }
+      );
+    }
+  );
+});
 
 
 // ============================

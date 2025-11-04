@@ -150,3 +150,16 @@ nav a {
 .purchase-btn:hover {
   background: #ccc;
 }
+
+.payment-method {
+  margin: 20px 0;
+}
+.payment-method label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+.payment-method select {
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}

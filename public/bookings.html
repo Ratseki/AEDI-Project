@@ -6,29 +6,25 @@
   <title>Book Your Session — ProfilePicMultimedia</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Local bookings styles (prefixed with bk- to avoid clashes) */
     .bk-page { padding: 140px 40px 80px; background: #f4f4f4; min-height: 100vh; color: #0A142D; }
     .bk-container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.95); border-left: 6px solid #CE6826; padding: 30px; border-radius: 8px; box-shadow: 0 6px 30px rgba(0,0,0,0.08);}
     .bk-title { font-size: 28px; font-weight:700; color:#0A142D; margin-bottom: 20px; letter-spacing: 1px;}
     .bk-row { display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; }
     .bk-col { flex:1; min-width:200px; display:flex; flex-direction:column; }
-    .bk-input, .bk-select, .bk-textarea { padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; }
+    .bk-input, .bk-select { padding:10px; border-radius:6px; border:1px solid #ccc; font-size:14px; }
     .bk-label { font-size:13px; margin-bottom:6px; color:#0A142D; font-weight:600; }
     .bk-required { color: #e03b3b; margin-left:4px; }
     .bk-actions { display:flex; gap:12px; align-items:center; margin-top:10px; }
     .bk-btn { background:#CE6826; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:600; }
     .bk-btn.secondary { background:#F9BF5F; color:#0A142D; }
     .bk-summary { background:#F9BF5F20; padding:12px; border-radius:6px; margin-top:10px; }
-    .bk-error { border:1px solid #e03b3b; background: #ffecec; color:#a80000; padding:8px; border-radius:6px; margin-top:6px; }
-    .bk-small { font-size:13px; color:#444; }
-    .bk-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); justify-content:center; align-items:center; z-index:9999; }
-    .bk-modal .bk-modal-content { background:#fff; padding:22px; border-radius:8px; width:360px; }
-    .bk-field-inline { display:flex; gap:8px; }
+    .bk-error { border:1px solid #e03b3b; background:#ffecec; color:#a80000; padding:8px; border-radius:6px; margin-top:6px; }
+    option[disabled]:hover { cursor: not-allowed; }
     @media (max-width:900px){ .bk-row {flex-direction:column;} .bk-col{min-width: unset;} }
   </style>
 </head>
 <body>
-  <header class="navbar"> <!-- you already have navbar styles in main CSS, this keeps it consistent -->
+  <header class="navbar">
     <div class="logo"><img src="images/logo_test.png" alt="logo" style="height:64px;"></div>
     <nav class="nav-links">
       <a href="index.html">Home</a>
@@ -37,12 +33,11 @@
   </header>
 
   <main class="bk-page">
-    <div class="bk-container" role="main">
+    <div class="bk-container">
       <h1 class="bk-title">BOOK YOUR SESSION</h1>
 
-      <!-- FORM -->
-      <form id="bkForm" class="bk-form" onsubmit="return false;">
-        <!-- Name -->
+      <form id="bkForm" onsubmit="return false;">
+        <!-- Basic Info -->
         <div class="bk-row">
           <div class="bk-col">
             <label class="bk-label">First Name <span class="bk-required">*</span></label>
@@ -54,7 +49,7 @@
           </div>
         </div>
 
-        <!-- Email & Phone -->
+        <!-- Contact Info -->
         <div class="bk-row">
           <div class="bk-col">
             <label class="bk-label">E-mail <span class="bk-required">*</span></label>
@@ -62,14 +57,14 @@
           </div>
           <div class="bk-col">
             <label class="bk-label">Phone Number <span class="bk-required">*</span></label>
-            <div class="bk-field-inline">
+            <div style="display:flex;gap:8px;">
               <input id="phoneArea" class="bk-input" placeholder="Area" style="width:90px" required />
               <input id="phoneNumber" class="bk-input" placeholder="Phone number" required />
             </div>
           </div>
         </div>
 
-        <!-- Address (simple fields) -
+       
         <div class="bk-row">
           <div class="bk-col" style="flex: 2 1 100%;">
             <label class="bk-label">Street Address <span class="bk-required">*</span></label>
@@ -77,7 +72,7 @@
           </div>
         </div>->
 
-        <!-- Date & Time + Timezone info -->
+        <!-- Date & Time -->
         <div class="bk-row">
           <div class="bk-col">
             <label class="bk-label">Select Appointment Date <span class="bk-required">*</span></label>
@@ -99,7 +94,7 @@
               <option>16:00</option>
               <option>17:00</option>
             </select>
-            <div class="bk-small" style="margin-top:6px;">Timezone: <span id="detectedTz"></span></div>
+            <div style="font-size:13px;margin-top:6px;">Timezone: <span id="detectedTz"></span></div>
           </div>
         </div>
 
@@ -109,10 +104,10 @@
             <label class="bk-label">Session Location <span class="bk-required">*</span></label>
             <select id="location" class="bk-select" required>
               <option value="">Please select</option>
-              <option>Paoay, Ilocos Norte</option>
-              <option>Daraga, Albay</option>
-              <option>Carmen, Bohol</option>
-              <option>La Union</option>
+              <option value="Paoay, Ilocos Norte">Paoay, Ilocos Norte</option>
+              <option value="Daraga, Albay" disabled title="Coming soon">Daraga, Albay (Coming Soon)</option>
+              <option value="Carmen, Bohol" disabled title="Coming soon">Carmen, Bohol (Coming Soon)</option>
+              <option value="La Union" disabled title="Coming soon">La Union (Coming Soon)</option>
             </select>
           </div>
 
@@ -120,39 +115,37 @@
             <label class="bk-label">Package <span class="bk-required">*</span></label>
             <select id="package" class="bk-select" required>
               <option value="">Please select</option>
-              <option value="1">Pro — $40</option>
-              <option value="2">Plus — $25</option>
-              <option value="3">Standard — $10</option>
+              <option value="1" data-price="40">Pro — ₱40</option>
+              <option value="2" data-price="25">Plus — ₱25</option>
+              <option value="3" data-price="10">Standard — ₱10</option>
             </select>
           </div>
         </div>
 
-        <!-- Extras -->
-        <div class="bk-row">
-          <div class="bk-col">
-            <label class="bk-label">Number of People</label>
-            <input id="numPeople" class="bk-input" type="number" min="1" />
-          </div>
-          <div class="bk-col">
-            <label class="bk-label">Note to Photographer</label>
-            <input id="note" class="bk-input" />
-          </div>
-        </div>
+        <div class="bk-col">
+        <label class="bk-label">Payment Method <span class="bk-required">*</span></label>
+        <select id="paymentMethod" class="bk-select" required>
+          <option value="">Please select</option>
+          <option value="gcash">GCash</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="maya" disabled title="Coming soon">Maya (Coming Soon)</option>
+        </select>
+      </div>
 
-        <!-- Agreement (short) -->
+
+
+        <!-- Agreement -->
         <div style="margin-top:12px;">
           <label class="bk-label">Agreement <span class="bk-required">*</span></label>
-          <div style="background:#fff; padding:12px; border-radius:6px; border:1px solid #eee; color:#333; max-height:120px; overflow:auto;">
+          <div style="background:#fff; padding:12px; border-radius:6px; border:1px solid #eee;">
             <p style="font-size:13px;">By submitting you agree to our terms and consent to model release and copyright terms.</p>
           </div>
           <label style="display:block; margin-top:8px;"><input id="agree" type="checkbox" /> I agree</label>
         </div>
 
-        <!-- Validation / summary -->
         <div id="bkError" class="bk-error" style="display:none;"></div>
         <div class="bk-summary" id="bkSummary" style="display:none;"></div>
 
-        <!-- Actions -->
         <div class="bk-actions">
           <button id="bkSubmit" class="bk-btn">Continue to Payment</button>
           <button id="bkClear" class="bk-btn secondary" type="button">Reset</button>
@@ -161,79 +154,84 @@
     </div>
   </main>
 
-  <!-- Downpayment modal -->
-<div id="bkDownModal" class="bk-modal" role="dialog" aria-hidden="true">
-  <div class="bk-modal-content">
-    <h3>Confirm Downpayment</h3>
-    <input id="bkDownAmount" class="bk-input" type="number" placeholder="Enter amount" />
-    <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
-      <button id="bkDownConfirmBtn" class="bk-btn">Confirm</button>
-      <button class="bk-btn secondary" onclick="closeDownModal()">Cancel</button>
-    </div>
-  </div>
-</div>
-
   <footer style="padding:40px; text-align:center; color:#777;">&copy; 2025 ProfilePicMultimedia</footer>
 
   <script>
-    // Detect timezone display
-    document.getElementById('detectedTz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
+  // Detect timezone
+  document.getElementById('detectedTz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
 
-    // Helper: show error
-    function showError(msg){
-      const el = document.getElementById('bkError');
-      el.style.display = 'block';
-      el.textContent = msg;
+  // Disable past dates
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById("date").setAttribute("min", today);
+
+  // === Currency conversion rate (USD → PHP) ===
+  const USD_TO_PHP = 58;
+
+  // Show converted price automatically
+  const pkgSelect = document.getElementById("package");
+  pkgSelect.addEventListener("change", () => {
+    const usd = parseFloat(pkgSelect.selectedOptions[0].dataset.price || 0);
+    if (usd > 0) {
+      const php = usd * USD_TO_PHP;
+      alert(`Selected package price: ₱${php.toLocaleString()} (≈ $${usd})`);
     }
-    function clearError(){
-      const el = document.getElementById('bkError');
-      el.style.display = 'none';
-      el.textContent = '';
+  });
+
+  function showError(msg){
+    const el = document.getElementById('bkError');
+    el.style.display='block';
+    el.textContent=msg;
+  }
+  function clearError(){
+    const el = document.getElementById('bkError');
+    el.style.display='none';
+    el.textContent='';
+  }
+
+  document.getElementById('bkClear').addEventListener('click', ()=>{
+    document.getElementById('bkForm').reset();
+    clearError();
+    document.getElementById('bkSummary').style.display='none';
+  });
+
+  document.getElementById('bkSubmit').addEventListener('click', async ()=>{
+    clearError();
+
+    const firstName = document.getElementById("firstName").value.trim();
+    const lastName = document.getElementById("lastName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phoneArea = document.getElementById("phoneArea").value.trim();
+    const phoneNumber = document.getElementById("phoneNumber").value.trim();
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const location = document.getElementById("location").value;
+    const pkgOption = pkgSelect.selectedOptions[0];
+    const service_id = pkgOption.value;
+    const usd = parseFloat(pkgOption.dataset.price || 0);
+    const php = usd * USD_TO_PHP;
+    const pkg = pkgOption.text;
+    
+    const method = document.getElementById("paymentMethod").value;
+    if (!method) {
+      showError("Please select a payment method.");
+      return;
     }
 
-    // Reset form
-    document.getElementById('bkClear').addEventListener('click', () => {
-      document.getElementById('bkForm').reset();
-      document.getElementById('bkSummary').style.display='none';
-      clearError();
-    });
+    const agree = document.getElementById("agree").checked;
 
-    // Submit booking
-    document.getElementById('bkSubmit').addEventListener('click', async () => {
-      clearError();
-      // Basic validation
-      const firstName = document.getElementById('firstName').value.trim();
-      const lastName = document.getElementById('lastName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phoneArea = document.getElementById('phoneArea').value.trim();
-      const phoneNumber = document.getElementById('phoneNumber').value.trim();
-      const date = document.getElementById('date').value;
-      const time = document.getElementById('time').value;
-      const location = document.getElementById('location').value;
-      const service_id = document.getElementById('package').value; // package dropdown value is your service_id
-      const pkg = document.getElementById('package').selectedOptions[0].text; // optional: store name for display
-      const agree = document.getElementById('agree').checked;
+    if(!firstName || !lastName || !email || !phoneNumber || !date || !time || !location || !pkg || !agree){
+      showError("Please fill all required fields and accept the agreement.");
+      return;
+    }
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to continue.");
+      window.location.href = "/login.html";
+      return;
+    }
 
-      
-
-      if (!firstName || !lastName || !email || !phoneNumber || !date || !time || !location || !pkg || !agree) {
-        showError('Please fill all required fields and accept the agreement.');
-        return;
-      }
-
-      // require login (JWT in localStorage)
-      const token = localStorage.getItem('token');
-      if (!token) {
-        // redirect to login, preserve form data maybe
-        localStorage.setItem('afterBooking', JSON.stringify({ firstName, lastName, email, phoneArea, phoneNumber, date, time, location, pkg }));
-        alert('Please log in or sign up to continue. You will be redirected to login page.');
-        window.location.href = '/login.html';
-        return;
-      }
-
-      // Build payload
-      const payload = {
+    const payload = {
       first_name: firstName,
       last_name: lastName,
       email,
@@ -242,126 +240,76 @@
       date,
       time,
       location,
-      package_name: pkg,        // clearer name than just “package”
-      note: document.getElementById('note').value || '',
-      num_people: document.getElementById('numPeople').value || 1,
-      service_id                 // properly included foreign key
+      package_name: pkg,
+      service_id,
+      amount: php
     };
 
-      try {
-        const res = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify(payload)
-        });
+    try {
+      const res = await fetch("/api/bookings", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "Authorization":"Bearer " + token
+        },
+        body: JSON.stringify(payload)
+      });
 
-        if (!res.ok) {
-          const t = await res.json().catch(()=>null);
-          showError((t && t.message) || 'Server error - could not create booking.');
-          return;
-        }
-        const data = await res.json();
-
-        // success -> show summary and redirect to payment step or show inline message
-        const s = document.getElementById('bkSummary');
-        s.style.display = 'block';
-        s.innerHTML = `
-          <strong>Booking created ✅</strong><br>
-          Booking ID: ${data.booking_id}<br>
-          Package: ${payload.package_name}<br>
-          Date: ${payload.date} ${payload.time}<br>
-          <div style="margin-top:8px;">
-            <button class="bk-btn" onclick="gotoPayment(${data.booking_id})">Proceed to Payment</button>
-            <button class="bk-btn secondary" onclick="openDownModal(${data.booking_id})">Add Downpayment</button>
-          </div>
-  `;
-        // optionally clear form
-      } catch (err) {
-        console.error(err);
-        showError('Network error. Please try again later.');
+      const data = await res.json();
+      if (!res.ok) {
+        showError(data.message || "Server error");
+        return;
       }
+
+      const s = document.getElementById("bkSummary");
+      s.style.display="block";
+      s.innerHTML = `
+        <strong>Booking created ✅</strong><br>
+        Booking ID: ${data.booking_id}<br>
+        Package: ${payload.package_name}<br>
+        Total Amount: ₱${php.toLocaleString()}<br>
+        Date: ${payload.date} ${payload.time}<br>
+        <div style="margin-top:8px;">
+          <button class="bk-btn" onclick="proceedToPayment(${data.booking_id}, ${php}, '${method}')">Proceed to Payment</button>
+        </div>
+      `;
+    } catch (err){
+      console.error(err);
+      showError("Network error.");
+    }
+  });
+
+  // === Payment redirect ===
+ async function proceedToPayment(bookingId, amount, method) {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch("/api/payments/create-checkout-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        amount,
+        booking_id: bookingId,
+        method
+      })
     });
 
-    // Payment navigation placeholder
-    function gotoPayment(bookingId) {
-    if (!bookingId) {
-    alert("Booking ID is missing!");
-    return;
-    }
-  window.location.href = `/payments.html?booking_id=${bookingId}`;
-}
-
-    // Downpayment modal
-    let bkModalBookingId = null;
-    function openDownModal(bookingId){
-      bkModalBookingId = bookingId;
-      document.getElementById('bkDownModal').style.display = 'flex';
-    }
-    function closeDownModal(){
-      document.getElementById('bkDownModal').style.display = 'none';
-      bkModalBookingId = null;
-    }
-    async function submitDownpayment(bkModalBookingId, amount) {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('You must be logged in to make a downpayment.');
-      return;
-    }
-
-    const res = await fetch('http://localhost:3000/api/bookings/downpayment', {
-    method: 'POST',
-    headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + token
-  },
-  body: JSON.stringify({ booking_id: bkModalBookingId, amount })
-});
-
-
-    const result = await res.json();
-
+    const data = await res.json();
     if (!res.ok) {
-      alert(result.message || 'Downpayment failed');
+      alert(`⚠️ Payment failed: ${data.message}`);
       return;
     }
 
-    alert(result.message || 'Downpayment successful!');
-    closeDownModal();
-
+    window.location.href = data.checkout_url;
   } catch (err) {
-    console.error('❌ Downpayment error:', err);
-    alert('Server error. Please try again later.');
+    console.error("❌ Payment error:", err);
+    alert("Server error while creating checkout session.");
   }
 }
 
-    // close modal on background click
-    document.getElementById('bkDownModal').addEventListener('click', (e)=> {
-      if (e.target === document.getElementById('bkDownModal')) closeDownModal();
-    });
+</script>
 
-    // Optional: pre-fill form if user was redirected to login
-    (function restoreAfterLogin(){
-      const storage = localStorage.getItem('afterBooking');
-      if (storage) {
-        try {
-          const obj = JSON.parse(storage);
-          document.getElementById('firstName').value = obj.firstName || '';
-          document.getElementById('lastName').value = obj.lastName || '';
-          document.getElementById('email').value = obj.email || '';
-          document.getElementById('phoneArea').value = obj.phoneArea || '';
-          document.getElementById('phoneNumber').value = obj.phoneNumber || '';
-          document.getElementById('date').value = obj.date || '';
-          document.getElementById('time').value = obj.time || '';
-          document.getElementById('location').value = obj.location || '';
-          document.getElementById('package').value = obj.pkg || '';
-          localStorage.removeItem('afterBooking');
-        } catch(e){ /* ignore */ }
-      }
-    })();
-  </script>
 </body>
 </html>

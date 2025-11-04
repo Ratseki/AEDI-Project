@@ -75,6 +75,32 @@ router.post(
   }
 );
 
+// 💳 Photo purchase route
+router.post("/purchase", authenticateToken, async (req, res) => {
+  try {
+    const { user_id, photo_ids, total_amount } = req.body;
+    if (!user_id || !photo_ids?.length || !total_amount)
+      return res.status(400).json({ message: "Invalid purchase data" });
+
+    const db = await dbPromise;
+
+    // Create reference
+    const reference = "PHOTO-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    // Record the transaction
+    await db.query(
+      "INSERT INTO transactions (user_id, type, reference, total_amount, status) VALUES (?, 'photo_purchase', ?, ?, 'pending')",
+      [user_id, reference, total_amount]
+    );
+
+    res.json({ message: "Photo purchase recorded successfully", reference });
+  } catch (err) {
+    console.error("❌ Purchase error:", err);
+    res.status(500).json({ message: "Error recording purchase" });
+  }
+});
+
+
 // ========================================
 // 💳 Purchase Photo (Individual)
 // ========================================
