@@ -1,0 +1,47 @@
+/* ===== NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px; /* fixed navbar height */
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.781);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  transition: padding 0.3s ease;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Logo placeholder for image */
+.navbar .logo img {
+  height: 90px; /* adjust as needed */
+  width: auto;
+  object-fit: contain;
+  margin-left: 20px;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin: 20px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  letter-spacing: 1.5px;
+  color: #000000;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 1.2rem; /* bigger text */
+}
+
+.nav-links a:hover{
+  color: #F4981E;
+}
+
