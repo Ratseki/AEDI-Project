@@ -7,9 +7,14 @@
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="navstyle.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 </head>
@@ -25,7 +30,8 @@
     <nav class="nav-links">
       <a href="#home" class="active">Home</a>
       <a href="#about">About Us</a>
-
+      <a href="#packages">Package & Booking</a>
+      <!--
       <div class="dropdown">
         <button class="dropbtn">Services ▾</button>
         <div class="dropdown-content">
@@ -33,7 +39,7 @@
           <a href="#locations-section">Locations</a>
           <a href="#how-it-works">Booking Guide</a>
         </div>
-      </div>
+      </div>-->
 
       <a href="/user/gallery">Gallery</a>
       <a href="#contact">Contact</a>
@@ -42,9 +48,6 @@
   <!-- This will be updated by JS -->
 </div>
 
-
-
-      
   </header>
 
   <!-- ===== HOME SECTION ===== -->
@@ -53,13 +56,13 @@
       <h1 class="main-heading">
         WE CREATE <span class="highlight">MEMORIES</span>
       </h1>
-      <p class="subtext">
+      <p class="hero-subtext">
         We don’t just take photos — we capture stories that live forever. Every frame is a heartbeat of your journey, frozen in time and filled with emotion.
       </p>
   
       <div class="hero-buttons">
-      <a href="#book" class="btn-primary">Explore</a>
-      <a href="#story" class="btn-outline">Learn <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="#intro-section" class="btn-primary">Explore</a>
+      <a href="#about" class="btn-outline">Learn <i class="fa-solid fa-arrow-right"></i></a>
       </div>
 
 <script>
@@ -70,30 +73,92 @@
     </div>
   </section>
 
+
 <!-- ===== YOUR JOURNEY SECTION ===== -->
-<section class="your-journey">
-  <div class="journey-container">
-    <!-- Left Text Column -->
-    <div class="journey-text">
+<!-- Replaced -->
+<!-- INTRO SECTION -->
+ <section id="intro-section" class="intro-section">
+  <div class="intro-container">
+    <div class="left">
       <h2>Your journey deserves the <span class="highlight-script">perfect shot.</span></h2>
       <p class="subtext">From stunning natural landscapes to awe-inspiring views, we turn your moments into timeless visuals.
-  Whether it’s a romantic escape, an outdoor adventure, or a cinematic journey, our creative team captures
-  the essence of every story in vibrant detail — transforming experiences into memories that last a lifetime.</p>
+      Whether it’s a romantic escape, an outdoor adventure, or a cinematic journey, our creative team captures
+      the essence of every story in vibrant detail — transforming experiences into memories that last a lifetime.</p>
       <div class="rating">
-  <div class="stars">
-    <i class="fa-solid fa-star"></i>
-    <i class="fa-solid fa-star"></i>
-    <i class="fa-solid fa-star"></i>
-    <i class="fa-solid fa-star"></i>
-    <i class="fa-regular fa-star"></i>
-  </div>
-  <span class="rating-text">4.4 Rated by 12,000+ Clients</span>
-</div>
+        <div class="stars">
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star"></i>
+          <i class="fa-regular fa-star"></i>
+        </div>
+        <span class="rating-text">4.4 Rated by 12,000+ Clients</span>
+      </div>
+    </div>
 
-    <!-- Right Image Column -->
-    <div class="journey-images">
-      <img src="images/journey1.jpg" alt="ATV adventure">
-      <img src="images/journey2.jpg" alt="Travel group">
+    <div class="right">
+      <div class="left-imagec">
+        <img src="images/mandy.jpg" alt="Intro Image">
+      </div>
+      <div class="right-imagec">
+        <img src="images/homepage_bg.jpg" alt="Intro Image" class="top-img">
+        <img src="images/homepage_bg.jpg" alt="Intro Image" class="bottom-img">
+      </div>
+    </div>
+  </div>
+ </section>
+
+ <!-- ===== GUIDE / HOW IT WORKS SECTION ===== -->
+<section class="how-it-works" id="how-it-works">
+  <h1>HOW IT WORKS</h1>
+   <div class="hiw-container">
+       
+     <div class="hiw-cards">
+      <i class="fa-solid fa-camera hiw-icon-style"></i>
+      <h3>Capture Your Experience</h3>
+      <p>Our photographers are stationed at partnered tourist spots to capture your best moments — whether you’re exploring, riding, or simply enjoying the view.</p>
+      
+     </div>
+     <div class="hiw-cards">
+      <i class="fa-solid fa-qrcode hiw-icon-style"></i>
+      <h3>Capture Your Experience</h3>
+      <p>Our photographers are stationed at partnered tourist spots to capture your best moments — whether you’re exploring, riding, or simply enjoying the view.</p>
+     </div>
+     <div class="hiw-cards">
+      <i class="fa-solid fa-images hiw-icon-style"></i>
+      <h3>Capture Your Experience</h3>
+      <p>Our photographers are stationed at partnered tourist spots to capture your best moments — whether you’re exploring, riding, or simply enjoying the view.</p>
+     </div>
+
+   </div>
+</section>
+
+<!-- ===== CONTENT SECTION (PLACEHOLDER) ===== -->
+<section class="content-section">
+  <div class="content-overlay">
+    <h1>Why Choose <br><span class="highlight-script">Profilepicmultimedia</span>
+      <span style="font-size: 20px; font-weight: lighter; margin-top: 20px; font-family: 'Roboto', sans-serif; letter-spacing: 2px;"><p>more than photos — we capture the heart of your journey</p></h1></span>
+    <div class="why-container">
+      <div class="wc-card">
+        <i class="fa-solid fa-camera wc-icon-style"></i>
+        <h3>Professional Quality</h3>
+        <p>From high-resolution candid shots to stunning portraits, our experienced photographers deliver gallery-worthy images every time.</p>
+      </div>
+      <div class="wc-card">
+         <i class="fa-solid fa-calendar-days wc-icon-style"></i>
+        <h3>Hassle-Free Booking</h3>
+        <p>Simple online booking, transparent pricing, and friendly service every step of the way. We handle the details—you enjoy the moment.</p>
+      </div>
+      <div class="wc-card">
+         <i class="fa-solid fa-gift wc-icon-style"></i>
+        <h3>Custom Packages & Souvenirs</h3>
+        <p>Choose from flexible packages tailored to solo travelers, couples, families, and groups—plus add unique printed souvenirs to your order.</p>
+      </div>
+      <div class="wc-card">
+         <i class="fa-solid fa-clock wc-icon-style"></i>
+        <h3>Fast Turnaround</h3>
+        <p>We know you're on the move. Get beautifully edited photos delivered fast, so you can share and relive your trip right away.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -207,84 +272,7 @@
   </div>
 </section>
 
-<!-- ===== GUIDE / HOW IT WORKS SECTION ===== -->
-<section class="how-it-works" id="how-it-works">
-    <section id="how-it-works"></section>
-  <h2 class="how-it-works-title">How It Works</h2>
 
-  <div class="how-it-works-steps">
-    <div class="step">
-      <img src="images/icons/location-pin.png" alt="Choose Location" class="icon">
-      <h3>Choose Your Location</h3>
-      <p>Browse our available destinations and select where you’d like to have your photo experience.</p>
-    </div>
-
-    <div class="step">
-      <img src="images/icons/calendar.png" alt="Pick Your Date" class="icon">
-      <h3>Pick Your Date & Package</h3>
-      <p>Set your preferred schedule and choose a package that fits your needs — whether it’s solo, group, or event coverage.</p>
-    </div>
-
-    <div class="step">
-      <img src="images/icons/dslr-camera.png" alt="Confirm & Get Ready" class="icon">
-      <h3>Confirm & Get Ready</h3>
-      <p>Submit your booking details and receive a confirmation message. You’re all set for your photo session!</p>
-    </div>
-  </div>
-
-  <a href="#" class="view-packages-btn">View Packages ></a>
-</section>
-
-<section id="packages" class="packages-section">
-    <section id="packages"></section>
-  <div class="packages-content">
-    <h2 class="packages-title">Choose the Perfect Package for Your Experience</h2>
-    <p class="packages-desc">
-      Whether you’re traveling solo, with friends, or in a group — we’ve got you covered.
-      Each package includes professional shots, easy booking, and lasting memories.
-    </p>
-    <a href="#" class="get-started-btn">Get Started &gt;</a>
-  </div>
-
-  <div class="packages-list">
-    <!-- Left (Pro) -->
-    <div class="package-card">
-      <h3 class="package-name">Pro</h3>
-      <p class="package-price">$40</p>
-      <p class="package-subtitle">Best for quick and simple captures.</p>
-      <p class="package-details">
-        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
-      </p>
-    </div>
-
-    <!-- Middle (Plus) -->
-    <div class="package-card highlight">
-      <h3 class="package-name">Plus</h3>
-      <p class="package-price">$25</p>
-      <p class="package-subtitle">Best for quick and simple captures.</p>
-      <p class="package-details">
-        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
-      </p>
-      <button class="book-now-btn">Book Now</button>
-
-<script>
-  document.querySelector('.book-now-btn').addEventListener('click', () => {
-    window.location.href = 'bookings.html';
-  });
-  </script>
-    </div>
-
-    <!-- Right (Standard) -->
-    <div class="package-card">
-      <h3 class="package-name">Standard</h3>
-      <p class="package-price">$10</p>
-      <p class="package-subtitle">Best for quick and simple captures.</p>
-      <p class="package-details">
-        Quick and simple — 5 edited, 10 raw shots. Perfect for solo visitors.
-      </p>
-    </div>
-  </div>
-</section>
 
 <!-- TESTIMONIAL -->
 <section class="testimonials">
@@ -292,7 +280,7 @@
 
   <div class="testimonial-carousel">
     <button class="arrow left" id="prevBtn">&#10094;</button>
-    <div class="testimonial-track">
+    <div class="testimonial-track" style="background-color: aquamarine;">
       <div class="testimonial-box">
         <div class="quote-mark">“</div>
         <p>10/10 Mabait ang staff, magaganda ang photos! Kudos sa team kasi kahit mainit matiyaga silang nagttake ng pictures! Ang ganda din ng quality printed photos.</p>
@@ -340,11 +328,6 @@
 </section>
 
 
-
-<!-- ===== CONTENT SECTION (PLACEHOLDER) ===== -->
-<section class="content-section">
-  <div class="content-overlay"></div>
-</section>
 
 <!-- ===== FOOTER SECTION ===== -->
 <footer class="footer-below-box">
