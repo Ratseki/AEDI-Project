@@ -30,12 +30,17 @@ async function loadGallery() {
     }
 
     galleryContainer.innerHTML = photos.map(photo => `
-      <div class="photo-card">
-        <img src="/${photo.watermarked_path}" alt="Photo ${photo.id}" />
-        <p>Photo #${photo.id}</p>
-        <button onclick="buyPhoto(${photo.id}, 50, 'gcash')">Buy ₱50</button>
-      </div>
-    `).join("");
+    <div class="photo-card">
+      <img src="/${photo.file_path}" alt="Photo ${photo.id}" />
+      <p>Photo #${photo.id}</p>
+      ${
+        photo.purchase_status === 'purchased'
+          ? `<a href="/${photo.file_path.replace('watermarked', 'originals')}" download>Download</a>`
+          : `<button onclick="buyPhoto(${photo.id}, ${photo.price || 50}, 'gcash')">Buy ₱${photo.price || 50}</button>`
+      }
+    </div>
+  `).join("");
+
   } catch (err) {
     console.error("❌ Gallery load error:", err);
     payError.textContent = "Network error loading photos.";

@@ -85,6 +85,16 @@ nav a {
   border: 3px solid #CE6826;
 }
 
+.photo-card .photo-checkbox {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  z-index: 2;
+}
+
 /* Photo images */
 .photo-card img {
   max-width: 100%;

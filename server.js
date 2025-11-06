@@ -15,11 +15,11 @@ const authorizeRoles = require("./middleware/roleMiddleware");
 
 const app = express();
 
-// ======================================================
-// === RAW Webhook (Must be before express.json())
-// ======================================================
-app.use("/api/photo-purchases/webhook", express.raw({ type: "application/json" }));
+// 1️⃣ Parse raw JSON for webhooks (before express.json())
+app.use("/api/webhooks/paymongo", express.raw({ type: "*/*" }));
 
+// 2️⃣ Mount the webhook router
+app.use("/api/webhooks", require("./routes/webhooks"));
 
 // ======================================================
 // === Middleware
@@ -34,8 +34,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 // Serve everything in public
 app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/api/webhooks", require("./routes/webhooks"));
 
 // Optional: explicitly serve /user if needed
 app.use("/user", express.static(path.join(__dirname, "public/user")));
@@ -63,7 +61,8 @@ const galleryAccessRoutes = require("./routes/galleryAccess");
 const photoRoutes = require("./routes/photos"); // upload + gallery
 const photoPurchaseRoutes = require("./routes/photoPurchases"); // purchase + download
 const transactionsRoutes = require("./routes/transactions");
-
+const profileRoutes = require("./routes/profile");
+const notificationRoutes = require("./routes/notifications");
 
 // ======================================================
 // === Route Mounting
@@ -82,6 +81,10 @@ app.use("/api/photos", photoRoutes);
 app.use("/api/transactions", transactionsRoutes);
 
 app.use("/api/photo-purchases", photoPurchaseRoutes);
+
+app.use("/api/profile", profileRoutes);
+
+app.use("/api/notifications", notificationRoutes);
 
 // ======================================================
 // === Cron Job: Expire Purchased Photos

@@ -50,41 +50,34 @@ router.get("/access/:code", async (req, res) => {
   }
 });
 
-// Get logged-in user's gallery (production-ready)
+// Get logged-in user's gallery (shows available + purchased)
 router.get("/gallery", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Fetch all published photos for this user
     const [photos] = await dbPromise.query(
-      `SELECT id, file_path, file_name, price, status, purchased_at, expires_at
-       FROM photos
-       WHERE user_id = ? AND is_published = 1
-       ORDER BY created_at DESC`,
+      `SELECT 
+         p.id,
+         p.file_name,
+         p.file_path,
+         p.price,
+         p.status,
+         p.purchased_at,
+         COALESCE(pp.status, 'unpaid') AS purchase_status
+       FROM photos p
+       LEFT JOIN photo_purchases pp 
+         ON p.id = pp.photo_id AND pp.user_id = ?
+       WHERE p.is_published = 1
+       ORDER BY p.created_at DESC`,
       [userId]
     );
 
-    // Map file paths to accessible URLs
     const formattedPhotos = photos.map(photo => ({
       ...photo,
-      file_path: `/uploads/${photo.file_path.split('/').pop()}` // only filename
+      file_path: `/uploads/${photo.file_path.split('/').pop()}`
     }));
 
-    // Remaining downloads
-    const [downloads] = await dbPromise.query(
-      `SELECT 
-         COALESCE(SUM(CASE WHEN status='purchased' AND expires_at > NOW() THEN 1 ELSE 0 END),0) AS remaining,
-         COUNT(*) AS total
-       FROM photo_purchases
-       WHERE user_id = ?`,
-      [userId]
-    );
-
-    res.json({
-      photos: formattedPhotos,
-      remaining: downloads[0]?.remaining || 0,
-      total: downloads[0]?.total || 0
-    });
+    res.json(formattedPhotos);
   } catch (err) {
     console.error("Gallery fetch error:", err);
     res.status(500).json({ message: "Server error fetching gallery" });
