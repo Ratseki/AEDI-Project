@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="navstyle.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    section {
+      background-color: #e0951e;
+      min-height: 100vh;
+      width: 100%;
+      margin: auto;
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      display: flex;
+      background: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 1000px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin: auto;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 260px;
+      background: #fff;
+      border-right: 1px solid #3a4b88;
+      padding: 25px;
+    }
+
+    .user-info {
+      text-align: center;
+    }
+
+    .user-info .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      margin-bottom: 8px;
+    }
+
+    .user-info h2 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      margin-top: 20px;
+    }
+
+    nav li {
+      font-size: 14px;
+      padding: 6px 0;
+      cursor: pointer;
+      color: #333;
+    }
+
+    nav li.active {
+      color: #f5a623;
+    }
+
+    nav .section-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 15px 0;
+    }
+
+    /* ===== MAIN PROFILE ===== */
+    .profile-section {
+      flex: 1;
+      padding: 35px 45px;
+    }
+
+    .profile-section h1 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .profile-content {
+      display: flex;
+      gap: 40px;
+      margin-top: 25px;
+    }
+
+    .profile-image {
+      text-align: center;
+    }
+
+    .profile-image img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .change-btn {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 5px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .profile-details {
+      flex: 1;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: inline-block;
+      width: 130px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-group input[type="text"] {
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 250px;
+    }
+
+    .form-group p {
+      display: inline-block;
+      color: #333;
+    }
+
+    .gender label {
+      font-weight: 400;
+      margin-right: 15px;
+    }
+
+    .save-btn {
+      display: block;
+      margin-top: 20px;
+      background: #f5a623;
+      color: white;
+      border: none;
+      padding: 10px 40px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .save-btn:hover {
+      background: #e0951e;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+      }
+      .profile-content {
+        flex-direction: column;
+        align-items: center;
+      }
+      .form-group label {
+        width: 100%;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input,
+      .form-group p {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+   <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="logo">
+      <!-- Replace this with your actual logo image -->
+      <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
+    </div>
+
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#about">About Us</a>
+      <a href="#packages">Package & Booking</a>
+      <!--
+      <div class="dropdown">
+        <button class="dropbtn">Services ▾</button>
+        <div class="dropdown-content">
+          <a href="service_and_packages.html">Photography Packages</a>
+          <a href="#locations-section">Locations</a>
+          <a href="#how-it-works">Booking Guide</a>
+        </div>
+      </div>-->
+
+      <a href="/user/gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+      
+      <div class="account-icon" id="account-nav">
+        <!-- This will be updated by JS -->
+      </div>
+
+  </header>
+  
+  <section>
+    
+    <div class="container">
+      <!-- ===== SIDEBAR ===== -->
+      <aside class="sidebar">
+        <div class="user-info">
+          <img src="/AEDI-Project/public/images/ambermcshine.jpg" alt="User Photo" class="avatar">
+          <h2>Amber Mcshine</h2>
+        </div>
+        <hr>
+        <nav>
+          <ul>
+            <li class="section-title">My Account</li>
+            <li class="active">Profile</li>
+            <li>Banks & Cards</li>
+            <li>Change Password</li>
+          </ul>
+          <ul>
+            <li class="section-title">My Gallery</li>
+          </ul>
+          <ul>
+            <li class="section-title">My Photos</li>
+          </ul>
+          <ul>
+            <li class="section-title">Bookings</li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- ===== MAIN PROFILE ===== -->
+      <main class="profile-section">
+        <h1>My Profile</h1>
+        <hr>
+        <div class="profile-content">
+          <div class="profile-image">
+            <img src="images/ambermcshine.jpg" alt="Profile Placeholder">
+            <button class="change-btn">Change</button>
+          </div>
+          <div class="profile-details">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" value="Amber Mcshine">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <p>mc****@gmail.com</p>
+            </div>
+            <div class="form-group">
+              <label>Phone Number</label>
+              <p>********20</p>
+            </div>
+            <div class="form-group gender">
+              <label>Gender</label>
+              <label><input type="radio" name="gender"> Male</label>
+              <label><input type="radio" name="gender" checked> Female</label>
+              <label><input type="radio" name="gender"> Other</label>
+            </div>
+            <div class="form-group">
+              <label>Date of Birth</label>
+              <p>**/**/2000</p>
+            </div>
+            <button class="save-btn">SAVE</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </section>
+
+
+
+  
+  <!-- ===== FOOTER SECTION ===== -->
+<footer>
+    <div class="footer-container">
+        <!-- LEFT: Logo and Contact -->
+        <div class="footer-logo-section">
+            <div class="footer-logo">
+                <img src="images/logo_wbg.png" alt="ProfilePic Multimedia">
+            </div>
+            <div class="footer-contact">
+                <p>0976 004 2741</p>
+                <p>profilepicmultimedia@gmail.com</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="footer-column">
+            <h3>Discover</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Partner Locations</a></li>
+                <li><a href="#">Packages</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">Testimonials</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Support</h3>
+            <ul>
+                <li><a href="#">How It Works</a></li>
+                <li><a href="#">Booking Guide</a></li>
+                <li><a href="#">My Gallery</a></li>
+                <li><a href="#">Edit My Account</a></li>
+                <li><a href="#">Payment & Refund Policy</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-column">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="#">Terms & Conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">FAQs</a></li>
+            </ul>
+        </div>
+
+        <!-- Follow Us -->
+        <div class="footer-column">
+            <h3>Follow us</h3>
+            <ul>
+            <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 363.3L240 576L356 576L356 363.3L442.5 363.3L460.5 265.5L356 265.5L356 230.9C356 179.2 376.3 159.4 428.7 159.4C445 159.4 458.1 159.8 465.7 160.6L465.7 71.9C451.4 68 416.4 64 396.2 64C289.3 64 240 114.5 240 223.4L240 265.5L174 265.5L174 363.3L240 363.3z"/></svg></a>
+             <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M544.5 273.9C500.5 274 457.5 260.3 421.7 234.7L421.7 413.4C421.7 446.5 411.6 478.8 392.7 506C373.8 533.2 347.1 554 316.1 565.6C285.1 577.2 251.3 579.1 219.2 570.9C187.1 562.7 158.3 545 136.5 520.1C114.7 495.2 101.2 464.1 97.5 431.2C93.8 398.3 100.4 365.1 116.1 336C131.8 306.9 156.1 283.3 185.7 268.3C215.3 253.3 248.6 247.8 281.4 252.3L281.4 342.2C266.4 337.5 250.3 337.6 235.4 342.6C220.5 347.6 207.5 357.2 198.4 369.9C189.3 382.6 184.4 398 184.5 413.8C184.6 429.6 189.7 444.8 199 457.5C208.3 470.2 221.4 479.6 236.4 484.4C251.4 489.2 267.5 489.2 282.4 484.3C297.3 479.4 310.4 469.9 319.6 457.2C328.8 444.5 333.8 429.1 333.8 413.4L333.8 64L421.8 64C421.7 71.4 422.4 78.9 423.7 86.2C426.8 102.5 433.1 118.1 442.4 131.9C451.7 145.7 463.7 157.5 477.6 166.5C497.5 179.6 520.8 186.6 544.6 186.6L544.6 274z"/></svg></a>
+            </ul>
+        </div>
+        
+    </div>
+
+    <div class="footer-bottom">
+        <p class="copyright">Copyright © ProfilePicMultimedia 2025</p>
+        <a href="#" class="back-to-top">Back to top</a>
+    </div>
+</footer>
+
+</body>
+</html>
