@@ -2,12 +2,18 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+const bcrypt = require("bcryptjs");
 const { dbPromise } = require("../config/db");
 const authenticateToken = require("../middleware/authMiddleware");
 
+// === Ensure upload folder exists ===
+const uploadDir = path.join(__dirname, "../uploads/profile_pics");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
 // === Multer Setup for Profile Picture Upload ===
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "uploads/profile_pics"),
+  destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     cb(null, `profile_${req.user.id}${ext}`);
@@ -19,7 +25,7 @@ const upload = multer({ storage });
 router.get("/", authenticateToken, async (req, res) => {
   try {
     const [rows] = await dbPromise.query(
-      "SELECT id, name, email, contact, profile_pic FROM users WHERE id = ?",
+      "SELECT id, name, email, contact, gender, dob, profile_pic FROM users WHERE id = ?",
       [req.user.id]
     );
     if (!rows.length) return res.status(404).json({ message: "User not found" });
@@ -32,13 +38,12 @@ router.get("/", authenticateToken, async (req, res) => {
 
 // === Update user details ===
 router.put("/", authenticateToken, async (req, res) => {
-  const { name, contact } = req.body;
+  const { name, contact, gender, dob } = req.body;
   try {
-    await dbPromise.query("UPDATE users SET name=?, contact=? WHERE id=?", [
-      name,
-      contact,
-      req.user.id,
-    ]);
+    await dbPromise.query(
+      "UPDATE users SET name=?, contact=?, gender=?, dob=? WHERE id=?",
+      [name, contact, gender, dob, req.user.id]
+    );
     res.json({ message: "Profile updated successfully." });
   } catch (err) {
     console.error(err);
@@ -53,7 +58,6 @@ router.put("/change-password", authenticateToken, async (req, res) => {
     const [rows] = await dbPromise.query("SELECT password FROM users WHERE id=?", [req.user.id]);
     if (!rows.length) return res.status(404).json({ message: "User not found" });
 
-    const bcrypt = require("bcryptjs");
     const valid = await bcrypt.compare(currentPassword, rows[0].password);
     if (!valid) return res.status(400).json({ message: "Current password incorrect" });
 

@@ -14,194 +14,290 @@
 
   <style>
 
-    section {
-      background-color: #e0951e;
-      min-height: 100vh;
-      width: 100%;
-      margin: auto;
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+/* ===== Global Settings ===== */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #F8F9FA;
+  margin: 0;
+  padding: 0;
+  color: #495057;
+}
 
-    .container {
-      display: flex;
-      background: #fff;
-      border-radius: 6px;
-      overflow: hidden;
-      width: 100%;
-      max-width: 1000px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin: auto;
-    }
+/* ===== Section & Container ===== */
+section {
+  background-color: #F8F9FA;
+  min-height: 100vh;
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-bottom: 2rem;
+}
 
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      width: 260px;
-      background: #fff;
-      border-right: 1px solid #3a4b88;
-      padding: 25px;
-    }
+.container {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 16px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 1200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
 
-    .user-info {
-      text-align: center;
-    }
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 280px;
+  background: #fff;
+  border-right: 1px solid #FFFFFF;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
 
-    .user-info .avatar {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      margin-bottom: 8px;
-    }
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
-    .user-info h2 {
-      font-size: 16px;
-      font-weight: 600;
-    }
+.user-info .avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #DEE2E6;
+}
 
-    nav ul {
-      list-style: none;
-      margin-top: 20px;
-    }
+.user-info h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+}
 
-    nav li {
-      font-size: 14px;
-      padding: 6px 0;
-      cursor: pointer;
-      color: #333;
-    }
+/* Sidebar Menu */
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 
-    nav li.active {
-      color: #f5a623;
-    }
+/* Section titles (non-clickable) */
+nav li.section-title {
+  font-weight: 600;
+  cursor: default;        /* non-clickable */
+  pointer-events: none;   /* disables clicks */
+  font-size: 0.95rem;
+  margin: 0.5rem 0 0.25rem 0;
+  color: #495057;
+  position: relative;
+  padding-left: 0.25rem;
+}
 
-    nav .section-title {
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 4px;
-    }
+nav li.section-title::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: rgba(0,0,0,0.2);
+  margin-top: 0.35rem;
+}
 
-    hr {
-      border: none;
-      border-top: 1px solid #eee;
-      margin: 15px 0;
-    }
+/* Sub-menu items (clickable) */
+nav ul.sub-menu {
+  padding-left: 1rem; /* visual nesting */
+}
 
-    /* ===== MAIN PROFILE ===== */
-    .profile-section {
-      flex: 1;
-      padding: 35px 45px;
-    }
+nav ul.sub-menu li {
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.35rem 0 0.35rem 1rem;
+  color: #6c757d;
+  transition: color 0.2s;
+}
 
-    .profile-section h1 {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
+nav ul.sub-menu li:hover {
+  color: #F4981E;
+}
 
-    .profile-content {
-      display: flex;
-      gap: 40px;
-      margin-top: 25px;
-    }
+nav li.active {
+  color: #F4981E;
+  font-weight: 600;
+}
 
-    .profile-image {
-      text-align: center;
-    }
+/* ===== Profile Section ===== */
+.profile-section {
+  flex: 1;
+  padding: 2.5rem 3rem;
+}
 
-    .profile-image img {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      margin-bottom: 10px;
-    }
+.profile-section h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
 
-    .change-btn {
-      border: 1px solid #ccc;
-      background: #fff;
-      padding: 5px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 14px;
-    }
+hr {
+  border: none;
+  border-top: 1px solid #FFFFFF;
+  margin: 0.5rem 0 1rem 0;
+}
 
-    .profile-details {
-      flex: 1;
-    }
+.profile-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
 
-    .form-group {
-      margin-bottom: 15px;
-    }
+/* Profile Image */
+.profile-image {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-    .form-group label {
-      display: inline-block;
-      width: 130px;
-      font-weight: 500;
-      color: #555;
-    }
+.profile-image img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: 2px solid #DEE2E6;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
 
-    .form-group input[type="text"] {
-      padding: 6px 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 250px;
-    }
+.change-btn {
+  background: #E9ECEF;
+  border: 1px solid #CED4DA;
+  color: #495057;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: 0.2s;
+}
 
-    .form-group p {
-      display: inline-block;
-      color: #333;
-    }
+.change-btn:hover {
+  background: #DEE2E6;
+}
 
-    .gender label {
-      font-weight: 400;
-      margin-right: 15px;
-    }
+/* Profile Form */
+.profile-details .form-group {
+  margin-bottom: 1.25rem;
+}
 
-    .save-btn {
-      display: block;
-      margin-top: 20px;
-      background: #f5a623;
-      color: white;
-      border: none;
-      padding: 10px 40px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+.profile-details label {
+  display: inline-block;
+  width: 130px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #495057;
+}
 
-    .save-btn:hover {
-      background: #e0951e;
-    }
+.profile-details input[type="text"],
+.profile-details input[type="date"],
+.profile-details input[type="password"] {
+  padding: 0.75rem 0.85rem;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  background: #E9ECEF;
+  font-size: 1rem;
+  color: #495057;
+}
 
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
-      .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #eee;
-      }
-      .profile-content {
-        flex-direction: column;
-        align-items: center;
-      }
-      .form-group label {
-        width: 100%;
-        display: block;
-        margin-bottom: 5px;
-      }
-      .form-group input,
-      .form-group p {
-        width: 100%;
-      }
-    }
-  </style>
+.profile-details input:focus {
+  outline: none;
+  border-color: #F4981E;
+  box-shadow: 0 0 0 2px rgba(244, 152, 30, 0.2);
+}
+
+/* Gender Radios */
+.gender {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.gender label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gender input[type="radio"] {
+  accent-color: #F4981E;
+}
+
+/* Save Button */
+.save-btn {
+  display: block;
+  margin-top: 1.5rem;
+  background: #F4981E;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #DEE2E6;
+    padding: 1rem;
+  }
+
+  .profile-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .profile-details label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .profile-details input,
+  .profile-details p {
+    width: 100%;
+  }
+
+  .profile-image {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+
+  .profile-image img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+
+</style>
+
+
 </head>
 
 <body>
+
    <!-- ===== NAVBAR ===== -->
   <header class="navbar">
     <div class="logo">
@@ -210,7 +306,7 @@
     </div>
 
     <nav class="nav-links">
-      <a href="#home" class="active">Home</a>
+      <a href="/index.html" class="active">Home</a>
       <a href="#about">About Us</a>
       <a href="#packages">Package & Booking</a>
       <!--
@@ -238,7 +334,8 @@
       <!-- ===== SIDEBAR ===== -->
       <aside class="sidebar">
         <div class="user-info">
-          <img src="/AEDI-Project/public/images/ambermcshine.jpg" alt="User Photo" class="avatar">
+          <img src="/images/ambermcshine.jpg" alt="User Photo" class="avatar">
+          <input type="file" id="profileUploadInput" accept="image/*" style="display: none;">
           <h2>Amber Mcshine</h2>
         </div>
         <hr>
@@ -250,59 +347,135 @@
             <li>Change Password</li>
           </ul>
           <ul>
-            <li class="section-title">My Gallery</li>
+            <li>My Gallery</li>
           </ul>
           <ul>
-            <li class="section-title">My Photos</li>
+            <li>My Photos</li>
           </ul>
           <ul>
-            <li class="section-title">Bookings</li>
+            <li>Bookings</li>
           </ul>
         </nav>
       </aside>
 
       <!-- ===== MAIN PROFILE ===== -->
-      <main class="profile-section">
-        <h1>My Profile</h1>
-        <hr>
-        <div class="profile-content">
-          <div class="profile-image">
-            <img src="images/ambermcshine.jpg" alt="Profile Placeholder">
-            <button class="change-btn">Change</button>
-          </div>
-          <div class="profile-details">
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" value="Amber Mcshine">
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <p>mc****@gmail.com</p>
-            </div>
-            <div class="form-group">
-              <label>Phone Number</label>
-              <p>********20</p>
-            </div>
-            <div class="form-group gender">
-              <label>Gender</label>
-              <label><input type="radio" name="gender"> Male</label>
-              <label><input type="radio" name="gender" checked> Female</label>
-              <label><input type="radio" name="gender"> Other</label>
-            </div>
-            <div class="form-group">
-              <label>Date of Birth</label>
-              <p>**/**/2000</p>
-            </div>
-            <button class="save-btn">SAVE</button>
-          </div>
-        </div>
-      </main>
+<main class="profile-section">
+  <!-- PANEL 1: Profile -->
+<section id="panelProfile">
+  <h1>My Profile</h1>
+  <hr>
+  <div class="profile-content">
+    <div class="profile-image">
+      <img id="profilePic" src="images/ambermcshine.jpg" alt="Profile Placeholder">
+      <button id="changePicBtn" class="change-btn">Change</button>
+    </div>
+    <div class="profile-details">
+      <div class="form-group">
+        <label for="profileName">Name</label>
+        <input type="text" id="profileName" value="">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <p id="profileEmail">Loading...</p>
+      </div>
+      <div class="form-group">
+        <label for="profilePhone">Phone Number</label>
+        <input type="text" id="profilePhone" value="">
+      </div>
+      <div class="form-group gender">
+        <label>Gender</label>
+        <label><input type="radio" name="profileGender" value="Male"> Male</label>
+        <label><input type="radio" name="profileGender" value="Female"> Female</label>
+        <label><input type="radio" name="profileGender" value="Other"> Other</label>
+      </div>
+      <div class="form-group">
+        <label for="profileDOB">Date of Birth</label>
+        <input type="date" id="profileDOB" value="">
+      </div>
+      <button id="saveProfileBtn" class="save-btn">SAVE</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- MODAL EXAMPLE -->
+<div class="modal-backdrop" id="profileModal" style="display:none;">
+  <div class="modal-content">
+    <img src="images/icons/user-icon.svg" alt="Profile Icon" style="width:50px; margin-bottom:15px;">
+    <h2>Change Profile Picture</h2>
+    <p>Select a new profile picture from your device.</p>
+    <input type="file" id="modalProfileUpload" accept="image/*">
+    <div style="margin-top:20px;">
+      <button onclick="closeModal('profileModal')">Cancel</button>
+      <button onclick="saveProfilePic()">Save</button>
+    </div>
+  </div>
+</div>
+
+  <!-- PANEL 2: Banks & Cards -->
+  <section id="panelBanks" style="display:none;">
+      <h1>Banks & Cards</h1>
+      <hr>
+      <button id="addPaymentBtn" class="save-btn" style="float:right;margin-bottom:15px;">+ Add Payment Method</button>
+      <p>You don't have any payment method yet.</p>
+</section>
+
+  <!-- PANEL 3: Change Password -->
+  <section id="panelPassword" style="display:none;">
+    <h1>Change Password</h1>
+    <hr>
+    <form id="passwordForm">
+      <div class="form-group">
+        <label for="currentPassword">Current Password</label>
+        <input type="password" id="currentPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Re-type New Password</label>
+        <input type="password" id="confirmPassword" required>
+      </div>
+      <p><a href="#">Forgot Password?</a></p>
+      <button type="submit" class="save-btn">Change Password</button>
+    </form>
+  </section>
+
+  <!-- PANEL 4: My Gallery -->
+<section id="panelGallery" style="display:none;">
+  <h1>My Gallery</h1>
+  <hr>
+  
+  <div class="gallery-header" style="display:flex; justify-content:space-between; margin-bottom:15px;">
+    <span>Remaining Downloads <span id="remaining-downloads">0</span>/<span id="total-downloads">0</span></span>
+    <div>
+      <span id="selected-count">0 Selected</span>
+      <button id="bulkDownloadBtn" class="save-btn" style="background:#F9BF5F; color:#000; margin-left:10px;">Download</button>
+    </div>
+  </div>
+
+  <div id="gallery-grid" class="gallery-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px;">
+    <!-- Images loaded dynamically by JS -->
+  </div>
+
+  <div class="payment-method" style="margin-top:15px;">
+    <label for="payment-method-select">Select Payment Method:</label>
+    <select id="payment-method-select">
+      <option value="card">Credit / Debit Card</option>
+      <option value="gcash">GCash</option>
+      <option value="paymaya">PayMaya</option>
+    </select>
+  </div>
+
+  <button id="purchase-btn" class="save-btn" style="margin-top:10px;">Purchase Selected Photos</button>
+</section>
+
+</main>
+
     </div>
   </section>
 
-
-
-  
   <!-- ===== FOOTER SECTION ===== -->
 <footer>
     <div class="footer-container">
@@ -367,6 +540,6 @@
         <a href="#" class="back-to-top">Back to top</a>
     </div>
 </footer>
-
+<script src="/js/profilepage.js"></script>
 </body>
 </html>
