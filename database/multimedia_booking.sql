@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 11:49 AM
+-- Generation Time: Nov 05, 2025 at 03:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,7 +64,13 @@ INSERT INTO `bookings` (`id`, `user_id`, `service_id`, `date`, `status`, `create
 (28, 3, 1, '2025-10-14', 'pending', '2025-10-22 16:01:42', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 2, '13:00', NULL),
 (29, 3, 1, '2025-10-10', 'pending', '2025-10-22 16:02:54', 'KC', 'AB', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — $40', 'yes', 3, '14:00', NULL),
 (30, 1, 1, '2025-10-23', 'confirmed', '2025-10-23 16:06:57', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL),
-(35, 3, 2, '2025-11-14', 'pending', '2025-11-04 02:02:22', 'KC', 'Abella', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', '3', 2, '15:00', NULL);
+(35, 3, 2, '2025-11-14', 'pending', '2025-11-04 02:02:22', 'KC', 'Abella', 'kcabella1611@gmail.com', '3019', '09167406636', 'Plus — $25', '3', 2, '15:00', NULL),
+(36, 3, 1, '2025-11-06', 'pending', '2025-11-04 11:04:36', 'KC', 'Abella', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — ₱40', NULL, NULL, '10:00', NULL),
+(37, 3, 3, '2025-11-06', 'pending', '2025-11-04 11:05:37', 'KC', 'Abella', 'rayseki1337@gmail.com', '3019', '09167406636', 'Standard — ₱10', NULL, NULL, '10:00', NULL),
+(38, 3, 1, '2025-11-06', 'pending', '2025-11-04 11:05:50', 'KC', 'Abella', 'rayseki1337@gmail.com', '3019', '09167406636', 'Pro — ₱40', NULL, NULL, '10:00', NULL),
+(39, 3, 3, '2025-11-06', 'pending', '2025-11-04 11:06:14', 'KC', 'Abella', 'rayseki1337@gmail.com', '3019', '09167406636', 'Standard — ₱10', NULL, NULL, '10:00', NULL),
+(40, 3, 3, '2025-11-06', 'pending', '2025-11-04 11:10:20', 'KC', 'Abella', 'rayseki1337@gmail.com', '3019', '09167406636', 'Standard — ₱10', NULL, NULL, '10:00', NULL),
+(41, 3, 1, '2025-11-14', 'pending', '2025-11-05 11:52:46', 'KC', 'Abella', 'kcabella1611@gmail.com', '3019', '09167406636', 'Pro — ₱40', NULL, NULL, '10:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -167,9 +173,7 @@ CREATE TABLE `photos` (
 
 INSERT INTO `photos` (`id`, `booking_id`, `user_id`, `uploaded_by`, `file_name`, `file_path`, `watermarked_path`, `uploaded_at`, `is_published`, `price`, `status`, `expires_at`, `purchased_at`, `created_at`) VALUES
 (31, NULL, 1, 7, '', '/uploads/1762000415075.png', NULL, '2025-11-01 12:33:35', 1, 100.00, 'available', NULL, NULL, '2025-11-01 20:33:35'),
-(33, NULL, 1, 7, '', '/uploads/1762000415096.png', NULL, '2025-11-01 12:33:35', 1, 100.00, 'available', NULL, NULL, '2025-11-01 20:33:35'),
 (34, NULL, 5, 7, 'DP for Corrupt.png', '/uploads/1762078302539.png', NULL, '2025-11-02 10:11:42', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:11:42'),
-(35, NULL, 5, 7, 'pat.png', '/uploads/1762078342970.png', NULL, '2025-11-02 10:12:22', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:12:22'),
 (36, NULL, 5, 7, 'horse.jpg', '/uploads/1762078603646.jpg', NULL, '2025-11-02 10:16:43', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:16:43'),
 (37, NULL, 5, 7, '360_F_487659230_LIQIuM4OtZLTJ4juqUAfyZL24muRatdZ.jpg', '/uploads/1762078603651.jpg', NULL, '2025-11-02 10:16:43', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:16:43'),
 (38, NULL, 5, 7, '7-ortoneffectkcab.jpg', '/uploads/1762078603652.jpg', NULL, '2025-11-02 10:16:43', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:16:43'),
@@ -177,8 +181,9 @@ INSERT INTO `photos` (`id`, `booking_id`, `user_id`, `uploaded_by`, `file_name`,
 (41, NULL, 5, 7, 'network-addressing-and-basic-troubleshooting(1).png', '/uploads/1762078654449.png', NULL, '2025-11-02 10:17:34', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:17:34'),
 (42, NULL, 5, 7, 'network-addressing-and-basic-troubleshooting(1).png', '/uploads/1762078761894.png', NULL, '2025-11-02 10:19:21', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:19:21'),
 (43, NULL, 5, 7, 'mesozoicomap2.png', '/uploads/1762078785061.png', NULL, '2025-11-02 10:19:45', 1, 100.00, 'available', NULL, NULL, '2025-11-02 18:19:45'),
-(83, NULL, 3, 7, 'togif.gif', '/uploads/1762165272831.gif', NULL, '2025-11-03 10:21:12', 1, 100.00, 'available', NULL, NULL, '2025-11-03 18:21:12'),
-(84, NULL, 1, 8, 'Dr_Andrew_Huberman.jpg', '/uploads/1762241156208.jpg', NULL, '2025-11-04 07:25:56', 1, 100.00, 'available', NULL, NULL, '2025-11-04 15:25:56');
+(83, NULL, 3, 7, 'togif.gif', '/uploads/1762165272831.gif', NULL, '2025-11-03 10:21:12', 1, 100.00, 'purchased', NULL, '2025-11-05 20:08:37', '2025-11-03 18:21:12'),
+(84, NULL, 1, 8, 'Dr_Andrew_Huberman.jpg', '/uploads/1762241156208.jpg', NULL, '2025-11-04 07:25:56', 1, 100.00, 'available', NULL, NULL, '2025-11-04 15:25:56'),
+(85, NULL, 3, 8, 'tyler.jpeg', '/uploads/1762344600581.jpeg', NULL, '2025-11-05 12:10:00', 1, 100.00, 'available', NULL, NULL, '2025-11-05 20:10:00');
 
 -- --------------------------------------------------------
 
@@ -214,7 +219,38 @@ INSERT INTO `photo_purchases` (`id`, `photo_id`, `user_id`, `purchase_date`, `ex
 (11, 83, 3, '2025-11-04 06:20:30', NULL, 100.00, '', '2025-11-04 14:20:30'),
 (12, 83, 3, '2025-11-04 06:23:14', NULL, 100.00, '', '2025-11-04 14:23:14'),
 (13, 83, 3, '2025-11-04 06:23:14', NULL, 100.00, '', '2025-11-04 14:23:14'),
-(14, 83, 3, '2025-11-04 06:23:21', NULL, 100.00, '', '2025-11-04 14:23:21');
+(14, 83, 3, '2025-11-04 06:23:21', NULL, 100.00, '', '2025-11-04 14:23:21'),
+(15, 83, 3, '2025-11-04 11:59:44', NULL, 100.00, '', '2025-11-04 19:59:44'),
+(16, 83, 3, '2025-11-04 11:59:51', NULL, 100.00, '', '2025-11-04 19:59:51'),
+(17, 83, 3, '2025-11-04 12:05:08', NULL, 100.00, '', '2025-11-04 20:05:08'),
+(18, 83, 3, '2025-11-04 12:05:18', NULL, 100.00, '', '2025-11-04 20:05:18'),
+(19, 83, 3, '2025-11-04 12:05:19', NULL, 100.00, '', '2025-11-04 20:05:19'),
+(20, 83, 3, '2025-11-04 12:06:35', NULL, 100.00, '', '2025-11-04 20:06:35'),
+(21, 83, 3, '2025-11-04 12:10:24', NULL, 100.00, '', '2025-11-04 20:10:24'),
+(22, 83, 3, '2025-11-04 12:13:06', NULL, 100.00, '', '2025-11-04 20:13:06'),
+(23, 83, 3, '2025-11-04 12:13:09', NULL, 100.00, '', '2025-11-04 20:13:09'),
+(24, 83, 3, '2025-11-05 09:26:58', NULL, 100.00, '', '2025-11-05 17:26:58'),
+(25, 83, 3, '2025-11-05 09:27:08', NULL, 100.00, '', '2025-11-05 17:27:08'),
+(26, 83, 3, '2025-11-05 09:40:50', NULL, 100.00, '', '2025-11-05 17:40:50'),
+(27, 83, 3, '2025-11-05 09:40:54', NULL, 100.00, '', '2025-11-05 17:40:54'),
+(28, 83, 3, '2025-11-05 09:45:28', NULL, 100.00, '', '2025-11-05 17:45:28'),
+(29, 83, 3, '2025-11-05 09:45:31', NULL, 100.00, '', '2025-11-05 17:45:31'),
+(30, 83, 3, '2025-11-05 09:46:06', NULL, 100.00, '', '2025-11-05 17:46:06'),
+(31, 83, 3, '2025-11-05 09:46:11', NULL, 100.00, '', '2025-11-05 17:46:11'),
+(32, 83, 3, '2025-11-05 09:58:25', NULL, 100.00, '', '2025-11-05 17:58:25'),
+(33, 83, 3, '2025-11-05 10:12:06', NULL, 100.00, '', '2025-11-05 18:12:06'),
+(34, 83, 3, '2025-11-05 10:12:16', NULL, 100.00, '', '2025-11-05 18:12:16'),
+(35, 83, 3, '2025-11-05 11:47:32', NULL, 100.00, '', '2025-11-05 19:47:32'),
+(36, 83, 3, '2025-11-05 11:47:32', NULL, 100.00, '', '2025-11-05 19:47:32'),
+(37, 83, 3, '2025-11-05 11:47:51', NULL, 100.00, '', '2025-11-05 19:47:51'),
+(38, 83, 3, '2025-11-05 11:47:56', NULL, 100.00, '', '2025-11-05 19:47:56'),
+(39, 83, 3, '2025-11-05 11:59:17', NULL, 100.00, '', '2025-11-05 19:59:17'),
+(40, 83, 3, '2025-11-05 12:03:44', NULL, 100.00, '', '2025-11-05 20:03:44'),
+(41, 83, 3, '2025-11-05 12:05:35', NULL, 100.00, '', '2025-11-05 20:05:35'),
+(42, 83, 3, '2025-11-05 12:06:47', NULL, 100.00, '', '2025-11-05 20:06:47'),
+(43, 83, 3, '2025-11-05 12:06:47', NULL, 100.00, '', '2025-11-05 20:06:47'),
+(44, 83, 3, '2025-11-05 12:06:50', NULL, 100.00, '', '2025-11-05 20:06:50'),
+(45, 83, 3, '2025-11-05 12:08:28', NULL, 100.00, '', '2025-11-05 20:08:28');
 
 -- --------------------------------------------------------
 
@@ -254,7 +290,8 @@ INSERT INTO `qr_codes` (`id`, `code`, `user_id`, `generated_by`, `created_at`, `
 (16, '095a9e9ec62a', 3, 8, '2025-11-04 15:26:20', '2025-11-11 15:26:20'),
 (17, 'e0eba20ca6de', 5, 8, '2025-11-04 15:31:49', '2025-11-11 15:31:49'),
 (18, 'fceec8b21c25', 1, 8, '2025-11-04 15:33:39', '2025-11-11 15:33:39'),
-(19, '13de1681f9c9', 5, 8, '2025-11-04 15:35:41', '2025-11-11 15:35:41');
+(19, '13de1681f9c9', 5, 8, '2025-11-04 15:35:41', '2025-11-11 15:35:41'),
+(20, '39eeaa300792', 1, 8, '2025-11-05 18:11:32', '2025-11-12 18:11:32');
 
 -- --------------------------------------------------------
 
@@ -293,6 +330,31 @@ INSERT INTO `services` (`id`, `name`, `description`, `price`, `created_at`) VALU
 (1, 'Pro', NULL, 40.00, '2025-10-21 10:59:34'),
 (2, 'Plus', NULL, 25.00, '2025-10-21 10:59:34'),
 (3, 'Standard', NULL, 10.00, '2025-10-21 10:59:34');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `reference_id` varchar(255) DEFAULT NULL,
+  `type` enum('photo','booking') NOT NULL,
+  `related_id` int(11) DEFAULT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_method` varchar(50) DEFAULT NULL,
+  `status` enum('pending','confirmed','rejected') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `user_id`, `reference_id`, `type`, `related_id`, `amount`, `payment_method`, `status`, `created_at`) VALUES
+(1, 3, 'pay_j67TkdXBqkCK5gb9mEvCienr', 'photo', 83, 100.00, 'gcash', 'confirmed', '2025-11-05 12:08:37');
 
 -- --------------------------------------------------------
 
@@ -434,6 +496,13 @@ ALTER TABLE `services`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -455,7 +524,7 @@ ALTER TABLE `user_gallery`
 -- AUTO_INCREMENT for table `bookings`
 --
 ALTER TABLE `bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `clients`
@@ -491,19 +560,19 @@ ALTER TABLE `payments`
 -- AUTO_INCREMENT for table `photos`
 --
 ALTER TABLE `photos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT for table `photo_purchases`
 --
 ALTER TABLE `photo_purchases`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `qr_codes`
 --
 ALTER TABLE `qr_codes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -516,6 +585,12 @@ ALTER TABLE `reviews`
 --
 ALTER TABLE `services`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -572,6 +647,12 @@ ALTER TABLE `photo_purchases`
 ALTER TABLE `reviews`
   ADD CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`);
+
+--
+-- Constraints for table `transactions`
+--
+ALTER TABLE `transactions`
+  ADD CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `user_gallery`

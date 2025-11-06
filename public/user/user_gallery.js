@@ -31,7 +31,7 @@ async function initGallery() {
 
 async function loadDownloadInfo() {
   try {
-    const res = await fetch('/api/gallery/downloads', { credentials: 'include' });
+    const res = await fetch('/api/photos/downloads', { credentials: 'include' });
     if (!res.ok) throw new Error('Failed to fetch downloads');
 
     const { remaining, total } = await res.json();
@@ -44,14 +44,18 @@ async function loadDownloadInfo() {
   }
 }
 
-async function loadGallery(userId = null) {
+async function loadGallery(forUserId = null) {
   try {
-    const url = userId ? `/api/gallery/gallery?user_id=${userId}` : '/api/gallery/gallery';
-    const res = await fetch(url, { credentials: 'include' });
+    const token = localStorage.getItem("token");
+    const url = forUserId 
+      ? `/api/photos/gallery/customer/${forUserId}` 
+      : '/api/photos/gallery/user';
+    
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) throw new Error('Failed to load gallery');
 
     const data = await res.json();
-    const photos = data.photos || [];
+    const photos = data.photos || data; // staff route returns array directly
     const galleryGrid = document.getElementById('gallery-grid');
     galleryGrid.innerHTML = '';
 
@@ -63,20 +67,17 @@ async function loadGallery(userId = null) {
     photos.forEach(photo => {
       const card = document.createElement('div');
       card.className = `photo-card ${photo.status === 'expired' ? 'expired' : ''}`;
-
+      card.style.position = 'relative'; // make checkbox positioning work
+      
       const img = document.createElement('img');
       img.src = photo.file_path;
       img.alt = photo.file_name || 'Gallery Photo';
       img.style.objectFit = 'cover';
       card.appendChild(img);
 
-      const badge = document.createElement('div');
-      badge.className = 'badge';
-      badge.textContent = photo.status.charAt(0).toUpperCase() + photo.status.slice(1);
-      card.appendChild(badge);
-
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
+      checkbox.className = 'photo-checkbox';
       checkbox.disabled = photo.status !== 'available';
       checkbox.onclick = () => {
         if (checkbox.checked) selectedPhotos.add(photo.id);
@@ -84,6 +85,11 @@ async function loadGallery(userId = null) {
         card.classList.toggle('selected', checkbox.checked);
       };
       card.appendChild(checkbox);
+
+      const statusBadge = document.createElement('div');
+      statusBadge.className = `status ${photo.status}`;
+      statusBadge.textContent = photo.status.charAt(0).toUpperCase() + photo.status.slice(1);
+      card.appendChild(statusBadge);
 
       const btn = document.createElement('button');
       btn.style.width = '100%';
@@ -95,7 +101,6 @@ async function loadGallery(userId = null) {
         btn.textContent = `Buy ₱${photo.price}`;
         btn.style.backgroundColor = '#CE6826';
         btn.style.color = '#fff';
-        // Pass price into purchasePhoto
         btn.onclick = () => purchasePhoto(photo.id, photo.price);
       } else if (photo.status === 'purchased') {
         btn.textContent = 'Download';
@@ -111,8 +116,7 @@ async function loadGallery(userId = null) {
     });
   } catch (err) {
     console.error('Load gallery error:', err);
-    const galleryGrid = document.getElementById('gallery-grid');
-    galleryGrid.innerHTML = '<p style="color:red">Error loading gallery.</p>';
+    document.getElementById('gallery-grid').innerHTML = '<p style="color:red">Error loading gallery.</p>';
   }
 }
 
@@ -123,7 +127,7 @@ function getSelectedPaymentMethod() {
 }
 
 // Purchase a single photo (with price)
-async function purchasePhoto(photoId, price) {
+async function purchasePhoto(photoId) {
   try {
     const method = getSelectedPaymentMethod();
 
@@ -131,7 +135,7 @@ async function purchasePhoto(photoId, price) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ photo_id: photoId, price, method })
+      body: JSON.stringify({ photo_id: photoId, method })
     });
 
     const data = await res.json();
@@ -156,20 +160,19 @@ async function purchaseSelectedPhotos() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ user_id: userId, photo_ids: Array.from(selectedPhotos), method })
+      body: JSON.stringify({ photo_ids: Array.from(selectedPhotos), method })
     });
 
     const data = await res.json();
-    if (res.ok) {
-      selectedPhotos.clear();
-      await loadGallery();
-      await loadDownloadInfo();
-      alert('Photos purchased successfully!');
+    if (res.ok && data.checkout_url) {
+      // redirect to PayMongo checkout
+      window.location.href = data.checkout_url;
     } else {
       alert(data.message || 'Bulk purchase failed');
     }
   } catch (err) {
     console.error('Bulk purchase error:', err);
+    alert('Error processing bulk purchase');
   }
 }
 
@@ -178,25 +181,37 @@ async function downloadPhoto(photoId) {
   if (remainingDownloads <= 0) return alert('No remaining downloads left!');
 
   try {
-    const res = await fetch(`/api/photo-purchases/download/${photoId}`, { credentials: 'include' });
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`/api/photos/download/${photoId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
     if (!res.ok) {
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       return alert(data.message || 'Download failed');
     }
 
+    // ✅ Convert the response to a blob (image)
     const blob = await res.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'photo.jpg';
+    a.download = `photo_${photoId}.jpg`;
     document.body.appendChild(a);
     a.click();
     a.remove();
 
+    // ✅ Decrease remaining download count visually
     remainingDownloads--;
     document.getElementById('remaining-downloads').textContent = remainingDownloads;
+
+    // (Optional) Refresh from server to stay accurate:
+    // await loadDownloadInfo();
+
   } catch (err) {
     console.error('Download error:', err);
+    alert('Error downloading photo.');
   }
 }
 
