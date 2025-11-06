@@ -1633,11 +1633,11 @@ body {
 }
 
 /* overlay part */
-.galprev-section .container .upper .l1 .overlay,
-.galprev-section .container .upper .l2 .overlay,
-.galprev-section .container .upper .l3 .overlay {
-  position: absolute;
-  bottom: 0;
+.galprev-section .container .upper .l1 .loctext,
+.galprev-section .container .upper .l2 .loctext,
+.galprev-section .container .upper .l3 .loctext {
+  position: relative;
+  bottom: -480px;
   left: 0;
   width: 100%;
   height: 60px; 
@@ -1646,11 +1646,20 @@ body {
   justify-content: left;
   align-items: center;
   padding-left: 20px;
+  overflow: hidden;
+  opacity: 0;
 }
 
-.galprev-section .container .upper .l1 .overlay h4,
-.galprev-section .container .upper .l2 .overlay h4,
-.galprev-section .container .upper .l3 .overlay h4 {
+.galprev-section .container .upper .l1:hover .loctext,
+.galprev-section .container .upper .l2:hover .loctext,
+.galprev-section .container .upper .l3:hover .loctext {
+  opacity: 1;      
+  cursor: pointer;
+}
+
+.galprev-section .container .upper .l1 .loctext h4,
+.galprev-section .container .upper .l2 .loctext h4,
+.galprev-section .container .upper .l3 .loctext h4 {
   font-family: Playfair Display, serif;
   font-size: 24px;
   color: #fff;
@@ -1716,11 +1725,11 @@ body {
 }
 
 /* overlay part */
-.galprev-section .container .lower .l1 .overlay,
-.galprev-section .container .lower .l2 .overlay,
-.galprev-section .container .lower .l3 .overlay {
-  position: absolute;
-  bottom: 0;
+.galprev-section .container .lower .l1 .loctext,
+.galprev-section .container .lower .l2 .loctext,
+.galprev-section .container .lower .l3 .loctext {
+  position: relative;
+  bottom: -480px;
   left: 0;
   width: 100%;
   height: 60px; 
@@ -1729,11 +1738,20 @@ body {
   justify-content: left;
   align-items: center;
   padding-left: 20px;
+  overflow: hidden;
+  opacity: 0;
 }
 
-.galprev-section .container .lower .l1 .overlay h4,
-.galprev-section .container .lower .l2 .overlay h4,
-.galprev-section .container .lower .l3 .overlay h4 {
+.galprev-section .container .lower .l1:hover .loctext,
+.galprev-section .container .lower .l2:hover .loctext,
+.galprev-section .container .lower .l3:hover .loctext {
+  opacity: 1;      
+  cursor: pointer;
+}
+
+.galprev-section .container .lower .l1 .loctext h4,
+.galprev-section .container .lower .l2 .loctext h4,
+.galprev-section .container .lower .l3 .loctext h4 {
   font-family: Playfair Display, serif;
   font-size: 24px;
   color: #fff;
