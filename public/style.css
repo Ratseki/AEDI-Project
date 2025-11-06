@@ -20,6 +20,7 @@ html, body {
   --section-font: 'DM Sans', sans-serif;
   --brand-color: #f4981e;
   --dark-color: #ce6826;
+  --light-color: #f9bf5f;
 }
 
 body {
@@ -1407,6 +1408,158 @@ body {
 
 .book-now-btn:hover {
   background-color: #F4981E;
+}
+
+/*PACKAGE PREVIEW*/
+
+.pacprev-section {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2%;
+}
+
+.pacprev-section .container {
+  width: 95%;
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-direction: row;
+}
+
+.pacprev-section .container .text-part {
+  width: 35%;
+  height: 80%;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.pacprev-section .container .text-part h1{
+  font-size: 64px;
+  font-family: 'Open Sans', sans-serif;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+.pacprev-section .container .text-part p {
+  font-size: 22px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  width: 90%;
+  margin-bottom: 70px;
+}
+
+.pacprev-section .container .text-part .cta{
+  text-decoration: none;
+  font-size: 24px;
+  letter-spacing: 2px;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+  transition: color 0.3s;
+  transition: text-decoration 0.3s;
+}
+
+.pacprev-section .container .text-part .cta:hover {
+  color: #F4981E;
+  text-decoration: underline;
+}
+
+.pacprev-section .container .card-part {
+  width: 65%;
+  height: 80%;
+  border-radius: 10px;
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pacprev-section .container .card-part .pcard{
+  background-color: #fFF;
+  width: 40%;
+  height: 100%;
+  border-radius: 4px;
+  flex-direction: row;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+  box-shadow: 0 0px 4px rgba(0, 0, 0, 0.30);
+}
+
+.card-part .pcard .icon {
+  background-color: var(--light-color);
+  color: #fff;
+  border-radius: 3rem;
+  
+  /* Make background box fixed-size */
+  width: 90px;
+  height: 90px;
+  
+  /* Center the icon inside */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Icon styling */
+  font-size: 3rem; /* adjust as needed */
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.card-part .pcard h3{
+  text-align: center;
+  font-size: 48px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.card-part .pcard p {
+  text-align: center;
+  font-size: 18px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.card-part .pcard .price{
+  text-align: center;
+  font-size: 48px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+
+.card-part .pcard .btn {
+  background-color: var(--brand-color);
+  color: white;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+  text-decoration: none;
+  text-align: center;
+  width: 60%;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s;
+}
+
+.card-part .pcard .btn:hover {
+  opacity: 0.8;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /*TESTIMONIALS*/
