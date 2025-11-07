@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gallery</title>
-
-  <!-- Fonts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+    <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
@@ -14,69 +13,12 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="navstyle.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <style>
-    /* ===== GALLERY ===== */
-    .gallery-section {
-      margin-top: 80px;
-      padding: 40px;
-      background: #f9f9f9;
-    }
-
-    /* 🧱 Masonry / column layout */
-    .gallery-container {
-      column-count: 4;       /* 4 columns on large screens */
-      column-gap: 20px;      /* space between columns */
-    }
-
-    .gallery-item {
-      margin-bottom: 20px;   /* space between images vertically */
-      break-inside: avoid;   /* prevents images from breaking oddly */
-      overflow: hidden;
-      border-radius: 10px;
-      display: inline-block;
-      width: 100%;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .gallery-item img {
-      width: 100%;
-      height: auto;           /* keep original height */
-      display: block;
-      border-radius: 10px;
-      transition: transform 0.3s ease;
-    }
-
-    .gallery-item:hover img {
-      transform: scale(1.05);
-    }
-
-    /* 🧱 Responsive columns */
-    @media (max-width: 1200px) {
-      .gallery-container {
-        column-count: 3;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .gallery-container {
-        column-count: 2;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .gallery-container {
-        column-count: 1;
-      }
-    }
-  </style>
 </head>
-
 <body>
   <!-- ===== NAVBAR ===== -->
   <header class="navbar">
     <div class="logo">
+      <!-- Replace this with your actual logo image -->
       <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
     </div>
 
@@ -84,34 +26,43 @@
       <a href="index.html" class="active">Home</a>
       <a href="about.html">About Us</a>
       <a href="packagebooking.html">Package & Booking</a>
+      <!--
+      <div class="dropdown">
+        <button class="dropbtn">Services ▾</button> 
+        <div class="dropdown-content">
+          <a href="service_and_packages.html">Photography Packages</a>
+          <a href="#locations-section">Locations</a>
+          <a href="#how-it-works">Booking Guide</a>
+        </div>
+      </div>-->
+
       <a href="gallerypage.html">Gallery</a>
       <a href="#contact">Contact</a>
-      <div class="account-icon" id="account-nav"></div>
-    </nav>
+      
+<div class="account-icon" id="account-nav">
+  <!-- This will be updated by JS -->
+</div>
+
   </header>
 
-  
-
-  <!-- ===== GALLERY GRID ===== -->
-  <section class="gallery-section">
-    <h1 style="text-align: center; font-family: 'DM Sans', sans-serif; font-size: 48px; color: #333; margin-bottom: 20px;">GALLERY</h1>
-    <div class="gallery-container">
-      <div class="gallery-item"><img src="images/image_compilation/490402997_1562897591806259_3538276122896098557_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/chocolate_hills/548618201_1709453280484022_5833899120032855836_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/elyu/san_juan.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/sand_dunes/556624381_1720795782683105_1815247340903817347_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/kapurpurawan/548306494_1710377843724899_2676726508541651600_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/hidden_garden/557254865_1723877965708220_8100600496436837139_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/490402997_1562897591806259_3538276122896098557_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/chocolate_hills/548618201_1709453280484022_5833899120032855836_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/elyu/san_juan.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/sand_dunes/556624381_1720795782683105_1815247340903817347_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/kapurpurawan/548306494_1710377843724899_2676726508541651600_n.jpg" alt=""></div>
-      <div class="gallery-item"><img src="images/image_compilation/hidden_garden/557254865_1723877965708220_8100600496436837139_n.jpg" alt=""></div>
+  <!-- ===== HOME SECTION ===== -->
+  <section class="about-section" id="home">
+    <div class="about-content">
+      <h1 class="main-heading">
+        ABOUT US
+      </h1>
+      <p class="hero-subtext">
+        Turning every adventure into a story you can keep forever
+      </p>
     </div>
   </section>
+  
+  <section class="sheader" style="background-color: rgb(0,0,0,0.3); height: 15vh;">
+    <p style="text-align: center; font-size: 18px; color: #333; letter-spacing: 1px;">At ProfilePic Multimedia, we bridge the gap between travel and technology — helping tourists relive their adventures through high-quality digital photos they can easily access and keep forever.</p>
+  </section>
 
-   <!-- ===== FOOTER SECTION ===== -->
+
+ <!-- ===== FOOTER SECTION ===== -->
 <footer>
     <div class="footer-container">
         <!-- LEFT: Logo and Contact -->
