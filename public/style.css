@@ -2117,3 +2117,35 @@ body {
 
 
 
+/* ===== ABOUT PAGE ===== */
+.about-section {
+  height: 80vh;
+  background: url('images/image_compilation/sand_dunes/paoay.jpg') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+/* Overlay layer */
+.about-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.about-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+
+.about-content {
+  max-width: 900px;
+  margin: 0 auto;
+  color: #0A142D;
+}
