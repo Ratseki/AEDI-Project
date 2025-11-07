@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Package & Bookings</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="navstyle.css" />
+
+  <style>
+    /* General Styles */
+section {
+  text-align: center;
+  margin: 80px auto;
+  max-width: 1100px;
+  padding: 0 1rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+p {
+  color: #555;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* ===== PHOTO PACKAGES ===== */
+.pricing-table {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.column {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 320px;
+  transition: 0.3s;
+}
+
+.column:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.column .header {
+  padding: 20px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.column h3 {
+  font-size: 1.4rem;
+  margin: 5px 0;
+}
+
+.column ul {
+  list-style: none;
+  padding: 0 20px 20px;
+  text-align: left;
+}
+
+.column ul li {
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 0.95rem;
+}
+
+/* Highlight middle column */
+.popular {
+  border: 2px solid #f8b500;
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: 50%;
+  transform: translateX(50%);
+  background: #f8b500;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ===== ADVENTURE PACKAGES ===== */
+.adventure-packages .cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  width: 350px;
+  text-align: left;
+  padding: 25px 25px 40px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.card h4 {
+  color: #f8b500;
+  margin: 8px 0 15px;
+}
+
+.card ul {
+  padding-left: 20px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.card ul li {
+  margin-bottom: 8px;
+  list-style-type: '✓ ';
+}
+
+.card button {
+  display: block;
+  width: 100%;
+  background: #f8b500;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card button:hover {
+  background: #e5a000;
+}
+
+/* ===== FEATURED LOCATIONS ===== */
+.featured-locations {
+  text-align: center;
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 1rem;
+}
+
+.featured-locations h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.featured-locations p {
+  color: #555;
+  margin: 10px 0 40px;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.location-card {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding-bottom: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+}
+
+.location-card:hover {
+  transform: translateY(-5px);
+}
+
+.location-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px 8px 0 0;
+}
+
+.location-card h3 {
+  margin: 10px 0 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.location-card a {
+  color: #f8b500;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.location-card a:hover {
+  text-decoration: underline;
+}
+
+/* ===== ADVENTURE BANNER ===== */
+.adventure-banner {
+  position: relative;
+  background: url("images/image_compilation/490191217_1562896478473037_7075364719915744987_n.jpg") center/cover no-repeat;
+  height: 350px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adventure-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+
+.adventure-banner .overlay {
+  position: relative;
+  color: #fff;
+  text-align: center;
+}
+
+.adventure-banner h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.adventure-banner p {
+  margin-bottom: 25px;
+  color: #fff;
+}
+
+.adventure-banner button {
+  background: #f8b500;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.adventure-banner button:hover {
+  background: #e5a000;
+}
+
+/* ===== FAQ SECTION ===== */
+.faq {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 0 1rem;
+  text-align: left;
+}
+
+.faq h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #0d1b2a;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.accordion-item {
+  margin-bottom: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  background: #f8b500;
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  border: none;
+  outline: none;
+  padding: 15px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-header .arrow {
+  transition: transform 0.3s;
+}
+
+.accordion-header.active .arrow {
+  transform: rotate(180deg);
+}
+
+.accordion-body {
+  background: #fff;
+  color: #333;
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.accordion-body p {
+  padding: 15px 0;
+}
+
+.accordion-item.active .accordion-body {
+  max-height: 200px;
+}
+
+.more-faq {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+}
+
+.more-faq a {
+  color: #f8b500;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.more-faq a:hover {
+  text-decoration: underline;
+}
+
+
+  </style>
+</head>
+<body>
+
+ <!-- ===== NAVBAR ===== -->
+  <header class="navbar">
+    <div class="logo">
+      <!-- Replace this with your actual logo image -->
+      <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
+    </div>
+
+    <nav class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="#about">About Us</a>
+      <a href="packagebooking.html">Package & Booking</a>
+      <!--
+      <div class="dropdown">
+        <button class="dropbtn">Services ▾</button>
+        <div class="dropdown-content">
+          <a href="service_and_packages.html">Photography Packages</a>
+          <a href="#locations-section">Locations</a>
+          <a href="#how-it-works">Booking Guide</a>
+        </div>
+      </div>-->
+
+      <a href="/user/gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+      
+<div class="account-icon" id="account-nav">
+  <!-- This will be updated by JS -->
+</div>
+
+  </header>
+
+  <section class="photo-packages" style="min-height: 100vh;">
+  <h2>Choose a Photo Package</h2>
+  <p>Keep your best memories in high-quality digital copies.<br>
+  Select package that fits your experience.</p>
+
+  <div class="pricing-table">
+    <div class="column">
+      <div class="header">
+        <h3>BASIC</h3>
+        <p>Package</p>
+      </div>
+      <ul>
+        <li>5 Photos</li>
+        <li>✔ Personal Online Gallery (30-Day Access)</li>
+        <li>✔ High-Resolution, Watermark-Free Downloads</li>
+        <li>✔ Choice of Frame or No Frame Format</li>
+        <li>✖ Access to Both Framed & Unframed Versions</li>
+        <li>✔ Unique Location-Themed Frames</li>
+        <li>✖ Voucher for Future Trip Discount</li>
+        <li>✖ Souvenir Print Voucher</li>
+      </ul>
+    </div>
+
+    <div class="column popular">
+      <div class="header">
+        <span class="badge">Most Popular</span>
+        <h3>STANDARD</h3>
+        <p>Package</p>
+      </div>
+      <ul>
+        <li>10 Photos</li>
+        <li>✔ Personal Online Gallery (30-Day Access)</li>
+        <li>✔ High-Resolution, Watermark-Free Downloads</li>
+        <li>✔ Choice of Frame or No Frame Format</li>
+        <li>✔ Access to Both Framed & Unframed Versions</li>
+        <li>✔ Unique Location-Themed Frames</li>
+        <li>5% Off Voucher for Future Trip</li>
+        <li>✖ Souvenir Print Voucher</li>
+      </ul>
+    </div>
+
+    <div class="column">
+      <div class="header">
+        <h3>PRO</h3>
+        <p>Package</p>
+      </div>
+      <ul>
+        <li>15 Photos</li>
+        <li>✔ Personal Online Gallery (30-Day Access)</li>
+        <li>✔ High-Resolution, Watermark-Free Downloads</li>
+        <li>✔ Choice of Frame or No Frame Format</li>
+        <li>✔ Access to Both Framed & Unframed Versions</li>
+        <li>✔ Unique Location-Themed Frames</li>
+        <li>10% Off Voucher for Future Trip</li>
+        <li>2 Free Prints (Souvenir Print Voucher)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="adventure-packages">
+  <h2>Sand Dunes Adventure Packages</h2>
+  <p>Experience the thrill of Paoay Sand Dunes! Choose a package that combines<br>
+  adventure and stunning photos — all in one unforgettable ride.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>🟠 Dune Explorer</h3>
+      <h4>₱1,500 / person</h4>
+      <ul>
+        <li>Private 4x4 ride (shared only with your group)</li>
+        <li>30-minute adventure route</li>
+        <li>10 Digital Photos (Downloadable)</li>
+        <li>Access to private photo gallery</li>
+        <li>Choice of frame or no-frame format</li>
+        <li>Free souvenir photo (printed)</li>
+        <li>Free souvenir e-card download</li>
+      </ul>
+      <button>Book Now</button>
+    </div>
+
+    <div class="card">
+      <h3>🟠 Extreme Rider</h3>
+      <h4>₱2,500 / person</h4>
+      <ul>
+        <li>4x4 Off-road Ride (30 minutes)</li>
+        <li>Priority photo coverage by our photographers</li>
+        <li>15 Digital Photos (Downloadable)</li>
+        <li>Access to private photo gallery</li>
+        <li>Access to both frame & no-frame format</li>
+        <li>10% voucher for your next trip</li>
+        <li>Complimentary souvenir print</li>
+      </ul>
+      <button>Book Now</button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== FEATURED LOCATIONS ===== -->
+<section class="featured-locations">
+  <h2>Featured Locations</h2>
+  <p>Find us at partner locations and enjoy seamless photo experiences anywhere.</p>
+
+  <div class="gallery">
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Sumlang Lake">
+      <h3>SUMLANG LAKE</h3>
+      <a href="#">View Details</a>
+    </div>
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Suba Sand Dunes">
+      <h3>SUBA SAND DUNES</h3>
+      <a href="#">View Details</a>
+    </div>
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Mayon Sky Drive">
+      <h3>MAYON SKY DRIVE</h3>
+      <a href="#">View Details</a>
+    </div>
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Chocolate Hills">
+      <h3>CHOCOLATE HILLS</h3>
+      <a href="#">View Details</a>
+    </div>
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Hidden Garden">
+      <h3>HIDDEN GARDEN</h3>
+      <a href="#">View Details</a>
+    </div>
+    <div class="location-card">
+      <img src="https://via.placeholder.com/350x220" alt="Kapurpurawan">
+      <h3>KAPURPURAWAN</h3>
+      <a href="#">View Details</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ADVENTURE BANNER ===== -->
+<section class="adventure-banner">
+  <div class="overlay">
+    <h2>Ready for your next adventure?</h2>
+    <p>Capture your experience and take home memories that last.</p>
+    <button>Book Now</button>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="faq">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="accordion">
+    <div class="accordion-item">
+      <button class="accordion-header">
+        What locations are currently available for booking?
+     
+      </button>
+      <div class="accordion-body">
+        <p>Our available locations are displayed on the Featured Locations section. New partner sites are added regularly.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header">
+        How do I book a photo package?
+        
+      </button>
+      <div class="accordion-body">
+        <p>Simply click the “Book Now” button on this page, fill out your details, and choose your preferred package. You’ll receive a confirmation once booking is complete.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <button class="accordion-header">
+        What payment methods do you accept?
+       
+      </button>
+      <div class="accordion-body">
+        <p>We accept major credit/debit cards, GCash, and bank transfers.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="more-faq">Need more answers? <a href="#">View full FAQ →</a></p>
+</section>
+
+
+
+  <!-- ===== FOOTER SECTION ===== -->
+<footer class="footer-below-box">
+    <div class="footer-container">
+        <!-- LEFT: Logo and Contact -->
+        <div class="footer-logo-section">
+            <div class="footer-logo">
+                <img src="images/logo_wbg.png" alt="ProfilePic Multimedia">
+            </div>
+            <div class="footer-contact">
+                <p>0976 004 2741</p>
+                <p>profilepicmultimedia@gmail.com</p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="footer-column">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">Booking</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+
+        <!-- Follow Us -->
+        <div class="footer-column">
+            <h3>Follow us</h3>
+            <ul>
+                <li><a href="#">Facebook</a></li>
+                <li><a href="#">Tiktok</a></li>
+            </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="footer-column">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="#">Terms & Conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p class="copyright">Copyright © ProfilePicMultimedia 2025</p>
+        <a href="#" class="back-to-top">Back to top</a>
+    </div>
+</footer>
+
+<script>
+const accordions = document.querySelectorAll(".accordion-item");
+
+accordions.forEach(item => {
+  const header = item.querySelector(".accordion-header");
+  header.addEventListener("click", () => {
+    item.classList.toggle("active");
+    header.classList.toggle("active");
+  });
+});
+</script>
+
+</body>
+</html>
