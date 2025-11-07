@@ -15,11 +15,76 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="navstyle.css" />
   <style>
-    
+    .gallery-section {
+  padding: 40px;
+  background: #f9f9f9;
+}
+
+.gallery-container {
+  display: flex;
+  flex-wrap: wrap;            /* allows wrapping to new rows */
+  justify-content: center;
+  gap: 20px;                  /* spacing between items */
+}
+
+.gallery-item {
+  position: relative;
+  width: 22%;                 /* roughly 4 columns with gaps */
+  overflow: hidden;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item img {
+  width: 100%;                /* fill the width of the div */
+  height: auto;               /* maintain image aspect ratio */
+  display: block;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.02);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.05);     /* subtle zoom on hover */
+}
+
+/* 🧱 Responsive columns */
+@media (max-width: 1024px) {
+  .gallery-item {
+    width: 30%; /* 3 columns */
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-item {
+    width: 45%; /* 2 columns */
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-item {
+    width: 100%; /* 1 column on mobile */
+  }
+}
+
   </style>
 </head>
 
 <body>
-  
+  <section class="gallery-section">
+  <div class="gallery-container">
+    <div class="gallery-item"><img src="img1.jpg" alt=""></div>
+    <div class="gallery-item"><img src="img2.jpg" alt=""></div>
+    <div class="gallery-item"><img src="img3.jpg" alt=""></div>
+    <div class="gallery-item"><img src="img4.jpg" alt=""></div>
+    <div class="gallery-item"><img src="img5.jpg" alt=""></div>
+    <div class="gallery-item"><img src="img6.jpg" alt=""></div>
+  </div>
+</section>
+
 </body>
 </html>
