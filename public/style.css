@@ -1807,7 +1807,7 @@ body {
 
 .testimonial-carousel {
   position: relative;
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -1822,6 +1822,7 @@ body {
   box-shadow: 0 6px 20px rgba(206, 104, 38, 0.4); /* orange shadow */
   border-radius: 16px;
   padding: 30px 40px;
+  height: 430px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -1829,11 +1830,12 @@ body {
   opacity: 0.5;
   transform: scale(0.95);
   transition: all 0.4s ease;
+  z-index: 1;
 }
 
 
 .testimonial-box.active {
-  background: #E2E5E4;
+  background: #cde0da;
   opacity: 1;
   transform: scale(1);
 }
@@ -1892,7 +1894,7 @@ body {
 }
 
 .arrow.left { left: 10px; }
-.arrow.right { right: 10px; }
+.arrow.right { right: -20px; }
 
 .testimonial-dots {
   margin-top: 30px;
