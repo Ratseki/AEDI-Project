@@ -70,6 +70,128 @@
         column-count: 1;
       }
     }
+
+/* ==== REVIEW SECTION ==== */
+.review-section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.review-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  color: #0A142D;
+  margin-bottom: 40px;
+}
+
+/* ==== WRAPPER AND CAROUSEL ==== */
+.review-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.review-carousel {
+  overflow: hidden;
+  width: 100%;
+}
+
+.review-track {
+  display: flex;
+  transition: transform 0.6s ease;
+}
+
+/* ==== REVIEW BOX ==== */
+.review-box {
+  flex: 0 0 100%;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(206, 104, 38, 0.4);
+  padding: 40px;
+  opacity: 0.5;
+  transform: scale(0.95);
+  transition: all 0.4s ease;
+}
+
+.review-box.active {
+  background: #cde0da;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ==== TEXT ==== */
+.review-box p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+.review-box h4 {
+  margin-top: 20px;
+  font-weight: 700;
+  color: #0A142D;
+}
+
+.review-box .role {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* ==== ARROWS ==== */
+.review-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #0A142D;
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.3s ease;
+}
+
+.review-arrow:hover {
+  background: #1C3879;
+}
+
+.review-arrow.left { left: -20px; }
+.review-arrow.right { right: -20px; }
+
+/* ==== DOTS ==== */
+.review-dots {
+  margin-top: 25px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin: 0 5px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.dot.active {
+  background: #0A142D;
+}
+
+
   </style>
 </head>
 
@@ -110,6 +232,48 @@
       <div class="gallery-item"><img src="images/image_compilation/hidden_garden/557254865_1723877965708220_8100600496436837139_n.jpg" alt=""></div>
     </div>
   </section>
+
+ <section class="review-section">
+  <h2 class="review-title">What Our Guests Say</h2>
+
+  <div class="review-wrapper">
+    <button class="review-arrow left">&#10094;</button>
+
+    <div class="review-carousel">
+      <div class="review-track">
+
+        <div class="review-box active">
+          <p>“Amazing experience! The staff was super friendly and my photos turned out great.”</p>
+          <h4>Ella Santos</h4>
+          <p class="role">Customer</p>
+        </div>
+
+        <div class="review-box">
+          <p>“I love how easy the booking process was and how beautiful the sand dunes looked in the pictures.”</p>
+          <h4>Leo Martinez</h4>
+          <p class="role">Traveler</p>
+        </div>
+
+        <div class="review-box">
+          <p>“Fast service, great energy, and awesome shots. Totally worth it!”</p>
+          <h4>Camille Rivera</h4>
+          <p class="role">Customer</p>
+        </div>
+
+      </div>
+    </div>
+
+    <button class="review-arrow right">&#10095;</button>
+  </div>
+
+  <div class="review-dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+</section>
+
+
 
    <!-- ===== FOOTER SECTION ===== -->
 <footer>
@@ -176,4 +340,39 @@
     </div>
 </footer>
 </body>
+<script>
+const track = document.querySelector('.review-track');
+const boxes = Array.from(document.querySelectorAll('.review-box'));
+const dots = Array.from(document.querySelectorAll('.dot'));
+const prevBtn = document.querySelector('.review-arrow.left');
+const nextBtn = document.querySelector('.review-arrow.right');
+
+let current = 0;
+
+function updateCarousel() {
+  track.style.transform = `translateX(-${current * 100}%)`;
+  boxes.forEach((box, i) => box.classList.toggle('active', i === current));
+  dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+}
+
+nextBtn.addEventListener('click', () => {
+  current = (current + 1) % boxes.length;
+  updateCarousel();
+});
+
+prevBtn.addEventListener('click', () => {
+  current = (current - 1 + boxes.length) % boxes.length;
+  updateCarousel();
+});
+
+dots.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    current = i;
+    updateCarousel();
+  });
+});
+</script>
+
+
+
 </html>
