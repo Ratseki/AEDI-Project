@@ -41,4 +41,4 @@ updateTestimonial();
 setInterval(() => {
   tIndex = (tIndex + 1) % tBoxes.length;
   updateTestimonial();
-}, 5000);
+}, 7000);
