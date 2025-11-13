@@ -246,7 +246,57 @@ select, input[type="file"] {
     <h2>Bookings</h2>
     <button onclick="loadBookings()">Refresh Bookings</button>
     <div id="bookings" class="loading">Loading...</div>
+    <table id="bookingTable" style="width:100%; border-collapse:collapse;">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Customer</th>
+      <th>Package</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Payment</th>
+      <th>Review</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="bookingTableBody"></tbody>
+</table>
   </div>
+
+  <!-- Downpayment Modal -->
+<div id="downpaymentModal" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;">
+  <div style="background:#fff;padding:20px;border-radius:10px;width:300px;">
+    <h3>Downpayment</h3>
+    <input type="number" id="downpaymentAmount" placeholder="Enter amount" />
+    <button onclick="submitDownpayment()" class="book-now-btn">Submit</button>
+    <button onclick="closeModal('downpaymentModal')" class="book-now-btn" style="background:red;">Cancel</button>
+  </div>
+</div>
+
+<!-- Cancel Booking Modal -->
+<div id="cancelModal" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;">
+  <div style="background:#fff;padding:20px;border-radius:10px;width:300px;">
+    <h3>Cancel Booking</h3>
+    <p>Are you sure you want to cancel this booking?</p>
+    <button onclick="confirmCancel()" class="book-now-btn" style="background:red;">Yes, Cancel</button>
+    <button onclick="closeModal('cancelModal')" class="book-now-btn">No</button>
+  </div>
+</div>
+
+<!-- User Review Section -->
+<div id="reviewSection" class="section" style="display:none;">
+  <h2>Submit Review</h2>
+  <select id="reviewRating">
+    <option value="5">5 ⭐</option>
+    <option value="4">4 ⭐</option>
+    <option value="3">3 ⭐</option>
+    <option value="2">2 ⭐</option>
+    <option value="1">1 ⭐</option>
+  </select>
+  <textarea id="reviewText" placeholder="Write your review..." style="width:100%;height:60px;margin-top:5px;"></textarea>
+  <button id="submitReview" class="book-now-btn" style="margin-top:5px;">Submit Review</button>
+</div>
+
 
   <!-- PAYMENTS -->
   <div class="section">
