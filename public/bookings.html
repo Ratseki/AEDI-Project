@@ -33,7 +33,7 @@
     </div>
 
     <nav class="nav-links">
-      <a href="#home" class="active">Home</a>
+      <a href="/index.html" class="active">Home</a>
       <a href="#about">About Us</a>
       <a href="#packages">Package & Booking</a>
       <!--
@@ -173,6 +173,23 @@
           <button id="bkSubmit" class="bk-btn">Continue to Payment</button>
           <button id="bkClear" class="bk-btn secondary" type="button">Reset</button>
         </div>
+
+<div id="reviewSection" style="display:none; margin-top:20px; padding:12px; background:#eef; border-radius:6px;">
+  <h3>Leave a Review</h3>
+  <label>Rating (1-5):
+    <select id="reviewRating">
+      <option value="5">5 ⭐</option>
+      <option value="4">4 ⭐</option>
+      <option value="3">3 ⭐</option>
+      <option value="2">2 ⭐</option>
+      <option value="1">1 ⭐</option>
+    </select>
+  </label>
+  <textarea id="reviewText" placeholder="Write your review..." rows="3" style="width:100%; margin-top:6px;"></textarea>
+  <button id="submitReview" class="bk-btn" style="margin-top:6px;">Submit Review</button>
+</div>
+
+
       </form>
     </div>
   </main>
