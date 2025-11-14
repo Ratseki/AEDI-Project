@@ -22,32 +22,34 @@
 <body>
   <!-- ===== NAVBAR ===== -->
   <header class="navbar">
-    <div class="logo">
-      <!-- Replace this with your actual logo image -->
-      <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
-    </div>
+    <div class="nav-container">
+      <div class="logo">
+        <!-- Replace this with your actual logo image -->
+        <img src="images/logo_test.png" alt="Profilepic Multimedia Logo" />
+      </div>
 
-    <nav class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="about.html">About Us</a>
-      <a href="packagebooking.html">Package & Booking</a>
-      <!--
-      <div class="dropdown">
-        <button class="dropbtn">Services ▾</button> 
-        <div class="dropdown-content">
-          <a href="service_and_packages.html">Photography Packages</a>
-          <a href="#locations-section">Locations</a>
-          <a href="#how-it-works">Booking Guide</a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="packagebooking.html">Package & Booking</a>
+        <!--
+        <div class="dropdown">
+          <button class="dropbtn">Services ▾</button> 
+          <div class="dropdown-content">
+            <a href="service_and_packages.html">Photography Packages</a>
+            <a href="#locations-section">Locations</a>
+            <a href="#how-it-works">Booking Guide</a>
+          </div>
+        </div>-->
+
+        <a href="gallerypage.html">Gallery</a>
+        <a href="#contact">Contact</a>
+        
+        <div class="account-icon" id="account-nav">
+          <!-- This will be updated by JS -->
         </div>
-      </div>-->
-
-      <a href="gallerypage.html">Gallery</a>
-      <a href="#contact">Contact</a>
-      
-<div class="account-icon" id="account-nav">
-  <!-- This will be updated by JS -->
-</div>
-
+      </nav>
+    </div>
   </header>
 
   <!-- ===== HOME SECTION ===== -->
@@ -65,11 +67,11 @@
       <a href="#about" class="btn-outline">Learn <i class="fa-solid fa-arrow-right"></i></a>
       </div>
 
-<script>
-  document.querySelector('.book-now').addEventListener('click', () => {
-    window.location.href = 'bookings.html';
-  });
-</script>
+      <script>
+        document.querySelector('.book-now').addEventListener('click', () => {
+          window.location.href = 'bookings.html';
+        });
+      </script>
     </div>
   </section>
 
