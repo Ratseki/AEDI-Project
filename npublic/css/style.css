@@ -331,6 +331,7 @@ footer .back-to-top:hover {
   font-family: 'Inter', sans-serif;
   font-weight: 550;
   font-size: 1.3rem;
+  letter-spacing: 0.6px;
   padding: 10px 32px;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -1500,6 +1501,8 @@ footer .back-to-top:hover {
   text-decoration: underline;
 }
 
+/* ================================================== */
+
 /* ===== ABOUT PAGE ===== */
 /* ===== HERO SECTION ===== */
 .about-section {
@@ -2003,7 +2006,482 @@ footer .back-to-top:hover {
   text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
 }
 
+/* ================================================== */
+
 /* ========== PACKAGE & BOOKING PAGE ========== */
+/* ================================
+   PHOTO PACKAGE SECTION
+================================ */
+.ppackage-section {
+  min-height: 100vh;
+  height: auto;
+  padding: 100px;
+  font-family: "Inter", sans-serif;
+}
+
+.ppalcage-section .container {
+  width: 100%;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ 
+
+/* ================================
+   HEADER
+================================ */
+.ppackage-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.ppackage-header h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.ppackage-header p {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+/* ——————————————————————————
+   GRID STRUCTURE
+—————————————————————————— */
+.ppackage-table {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  grid-auto-rows: 1fr;  /* Each row same height */
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  overflow: visible;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+/* Each column is also a grid with fixed rows */
+.ppackage-labels,
+.ppackage-plan {
+  display: grid;
+  grid-template-rows: repeat(9, 1fr); /* EXACT same number of rows per column */
+}
+
+/* ——————————————————————————
+   LABEL COLUMN
+—————————————————————————— */
+.ppackage-labels {
+  border-right: 1px solid #e6e6e6;
+}
+
+.ppackage-label {
+  padding: 20px;
+  font-size: 15px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;     /* vertical centering */
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.ppackage-label:nth-child(1) {
+  /* EMPTY ROW AT TOP — aligns with headers on package columns */
+  background: #fff;
+  border-bottom: none;
+}
+
+/* ——————————————————————————
+   PACKAGE COLUMNS
+—————————————————————————— */
+.ppackage-plan {
+  text-align: center;
+  border-left: 1px solid #e6e6e6;
+  position: relative;
+}
+
+.ppackage-plan-header {
+  padding: 22px 10px;
+  border-bottom: 1px solid #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ppackage-cell {
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;       /* vertical alignment */
+  justify-content: center;   /* center horizontally */
+  border-bottom: 1px solid #f2f2f2;
+  line-height: 1.3;
+}
+
+/* No border on last row */
+.ppackage-cell:last-child,
+.ppackage-label:last-child {
+  border-bottom: none;
+}
+
+/* ——————————————————————————
+   POPULAR (middle highlight)
+—————————————————————————— */
+.ppackage-popular {
+  border: 2px solid #f7c65a !important;
+  z-index: 2;
+}
+
+.ppackage-popular-tag {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f7c65a;
+  padding: 6px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+/* ——————————————————————————
+   ICON STYLING
+—————————————————————————— */
+.ppackage-cell:contains("✔") {
+  color: #111;
+  font-weight: bold;
+}
+.ppackage-cell:contains("✖") {
+  color: #bbb;
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+  .ppackage-table {
+    grid-template-columns: 1fr;
+  }
+
+  .ppackage-labels {
+    border-right: none;
+  }
+
+  .ppackage-plan {
+    border-left: none;
+    border-top: 1px solid #e6e6e6;
+  }
+
+  .ppackage-popular-tag {
+    top: -25px;
+    left: 20px;
+    transform: none;
+  }
+
+  .ppackage-header h1 {
+    font-size: 28px;
+  }
+}
+
+/* ================================
+   SAND DUNES PACKAGE SECTION
+================================ */
+.sdpackage-section {
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sdpackage-section .container {
+  width: 100%;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 80%;
+}
+
+.sdpackage-section .container h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.sdpackage-section .container .subhead {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+
+.sdpackage-section .container .cards-container {
+  height: 75%;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sdpackage-section .container .cards-container .card {
+  height: 90%;
+  width: 48%;
+  padding: 20px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.sdpackage-section .container .cards-container .card h3 {
+  font-size: 24px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--brand-color);
+  letter-spacing: 0.6px;
+  margin-left: 10px;
+}
+
+.sdpackage-section .container .cards-container .card h5 {
+  margin-bottom: 20px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+.sdpackage-section .container .cards-container .card .wyg {
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: #444;
+  margin-left: 10px;
+}
+
+.sdpackage-section .container .cards-container .card .list {
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  height: 65%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+}
+
+.sdpackage-section .container .cards-container .card .list .checksym {
+  margin-right: 10px;
+}
+
+.sdpackage-section .container .cards-container .card .btn {
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 550;
+  font-size: 1.2rem;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 10px 32px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--dark-color);
+  color: white;
+  border: none;
+}
+
+.sdpackage-section .container .cards-container .card .btn:hover {
+  background-color: #F4981E;
+}
+
+
+/* ================================
+   FEATURED LOCATIONS SECTION
+================================ */
+.flocations-section {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.flocations-section .container {
+  height: 1200px;
+  width: 100%;
+  padding: 40px;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.flocations-section .container h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.flocations-section .container .subhead {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+.flocations-section .container .cards-container {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.flocations-section .container .cards-container .card {
+  height: 47%;
+  width: 28%;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.3s ease;;
+}
+
+.flocations-section .container .cards-container .card:hover {
+  background-color: #fafafa;
+}
+
+.flocations-section .container .cards-container .card .imgdiv {
+  background-color: rebeccapurple;
+  background: url(/AEDI-Project/npublic/images/image_compilation/sand_dunes/556624381_1720795782683105_1815247340903817347_n.jpg) center/cover no-repeat;
+  height: 65%;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.flocations-section .container .cards-container .card h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: var(--sub-texts);
+  letter-spacing: 0.6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.flocations-section .container .cards-container .card hr {
+  border: none;           
+  height: 0.6px;            
+  background-color: #aaa; 
+}
+
+.flocations-section .container .cards-container .card .cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease-in-out;
+  transition: color 0.3s ease;
+  margin-top: auto;
+}
+
+.flocations-section .container .cards-container .card:hover .cta {
+  opacity: 1;              
+  visibility: visible;
+}
+
+.flocations-section .container .cards-container .card .cta:hover {
+  color: var(--brand-color);
+}
+
+/* Q SECTION */
+.cta-section {
+  background: url(/AEDI-Project/npublic/images/homepage_bg.jpg) center/cover no-repeat;
+  min-height: 60vh;
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: 100px;
+}
+
+
+/* Overlay layer */
+.cta-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.cta-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.cta-container {
+  width: 80%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.cta-container h3 {
+  font-size: var(--main-header);
+  font-family: var(--section-font);
+  margin-bottom: 20px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.cta-container p {
+  font-size: var(--bodyp);
+  font-family: var(--body-font);
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 40px;
+}
+
+
+.cta-container .btn {
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 550;
+  font-size: 1.2rem;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 10px 32px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--dark-color);
+  color: white;
+  border: none;
+}
+
+.cta-container .btn:hover {
+  background-color: #F4981E;
+}
 
 /* ========== GALLERY PAGE ========== */
 
