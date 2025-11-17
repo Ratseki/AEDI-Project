@@ -27,10 +27,12 @@ html, body {
 
   /* Font-size */
   --main-header: 64px;
+  --section-titles: 36px;
   --section-headers: 32px;
   --sub-texts: 24px;
   --labels: 18px;
   --nav-links: 16px;
+  --bodyp: 18px;
 
 
   /* Colors */
@@ -329,6 +331,7 @@ footer .back-to-top:hover {
   font-family: 'Inter', sans-serif;
   font-weight: 550;
   font-size: 1.3rem;
+  letter-spacing: 0.6px;
   padding: 10px 32px;
   border-radius: 6px;
   transition: all 0.3s ease;
@@ -504,6 +507,7 @@ footer .back-to-top:hover {
 .how-it-works h1 {
   color: #000;
   font-family: var(--section-font);
+  font-size: var(--section-headers);
   margin-bottom: 40px;
 }
 
@@ -733,8 +737,8 @@ footer .back-to-top:hover {
 }
 
 .locations-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.5rem;
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
   font-weight: 700;
   color: #0A142D;
   margin-bottom: 40px;
@@ -1408,9 +1412,1076 @@ footer .back-to-top:hover {
 }
 
 
-/* ========== ABOUT US PAGE ========== */
+/* ===== FAQ SECTION ===== */
+.faq {
+  height: 100vh;
+  max-width: 70%;
+  margin: auto;
+  padding: 0 1rem;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.faq h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #0d1b2a;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.accordion-item {
+  margin-bottom: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  width: 100%;
+  background: #f8b500;
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  border: none;
+  outline: none;
+  padding: 15px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-symbol {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+  transition: transform 0.6s; 
+}
+
+.accordion-header.active .accordion-symbol {
+  content: "-"; 
+}
+
+.accordion-body {
+  background: #fafafa;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  color: #333;
+  padding: 0 20px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+  margin-bottom: 2px;
+} 
+
+.accordion-body p {
+  padding: 15px 0;
+}
+
+.accordion-item.active .accordion-body {
+  max-height: 200px;
+}
+
+.more-faq {
+  text-align: center;
+  margin-top: 20px;
+  color: #555;
+}
+
+.more-faq a {
+  color: #f8b500;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.more-faq a:hover {
+  text-decoration: underline;
+}
+
+/* ================================================== */
+
+/* ===== ABOUT PAGE ===== */
+/* ===== HERO SECTION ===== */
+.about-section {
+  height: 80vh;
+  background: url('/AEDI-Project/npublic/images/image_compilation/elyu/san_juan.jpg') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+/* Overlay layer */
+.about-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.about-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+
+.about-container {
+  width: 100%;
+  margin: 0 auto;
+  color: #0A142D;
+}
+
+.sheader {
+  background-color: rgb(0,0,0,0.2); 
+  height: 10vh; 
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}
+
+.sheader p {
+  color: #444;
+  font-size: 14px;
+  font-family: var(--body-font);
+  max-width: 900px;
+  line-height: 1.6;          
+  letter-spacing: 0.3px;  
+  text-align: center;  
+}
+
+/* STORY SECTION */
+.story-section{
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5%;
+}
+
+.story-container {
+  width: 100%;
+  margin: 0 auto;
+  color: #0A142D;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.story-container .left {
+  background: url('/AEDI-Project/npublic/images/image_compilation/sand_dunes/558093956_1723881705707846_8063273594920731640_n.jpg') center/cover no-repeat;
+  height: 100%;
+  width: 46%;
+}
+
+.story-container .right {
+  height: 100%;
+  width: 52%;
+  padding: 20px 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.story-container .right h3 {
+  font-size: var(--section-titles);
+  font-family: var(--section-font);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.story-container .right .subheader {
+  font-size: var(--body-font);
+  font-family: var(--section-font);
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.story-container .right p {
+  font-size: var(--bodyp);
+  font-family: var(--body-font);
+  line-height: 1.6;          
+  letter-spacing: 0.3px;    
+  margin-bottom: 14px;      
+  max-width: 650px;          
+  color: #444;               
+  font-weight: 300;          
+}
+
+/* COMMITMENT SECTION */
+.commmitment-section{
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5%;
+}
+
+.commmitment-container {
+  width: 100%;
+  margin: 0 auto;
+  color: #0A142D;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.commmitment-container .left {
+  background: url('/AEDI-Project/npublic/images/image_compilation/chocolate_hills/548618201_1709453280484022_5833899120032855836_n.jpg') center/cover no-repeat;
+  height: 100%;
+  width: 46%;
+}
+
+.commmitment-container .right {
+  height: 100%;
+  width: 52%;
+  padding: 20px 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.commmitment-container .right h3 {
+  font-size: var(--section-titles);
+  font-family: var(--section-font);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.commmitment-container .right .subheader {
+  font-size: var(--body-font);
+  font-family: var(--section-font);
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.commmitment-container .right p {
+  font-size: var(--bodyp);
+  font-family: var(--body-font);
+  line-height: 1.6;          
+  letter-spacing: 0.3px;    
+  margin-bottom: 14px;      
+  max-width: 650px;          
+  color: #444;               
+  font-weight: 300;          
+}
+
+/* YEXOP SECTION */
+.yexop-section{
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3% 5%;
+}
+
+.yexop-container {
+  width: 100%;
+  margin: 0 auto;
+  color: #0A142D;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column ;
+}
+
+.yexop-container h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 1.5px;
+  margin: 40px;
+}
+
+.yexop-container .yexop-card-wrapper {
+  width: 95%;
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.yexop-card-wrapper .yexop-card {
+  width: 30%;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.yexop-card-wrapper .yexop-card .img-div,
+.yexop-card-wrapper .yexop-card .txt-div{
+  height: 50%;
+  width: 100%;
+}
+
+.yexop-card-wrapper .yexop-card .img-div  {
+  background: url(/AEDI-Project/npublic/images/image_compilation/sumlang_lake/550423591_1712314936864523_5468229218394515801_n.jpg) center/cover no-repeat;
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.yexop-card-wrapper .yexop-card .img-div-c1 {
+  background: url(/AEDI-Project/npublic/images/image_compilation/sand_dunes/558093956_1723881705707846_8063273594920731640_n.jpg) center/cover no-repeat;
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.yexop-card-wrapper .yexop-card .img-div-c2 {
+  background: url(/AEDI-Project/npublic/images/image_compilation/chocolate_hills/558151340_1721860972576586_5846897874639109039_n.jpg) center/cover no-repeat;
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.yexop-card-wrapper .yexop-card .img-div-c3{
+  background: url(/AEDI-Project/npublic/images/image_compilation/sumlang_lake/550446532_1712315000197850_1866374290184121956_n.jpg) center/cover no-repeat;
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.yexop-card-wrapper .yexop-card .txt-div {
+  color: #444;
+}
+
+.yexop-card-wrapper .yexop-card .txt-div h3 {
+  font-size: 22px;
+  font-family: var(--subheader-font);
+  margin-bottom: 20px;
+}
+
+.yexop-card-wrapper .yexop-card .txt-div p {
+  font-size: 16px;
+  font-family: var(--body-font);
+  line-height: 1.6;          
+  letter-spacing: 0.4px;    
+  margin-bottom: 14px;      
+  max-width: 400px;          
+  color: #444;                  
+  font-weight: 300; 
+}
+
+/* PARTNER SECTION */
+.partner-section{
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3% 5%;
+}
+
+.partner-container {
+  width: 100%;
+  margin: 0 auto;
+  color: #0A142D;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  padding: 20px;
+}
+
+.partner-container .left {
+  height: 50%;
+  width: 45%;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-left: 40px;
+}
+
+.partner-container .left h3 {
+  font-size: 56px;
+  font-family: var(--subheader-font);
+  margin-bottom: 20px;
+}
+
+.partner-container .left p {
+  font-size: 18px;
+  font-family: var(--body-font);
+  line-height: 1.6;          
+  letter-spacing: 0.4px; 
+  color: #333;                  
+  font-weight: 300; 
+  max-width: 460px;
+}
+
+.partner-container .right {
+  height: 70%;
+  width: 55%;
+  padding: 20px 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: auto; 
+  gap: 0; 
+}
+
+.partner-container .right div {
+  padding: 20px;
+}
+
+.partner-container .right .b1 {
+  background: url(/AEDI-Project/npublic/images/mayonskydrive.png) center/contain no-repeat;
+}
+
+.partner-container .right .b2 {
+  background: url(/AEDI-Project/npublic/images/soteras.png) center/contain no-repeat;
+}
+
+.partner-container .right .b3 {
+  background: url(/AEDI-Project/npublic/images/mayonskydrive.png) center/contain no-repeat;
+}
+
+.partner-container .right .b4 {
+  background: url(/AEDI-Project/npublic/images/elyu_c_logo.png) center/contain no-repeat;
+}
+
+.partner-container .right .b5 {
+  background: url(/AEDI-Project/npublic/images/mayonskydrive.png) center/contain no-repeat;
+}
+
+.partner-container .right .b6 {
+  background: url(/AEDI-Project/npublic/images/elyu_c_logo.png) center/contain no-repeat;
+}
+
+.partner-container .right .b1,
+.partner-container .right .b3 {
+  border-bottom: 2px solid black;
+}
+
+.partner-container .right .b2 {
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+.partner-container .right .b5 {
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+}
+
+
+.team-section {
+  padding: 80px 0;
+  background: #fafafa;
+  display: flex;
+  justify-content: center;
+}
+
+.team-section .container {
+   background: url(/AEDI-Project/npublic/images/homepage_bg.jpg) center/cover no-repeat;
+  width: 100%;
+}
+
+.team-title {
+  text-align: center;
+  font-size: var(--section-titles);
+  margin-bottom: 20px;
+  font-family: var(--section-font);
+  letter-spacing: 1px;
+}
+
+.team-intro,
+.team-footer {
+  text-align: center;
+  max-width: 750px;
+  margin: 0 auto 40px auto;
+  font-size: var(--body-font);
+  line-height: 1.6;
+  color: #444;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.team-card {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.team-card h3 {
+  font-size: var(--subheader-font);
+  font-family: var(--section-font);
+  margin-bottom: 10px;
+}
+
+.team-card p {
+  font-size: var(--bodyp);
+  line-height: 1.5;
+  color: #555;
+}
+
+
+
+/* Q SECTION */
+.q-section {
+  background-color: rebeccapurple;
+  background: url(/AEDI-Project/npublic/images/homepage_bg.jpg) center/cover no-repeat;
+  min-height: 40vh;
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: 100px;
+}
+
+
+/* Overlay layer */
+.q-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.q-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.q-container {
+  width: 80%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  text-align: left;
+  flex-direction: column;
+}
+
+.q-container h3 {
+  font-size: var(--main-header);
+  font-family: var(--section-font);
+  margin-bottom: 20px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.q-container p {
+  font-size: var(--bodyp);
+  font-family: var(--body-font);
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* ================================================== */
 
 /* ========== PACKAGE & BOOKING PAGE ========== */
+/* ================================
+   PHOTO PACKAGE SECTION
+================================ */
+.ppackage-section {
+  min-height: 100vh;
+  height: auto;
+  padding: 100px;
+  font-family: "Inter", sans-serif;
+}
+
+.ppalcage-section .container {
+  width: 100%;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ 
+
+/* ================================
+   HEADER
+================================ */
+.ppackage-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.ppackage-header h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.ppackage-header p {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+/* ——————————————————————————
+   GRID STRUCTURE
+—————————————————————————— */
+.ppackage-table {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  grid-auto-rows: 1fr;  /* Each row same height */
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  overflow: visible;
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+/* Each column is also a grid with fixed rows */
+.ppackage-labels,
+.ppackage-plan {
+  display: grid;
+  grid-template-rows: repeat(9, 1fr); /* EXACT same number of rows per column */
+}
+
+/* ——————————————————————————
+   LABEL COLUMN
+—————————————————————————— */
+.ppackage-labels {
+  border-right: 1px solid #e6e6e6;
+}
+
+.ppackage-label {
+  padding: 20px;
+  font-size: 15px;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;     /* vertical centering */
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.ppackage-label:nth-child(1) {
+  /* EMPTY ROW AT TOP — aligns with headers on package columns */
+  background: #fff;
+  border-bottom: none;
+}
+
+/* ——————————————————————————
+   PACKAGE COLUMNS
+—————————————————————————— */
+.ppackage-plan {
+  text-align: center;
+  border-left: 1px solid #e6e6e6;
+  position: relative;
+}
+
+.ppackage-plan-header {
+  padding: 22px 10px;
+  border-bottom: 1px solid #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ppackage-cell {
+  padding: 20px 10px;
+  display: flex;
+  align-items: center;       /* vertical alignment */
+  justify-content: center;   /* center horizontally */
+  border-bottom: 1px solid #f2f2f2;
+  line-height: 1.3;
+}
+
+/* No border on last row */
+.ppackage-cell:last-child,
+.ppackage-label:last-child {
+  border-bottom: none;
+}
+
+/* ——————————————————————————
+   POPULAR (middle highlight)
+—————————————————————————— */
+.ppackage-popular {
+  border: 2px solid #f7c65a !important;
+  z-index: 2;
+}
+
+.ppackage-popular-tag {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f7c65a;
+  padding: 6px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 6px;
+}
+
+/* ——————————————————————————
+   ICON STYLING
+—————————————————————————— */
+.ppackage-cell:contains("✔") {
+  color: #111;
+  font-weight: bold;
+}
+.ppackage-cell:contains("✖") {
+  color: #bbb;
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 900px) {
+  .ppackage-table {
+    grid-template-columns: 1fr;
+  }
+
+  .ppackage-labels {
+    border-right: none;
+  }
+
+  .ppackage-plan {
+    border-left: none;
+    border-top: 1px solid #e6e6e6;
+  }
+
+  .ppackage-popular-tag {
+    top: -25px;
+    left: 20px;
+    transform: none;
+  }
+
+  .ppackage-header h1 {
+    font-size: 28px;
+  }
+}
+
+/* ================================
+   SAND DUNES PACKAGE SECTION
+================================ */
+.sdpackage-section {
+  height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sdpackage-section .container {
+  width: 100%;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 80%;
+}
+
+.sdpackage-section .container h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.sdpackage-section .container .subhead {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+
+.sdpackage-section .container .cards-container {
+  height: 75%;
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sdpackage-section .container .cards-container .card {
+  height: 90%;
+  width: 48%;
+  padding: 20px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.sdpackage-section .container .cards-container .card h3 {
+  font-size: 24px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--brand-color);
+  letter-spacing: 0.6px;
+  margin-left: 10px;
+}
+
+.sdpackage-section .container .cards-container .card h5 {
+  margin-bottom: 20px;
+  font-size: 14px;
+  margin-left: 10px;
+}
+.sdpackage-section .container .cards-container .card .wyg {
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: #444;
+  margin-left: 10px;
+}
+
+.sdpackage-section .container .cards-container .card .list {
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  height: 65%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+}
+
+.sdpackage-section .container .cards-container .card .list .checksym {
+  margin-right: 10px;
+}
+
+.sdpackage-section .container .cards-container .card .btn {
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 550;
+  font-size: 1.2rem;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 10px 32px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--dark-color);
+  color: white;
+  border: none;
+}
+
+.sdpackage-section .container .cards-container .card .btn:hover {
+  background-color: #F4981E;
+}
+
+
+/* ================================
+   FEATURED LOCATIONS SECTION
+================================ */
+.flocations-section {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.flocations-section .container {
+  height: 1200px;
+  width: 100%;
+  padding: 40px;
+  margin: 0 auto; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.flocations-section .container h1 {
+  font-family: var(--section-font);
+  font-size: var(--section-headers);
+  color: var(--text-color);
+  font-weight: bold;
+  margin-bottom: 10px
+}
+
+.flocations-section .container .subhead {
+  text-align: center;
+  font-size: 16px;
+  font-family: var(--subheader-font);
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+}
+
+.flocations-section .container .cards-container {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.flocations-section .container .cards-container .card {
+  height: 47%;
+  width: 28%;
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: background-color 0.3s ease;;
+}
+
+.flocations-section .container .cards-container .card:hover {
+  background-color: #fafafa;
+}
+
+.flocations-section .container .cards-container .card .imgdiv {
+  background-color: rebeccapurple;
+  background: url(/AEDI-Project/npublic/images/image_compilation/sand_dunes/556624381_1720795782683105_1815247340903817347_n.jpg) center/cover no-repeat;
+  height: 65%;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.flocations-section .container .cards-container .card h2 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: var(--sub-texts);
+  letter-spacing: 0.6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.flocations-section .container .cards-container .card hr {
+  border: none;           
+  height: 0.6px;            
+  background-color: #aaa; 
+}
+
+.flocations-section .container .cards-container .card .cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.3px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s ease-in-out;
+  transition: color 0.3s ease;
+  margin-top: auto;
+}
+
+.flocations-section .container .cards-container .card:hover .cta {
+  opacity: 1;              
+  visibility: visible;
+}
+
+.flocations-section .container .cards-container .card .cta:hover {
+  color: var(--brand-color);
+}
+
+/* Q SECTION */
+.cta-section {
+  background: url(/AEDI-Project/npublic/images/homepage_bg.jpg) center/cover no-repeat;
+  min-height: 60vh;
+  width: 100%;
+  padding: 2%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: 100px;
+}
+
+
+/* Overlay layer */
+.cta-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* adjust 0.45 = 45% dark overlay */
+  z-index: 1;
+}
+
+/* Make sure all content appears above the overlay */
+.cta-section > * {
+  position: relative;
+  z-index: 2;
+}
+
+.cta-container {
+  width: 80%;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.cta-container h3 {
+  font-size: var(--main-header);
+  font-family: var(--section-font);
+  margin-bottom: 20px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+.cta-container p {
+  font-size: var(--bodyp);
+  font-family: var(--body-font);
+  line-height: 1.6;
+  letter-spacing: 0.3px;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+  margin-bottom: 40px;
+}
+
+
+.cta-container .btn {
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif;
+  font-weight: 550;
+  font-size: 1.2rem;
+  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 10px 32px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: var(--dark-color);
+  color: white;
+  border: none;
+}
+
+.cta-container .btn:hover {
+  background-color: #F4981E;
+}
 
 /* ========== GALLERY PAGE ========== */
 
