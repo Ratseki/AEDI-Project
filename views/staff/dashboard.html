@@ -283,6 +283,16 @@ select, input[type="file"] {
   </div>
 </div>
 
+<div id="summaryModal" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;z-index:100;">
+  <div style="background:#fff;padding:20px;border-radius:10px;width:400px; max-height: 80vh; overflow-y: auto;">
+    <h3>Booking Summary</h3>
+    <div id="summaryContent">
+        <p>Loading summary...</p>
+    </div>
+    <button onclick="closeModal('summaryModal')" class="book-now-btn" style="margin-top:15px; background:red;">Close</button>
+  </div>
+</div>
+
 <!-- User Review Section -->
 <div id="reviewSection" class="section" style="display:none;">
   <h2>Submit Review</h2>

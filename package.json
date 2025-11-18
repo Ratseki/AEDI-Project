@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "archiver": "^7.0.1",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
@@ -22,7 +23,7 @@
     "multer": "^2.0.2",
     "mysql2": "^3.15.1",
     "node-cron": "^4.2.1",
-    "node-fetch": "^2.7.0",
+    "node-fetch": "2.6.7",
     "nodemailer": "^7.0.9",
     "qrcode": "^1.5.4",
     "sharp": "^0.34.4"

@@ -25,20 +25,27 @@
   <main class="main">
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <h3>User123</h3>
+      <div style="text-align: center; margin-bottom: 15px;">
+        <img id="sidebar-profile-pic" src="/assets/default-avatar.png" 
+             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #eee;">
+        <h3 style="margin-top: 10px; font-size: 1.1rem;">User</h3>
+      </div>
+
       <section>
         <h4>👤 My Account</h4>
         <ul>
-          <li><a href="#">Banks & Cards</a></li>
-          <li><a href="#">Change Password</a></li>
-        </ul>
+    <li style="cursor: pointer;"><a href="/profilepage.html" style="text-decoration:none; color:inherit; display:block;">Profile</a></li>
+    <li style="cursor: pointer;"><a href="#" style="text-decoration:none; color:inherit; display:block;">Banks & Cards</a></li>
+    <li style="cursor: pointer;"><a href="/profilepage.html" style="text-decoration:none; color:inherit; display:block;">Change Password</a></li>
+      </ul>
       </section>
+
       <section>
         <h4>📁 My Gallery</h4>
         <ul>
-          <li class="active">My Gallery</li>
-          <li>🖼 My Photos</li>
-          <li>📅 Bookings</li>
+          <li id="tab-gallery" class="active" style="cursor: pointer;">My Gallery</li>
+          <li id="tab-bookings" style="cursor: pointer;">My Bookings</li>
+          <li id="tab-transactions" style="cursor: pointer;">My Transactions</li>
         </ul>
       </section>
     </aside>
@@ -67,6 +74,41 @@
 
       <button id="purchase-btn" class="purchase-btn">Purchase Photos</button>
     </section>
+
+    <section id="bookings-content" class="content" style="display:none;">
+      <h2>My Bookings</h2>
+      <p id="bookings-loading">Loading booking history...</p>
+      <table class="bookings-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-table-body">
+          </tbody>
+      </table>
+    </section>
+
+<section id="transactions-content" class.content" style="display:none;">
+  <h2>My Transactions</h2>
+  <p id="transactions-loading">Loading transactions...</p>
+  <table class.bookings-table" style="width:100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Reference</th>
+      </tr>
+    </thead>
+    <tbody id="transactions-table-body"></tbody>
+  </table>
+</section>
+
   </main>
 
   <script>
@@ -94,5 +136,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   <script src="user_gallery.js"></script>
+
+  <div id="preview-modal" class="modal-overlay">
+    <span id="modal-close-btn" class="modal-close">&times;</span>
+    <div class="modal-content">
+      <img id="modal-image" src="" alt="Photo Preview" />
+    </div>
+  </div>
+
+  <div id="review-modal" class="modal-overlay">
+    <div class="modal-content" style="background: white; padding: 20px; border-radius: 8px; width: 400px;">
+      <h3>Leave a Review</h3>
+      <p>How was your experience?</p>
+      <select id="review-rating" style="width:100%; padding: 8px; font-size: 1rem;">
+        <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+        <option value="4">⭐⭐⭐⭐ (Great)</option>
+        <option value="3">⭐⭐⭐ (Good)</option>
+        <option value="2">⭐⭐ (Fair)</option>
+        <option value="1">⭐ (Poor)</option>
+      </select>
+      <textarea id="review-comment" placeholder="Write your review here..." style="width: 100%; height: 100px; margin-top: 10px;" maxlength="500"></textarea>
+      <small id="char-counter" style="display: block; text-align: right; color: #777;">0 / 500</small>
+      <div style="margin-top: 10px;">
+        <button id="submit-review-btn" class="purchase-btn" style="background-color: #4CAF50;">Submit Review</button>
+        <button id="close-review-modal" class="purchase-btn" style="background-color: #777;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

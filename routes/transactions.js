@@ -12,10 +12,11 @@ router.get("/", authenticateToken, authorizeRoles("admin", "staff"), async (req,
   try {
     const db = await dbPromise;
 
+    // This query is correct and joins the user's name
     const [rows] = await db.query(`
       SELECT t.id, t.reference_id, t.type, t.amount, t.payment_method, t.status, t.created_at,
              t.related_id AS booking_id,
-             u.id AS user_id, u.name AS customer
+             u.id AS user_id, u.name AS customer  -- This is the field we need
       FROM transactions t
       LEFT JOIN users u ON t.user_id = u.id
       ORDER BY t.created_at DESC
@@ -26,7 +27,7 @@ router.get("/", authenticateToken, authorizeRoles("admin", "staff"), async (req,
     res.json(Array.isArray(rows) ? rows : []);
   } catch (err) {
     console.error("❌ Error fetching transactions:", err);
-    res.status(500).json([]);
+    res.status(500).json([]); // Send empty array on error
   }
 });
 
@@ -38,7 +39,6 @@ router.patch("/:id/status", authenticateToken, authorizeRoles("admin", "staff"),
     const { id } = req.params;
     const { status } = req.body;
 
-    // ✅ Extended allowed statuses
     const allowedStatuses = ["confirmed", "rejected", "partial", "paid", "cancelled"];
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
@@ -49,13 +49,13 @@ router.patch("/:id/status", authenticateToken, authorizeRoles("admin", "staff"),
     const [result] = await db.query("UPDATE transactions SET status = ? WHERE id = ?", [status, id]);
     if (result.affectedRows === 0) return res.status(404).json({ message: "Transaction not found" });
 
-    // 🔄 Auto-update booking if linked
+    // Auto-update booking if linked
     const [[txn]] = await db.query("SELECT related_id FROM transactions WHERE id = ?", [id]);
     if (txn && txn.related_id) {
       await db.query("UPDATE bookings SET status = ? WHERE id = ?", [status, txn.related_id]);
     }
 
-    // ✅ Return updated transaction with customer info for frontend refresh
+    // Return updated transaction with customer info for frontend refresh
     const [[updatedTxn]] = await db.query(`
       SELECT t.id, t.reference_id, t.type, t.amount, t.payment_method, t.status, t.created_at,
              t.related_id AS booking_id,
@@ -73,7 +73,7 @@ router.patch("/:id/status", authenticateToken, authorizeRoles("admin", "staff"),
 });
 
 // ================================
-// ✅ Optional: Fetch single transaction (helpful for frontend refresh)
+// ✅ Optional: Fetch single transaction
 // ================================
 router.get("/:id", authenticateToken, authorizeRoles("admin", "staff"), async (req, res) => {
   try {

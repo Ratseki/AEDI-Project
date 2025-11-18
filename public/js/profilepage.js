@@ -1,149 +1,183 @@
+// ===============================
+// ✅ profilepage.js (FINAL CLEAN VERSION)
+// ===============================
+
+const API_BASE = "http://localhost:3000";
+// Use the cookie for auth, but some routes might check the token header
+const token = localStorage.getItem("token");
+
+// --- Elements ---
+const navItems = document.querySelectorAll(".sidebar nav ul li");
+const panels = {
+  "Profile": document.getElementById("panelProfile"),
+  "Banks & Cards": document.getElementById("panelBanks"),
+  "Change Password": document.getElementById("panelPassword"),
+  // Note: Gallery/Bookings will redirect, so no panels needed here
+};
+
+// Profile Elements
+const profileName = document.getElementById("profileName");
+const profileEmail = document.getElementById("profileEmail");
+const profilePhone = document.getElementById("profilePhone");
+const profileDOB = document.getElementById("profileDOB");
+const genderRadios = document.getElementsByName("profileGender");
+const saveProfileBtn = document.getElementById("saveProfileBtn");
+
+const profilePic = document.getElementById("profilePic");
+const changePicBtn = document.getElementById("changePicBtn");
+const profileModal = document.getElementById("profileModal");
+const modalProfileUpload = document.getElementById("modalProfileUpload");
+const passwordForm = document.getElementById("passwordForm");
+
+// ===============================
+// 1. Initialize
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
-  // ===============================
-  // ✅ Profile Page Script
-  // ===============================
-
-  const API_BASE = "http://localhost:3000";
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Please log in first.");
-    window.location.href = "/login.html";
-  }
-
-  // 🔹 DOM Elements
-  const profileName = document.querySelector("#profileName");
-  const profileEmail = document.querySelector("#profileEmail");
-  const profilePhone = document.querySelector("#profilePhone");
-  const profileGender = document.getElementsByName("profileGender");
-  const profileDOB = document.querySelector("#profileDOB");
-  const profilePic = document.querySelector("#profilePic");
-  const profileUploadInput = document.querySelector("#profileUploadInput");
-  const changePicBtn = document.querySelector("#changePicBtn");
-  const saveBtn = document.querySelector("#saveProfileBtn");
-  const passwordForm = document.querySelector("#passwordForm");
-  const addPaymentBtn = document.querySelector("#addPaymentBtn");
-
-  const panelProfile = document.querySelector("#panelProfile");
-  const panelBanks = document.querySelector("#panelBanks");
-  const panelPassword = document.querySelector("#panelPassword");
-  const panelGallery = document.querySelector("#panelGallery");
-  const sidebarLinks = document.querySelectorAll(".sidebar nav ul li");
-
-  const sidebarAvatar = document.querySelector(".user-info .avatar");
-  const sidebarName = document.querySelector(".user-info h2");
-
-  // ===============================
-  // 🔹 Panel Switching
-  // ===============================
-  function hideAllPanels() {
-    [panelProfile, panelBanks, panelPassword, panelGallery].forEach(p => p.style.display = "none");
-    sidebarLinks.forEach(l => l.classList.remove("active"));
-  }
-
-  sidebarLinks.forEach(link => {
-  if (link.classList.contains("section-title")) return; // ignore titles
-
-  link.addEventListener("click", () => {
-    hideAllPanels();
-    switch (link.textContent.trim()) {
-      case "Profile": panelProfile.style.display = "block"; break;
-      case "Banks & Cards": panelBanks.style.display = "block"; break;
-      case "Change Password": panelPassword.style.display = "block"; break;
-      case "My Gallery": panelGallery.style.display = "block"; break;
-    }
-    link.classList.add("active");
-  });
+  loadProfileData();
+  setupSidebar();
+  setupModal();
 });
 
+// ===============================
+// 2. Load Profile Data
+// ===============================
+async function loadProfileData() {
+  try {
+    // Check auth first
+    const res = await fetch(`${API_BASE}/api/auth/verify`, { credentials: 'include' });
+    if (!res.ok) window.location.href = "/login.html";
+    const authData = await res.json();
+    if (!authData.valid) window.location.href = "/login.html";
 
-  // ===============================
-  // 📥 Load User Profile
-  // ===============================
-  async function loadProfile() {
-    try {
-      const res = await fetch(`${API_BASE}/api/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to load profile.");
+    // Now load profile details
+    const profileRes = await fetch(`${API_BASE}/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await profileRes.json();
 
-      // ===== Main Profile Section =====
-      profileName.value = data.name || "";
-      profileEmail.textContent = data.email || "";
-      profilePhone.value = data.contact || "";
-      profileDOB.value = data.dob ? data.dob.split("T")[0] : "";
+    // Fill Inputs
+    if (profileName) profileName.value = data.name || "";
+    if (profileEmail) profileEmail.textContent = data.email || "No email";
+    if (profilePhone) profilePhone.value = data.contact || "";
+    if (profileDOB) profileDOB.value = data.dob ? data.dob.split("T")[0] : "";
 
-      if (data.gender) {
-        Array.from(profileGender).forEach(r => r.checked = r.value === data.gender);
+    // Set Gender
+    if (data.gender) {
+      for (const radio of genderRadios) {
+        if (radio.value === data.gender) radio.checked = true;
       }
-
-      profilePic.src = data.profile_pic
-        ? `${API_BASE}${data.profile_pic}?t=${Date.now()}`
-        : "/assets/default-avatar.png";
-
-      // ===== Sidebar Update =====
-      sidebarAvatar.src = data.profile_pic
-        ? `${API_BASE}${data.profile_pic}?t=${Date.now()}`
-        : "/assets/default-avatar.png";
-
-      sidebarName.textContent = data.name || "User";
-
-    } catch (err) {
-      console.error(err);
-      alert("Error loading profile data.");
     }
+
+    // Set Pic
+    if (data.profile_pic) {
+      const freshUrl = `${data.profile_pic}?t=${Date.now()}`;
+      if (profilePic) profilePic.src = freshUrl;
+      const sidebarAvatar = document.querySelector(".sidebar .avatar");
+      if (sidebarAvatar) sidebarAvatar.src = freshUrl;
+    }
+
+    // Set Sidebar Name
+    const sidebarName = document.querySelector(".sidebar h2");
+    if (sidebarName) sidebarName.textContent = data.name || "User";
+
+  } catch (err) {
+    console.error("Error loading profile:", err);
   }
+}
 
-  // ===============================
-  // 💾 Save Updated Profile Info
-  // ===============================
-  saveBtn.addEventListener("click", async () => {
+// ===============================
+// 3. Save Profile Changes
+// ===============================
+if (saveProfileBtn) {
+  saveProfileBtn.addEventListener("click", async () => {
+    const gender = Array.from(genderRadios).find(r => r.checked)?.value || null;
+
     try {
-      const gender = Array.from(profileGender).find(r => r.checked)?.value || "Other";
-
-      const updatedData = {
-        name: profileName.value.trim(),
-        contact: profilePhone.value.trim(),
-        dob: profileDOB.value,
-        gender,
-      };
-
       const res = await fetch(`${API_BASE}/api/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedData),
+        body: JSON.stringify({
+          name: profileName.value.trim(),
+          contact: profilePhone.value.trim(),
+          gender: gender,
+          dob: profileDOB.value,
+        }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Update failed.");
+      if (!res.ok) throw new Error(data.message);
 
-      alert("Profile updated successfully!");
-      loadProfile();
+      alert("✅ Profile updated successfully!");
+      loadProfileData(); // Refresh UI
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      alert(`Error: ${err.message}`);
     }
   });
+}
 
-  // ===============================
-  // 🖼️ Profile Picture Upload
-  // ===============================
-  function triggerUpload() {
-    profileUploadInput.click();
-  }
-  profilePic.addEventListener("click", triggerUpload);
-  if (changePicBtn) changePicBtn.addEventListener("click", triggerUpload);
+// ===============================
+// 4. Change Password
+// ===============================
+if (passwordForm) {
+  passwordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
 
-  profileUploadInput.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    if (newPassword !== confirmPassword) {
+      return alert("New passwords do not match!");
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/profile/change-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      alert("✅ Password changed successfully!");
+      passwordForm.reset();
+    } catch (err) {
+      console.error(err);
+      alert(`Error: ${err.message}`);
+    }
+  });
+}
+
+// ===============================
+// 5. Profile Picture Logic
+// ===============================
+function setupModal() {
+  if (!changePicBtn) return;
+
+  // Open Modal
+  changePicBtn.addEventListener("click", () => {
+    if (profileModal) profileModal.style.display = "flex";
+  });
+
+  // Close Modal Global Function (for HTML onclick)
+  window.closeModal = (modalId) => {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.style.display = "none";
+  };
+
+  // Save Pic (Upload)
+  window.saveProfilePic = async () => {
+    if (!modalProfileUpload.files[0]) return alert("Please select a file.");
 
     const formData = new FormData();
-    formData.append("profile_pic", file);
+    formData.append("profile_pic", modalProfileUpload.files[0]);
 
     try {
       const res = await fetch(`${API_BASE}/api/profile/upload-pic`, {
@@ -151,203 +185,48 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed.");
+      if (!res.ok) throw new Error(data.message);
 
-      // Update main profile pic AND sidebar instantly
-      profilePic.src = `${API_BASE}${data.path}?t=${Date.now()}`;
-      sidebarAvatar.src = `${API_BASE}${data.path}?t=${Date.now()}`;
-
-      alert("Profile picture updated!");
+      alert("✅ Profile picture updated!");
+      closeModal("profileModal");
+      loadProfileData(); // Refresh images
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      alert("Failed to upload profile picture.");
     }
-  });
+  };
+}
 
-  // ===============================
-  // 🔐 Change Password
-  // ===============================
-  if (passwordForm) {
-    passwordForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const currentPassword = document.querySelector("#currentPassword").value;
-      const newPassword = document.querySelector("#newPassword").value;
-      const confirmPassword = document.querySelector("#confirmPassword").value;
-
-      if (newPassword !== confirmPassword) return alert("New passwords do not match!");
-
-      try {
-        const res = await fetch(`${API_BASE}/api/profile/change-password`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ currentPassword, newPassword }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Password change failed.");
-
-        alert("Password changed successfully!");
-        passwordForm.reset();
-      } catch (err) {
-        console.error(err);
-        alert(err.message);
-      }
-    });
-  }
-
-  // ===============================
-// 🚀 My Gallery Backend Integration
 // ===============================
-let userId = null;
-let selectedPhotos = new Set();
-let remainingDownloads = 0;
+// 6. Sidebar Navigation Logic
+// ===============================
+function setupSidebar() {
+  navItems.forEach(item => {
+    item.addEventListener("click", () => {
+      // Ignore section titles
+      if (item.classList.contains("section-title")) return;
 
-async function initGallery() {
-  try {
-    const res = await fetch(`${API_BASE}/api/auth/verify`, { credentials: 'include' });
-    if (!res.ok) throw new Error('Not logged in');
-    const data = await res.json();
-    if (!data.valid) throw new Error('Invalid session');
+      const text = item.innerText.trim();
 
-    userId = data.user.id;
+      // ✅ REDIRECT Logic for Gallery Pages
+      if (text === "My Gallery" || text === "My Photos" || text === "Bookings") {
+        window.location.href = "/user/user_gallery.html";
+        return;
+      }
 
-    await loadDownloadInfo();
-    await loadGallery();
-  } catch (err) {
-    console.error('Gallery init error:', err);
-    alert('Please log in first.');
-  }
-}
+      // Normal Tab Switching
+      navItems.forEach(li => li.classList.remove("active"));
+      item.classList.add("active");
 
-async function loadDownloadInfo() {
-  try {
-    const res = await fetch(`${API_BASE}/api/photos/downloads`, { credentials: 'include' });
-    if (!res.ok) throw new Error('Failed to fetch downloads');
-    const { remaining, total } = await res.json();
-    remainingDownloads = remaining;
-
-    document.getElementById('remaining-downloads').textContent = remaining;
-  } catch (err) {
-    console.error('Download info error:', err);
-  }
-}
-
-async function loadGallery() {
-  try {
-    const token = localStorage.getItem("token");
-    const res = await fetch(`/api/photos/gallery/user`, { headers: { Authorization: `Bearer ${token}` } });
-    if (!res.ok) throw new Error('Failed to load gallery');
-    const photos = await res.json();
-    const galleryGrid = document.getElementById('gallery-grid');
-    galleryGrid.innerHTML = '';
-
-    if (!photos.length) {
-      galleryGrid.innerHTML = '<p>No photos found.</p>';
-      return;
-    }
-
-    photos.forEach(photo => {
-  const card = document.createElement('div');
-  card.className = 'gallery-item';
-  card.style.position = 'relative';
-
-  const img = document.createElement('img');
-  img.src = photo.file_path;
-  img.alt = photo.file_name || 'Photo';
-  img.style.width = '100%';
-  img.style.borderRadius = '6px';
-  card.appendChild(img);
-
-  const selectIcon = document.createElement('div');
-  selectIcon.className = 'select-icon';
-  selectIcon.textContent = '✓';
-  selectIcon.style.cssText = 'position:absolute; top:5px; left:5px; width:20px; height:20px; background:#F4981E; border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-size:12px;';
-  card.appendChild(selectIcon);
-
-  card.addEventListener('click', () => {
-    card.classList.toggle('selected');
-    selectIcon.style.background = card.classList.contains('selected') ? '#f5a623' : '#F4981E';
-    selectedPhotos = new Set([...document.querySelectorAll('.gallery-item.selected')].map(el => el.dataset.id));
-    document.getElementById('selected-count').textContent = `${selectedPhotos.size} Selected`;
-  });
-
-  card.dataset.id = photo.id;
-  galleryGrid.appendChild(card);
-});
-
-
-  } catch (err) {
-    console.error('Load gallery error:', err);
-    document.getElementById('gallery-grid').innerHTML = '<p style="color:red">Error loading gallery.</p>';
-  }
-}
-
-// Download selected photos
-document.getElementById('bulkDownloadBtn')?.addEventListener('click', async () => {
-  if (!selectedPhotos.size) return alert('Select at least one photo!');
-  for (const photoId of selectedPhotos) {
-    await fetch(`${API_BASE}/api/photos/download/${photoId}`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => res.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `photo_${photoId}.jpg`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch(err => console.error('Download error:', err));
-  }
-});
-
-initGallery();
-
-
-  const downloadBtn = panelGallery.querySelector("button.save-btn");
-  downloadBtn?.addEventListener("click", () => {
-    const selected = panelGallery.querySelectorAll(".gallery-item.selected");
-    if (selected.length === 0) return alert("Select at least 1 photo to download!");
-    alert(`You selected ${selected.length} photo(s) to download. Backend logic can be added here.`);
-  });
-
-  // ===============================
-  // 💳 Banks & Cards PayMongo Integration
-  // ===============================
-  addPaymentBtn?.addEventListener("click", async () => {
-    try {
-      const bookingId = prompt("Enter your booking ID:");
-      const amount = parseFloat(prompt("Enter payment amount:"));
-      if (!bookingId || !amount || amount <= 0) return alert("Invalid booking or amount.");
-
-      const method = "card"; // default to card, can extend to gcash, grabpay, etc.
-
-      const res = await fetch(`${API_BASE}/api/payments/create-checkout-session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount, booking_id: bookingId, method }),
+      Object.values(panels).forEach(panel => {
+        if (panel) panel.style.display = "none";
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Payment session failed.");
-
-      window.open(data.checkout_url, "_blank");
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
-    }
+      if (panels[text]) {
+        panels[text].style.display = "block";
+      }
+    });
   });
-
-  // ===============================
-  // 🚀 Initialize
-  // ===============================
-  loadProfile();
-});
+}

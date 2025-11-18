@@ -50,6 +50,107 @@ router.get("/summary/:id", authenticateToken, async (req, res) => {
 });
 
 /**
+ * GET /api/bookings/admin/summary/:id
+ * ✅ NEW: Admin-only route to get summary for *any* booking.
+ * This route does NOT check for user ownership.
+ */
+router.get(
+  "/admin/summary/:id",
+  authenticateToken,
+  authorizeRoles("admin", "staff"),
+  async (req, res) => {
+    try {
+      const bookingId = req.params.id; // No user_id check
+
+      // This query joins user info for display
+      const [rows] = await dbPromise.query(
+        `SELECT b.*, s.name AS service_name, s.price AS service_price,
+                u.name AS customer_name, u.email AS customer_email
+         FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
+         LEFT JOIN users u ON b.user_id = u.id
+         WHERE b.id = ? LIMIT 1`,
+        [bookingId]
+      );
+
+      if (!rows.length)
+        return res.status(404).json({ message: "Booking not found" });
+
+      const booking = rows[0];
+      const subtotal = parseFloat(booking.service_price || 0);
+      const tax = +(subtotal * TAX_RATE).toFixed(2);
+      const total = +(subtotal + tax).toFixed(2);
+
+      const summary = {
+        subtotal,
+        tax,
+        tax_rate: TAX_RATE,
+        total,
+        notice: `Total includes ${Math.round(
+          TAX_RATE * 100
+        )}% tax. Package + Tax = Total.`,
+      };
+
+      return res.json({ booking, summary });
+    } catch (err) {
+      console.error("Error fetching admin booking summary:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/**
+ * GET /api/bookings/admin/payment-details/:id
+ * ✅ NEW: Smart route for the admin dashboard to get balance info.
+ */
+router.get(
+  "/admin/payment-details/:id",
+  authenticateToken,
+  authorizeRoles("admin", "staff"),
+  async (req, res) => {
+    try {
+      const bookingId = req.params.id;
+      const db = await dbPromise;
+
+      // 1. Get the total price of the service
+      const [[booking]] = await db.query(
+        `SELECT s.price 
+         FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
+         WHERE b.id = ?`,
+        [bookingId]
+      );
+
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+      const total_price = Number(booking.price || 0);
+
+      // 2. Get the sum of all confirmed payments for this booking
+      const [[payment]] = await db.query(
+        `SELECT SUM(amount) AS total_paid 
+         FROM transactions 
+         WHERE related_id = ? AND type = 'booking' AND status = 'confirmed'`,
+        [bookingId]
+      );
+      
+      const total_paid = Number(payment.total_paid || 0);
+      const remaining_balance = total_price - total_paid;
+
+      res.json({
+        total_price,
+        total_paid,
+        remaining_balance: remaining_balance < 0 ? 0 : remaining_balance, // Don't show negative
+      });
+
+    } catch (err) {
+      console.error("Error fetching payment details:", err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+
+/**
  * GET /api/bookings/:id
  * Return booking (existing), but updated to use promise pool
  */
@@ -137,14 +238,12 @@ router.post("/", authenticateToken, async (req, res) => {
 });
 
 /**
- * POST /api/bookings/:id/pay
- * Record payment (downpayment or full) for a booking.
- * This will insert into payments and create a transaction for reflection in admin/user history.
+ * POST /api/bookings/:id/pay (SMARTER VERSION)
+ * Records payment and automatically updates booking status based on remaining balance.
  */
 router.post("/:id/pay", authenticateToken, async (req, res) => {
   const bookingId = req.params.id;
-  const userId = req.user.id;
-  const { amount, is_downpayment = true, payment_method = "unknown", reference = null } = req.body;
+  const { amount, payment_method = "unknown", reference = null } = req.body;
 
   if (!amount || amount <= 0) return res.status(400).json({ message: "Invalid payment amount" });
 
@@ -152,48 +251,57 @@ router.post("/:id/pay", authenticateToken, async (req, res) => {
   try {
     await conn.beginTransaction();
 
-    // verify booking ownership (user can pay) or staff/admin can pay for any booking
-    const [bookingRows] = await conn.query("SELECT * FROM bookings WHERE id = ? LIMIT 1", [bookingId]);
-    if (!bookingRows.length) {
+    // 1. Get booking and total price
+    const [[booking]] = await conn.query(
+      `SELECT b.user_id, s.price 
+       FROM bookings b
+       LEFT JOIN services s ON b.service_id = s.id
+       WHERE b.id = ? LIMIT 1`,
+      [bookingId]
+    );
+    if (!booking) {
       await conn.rollback();
       conn.release();
       return res.status(404).json({ message: "Booking not found" });
     }
-    const booking = bookingRows[0];
+    const total_price = Number(booking.price || 0);
 
-    // If user is not the owner and not staff/admin -> forbidden
-    if (req.user.role === "customer" && booking.user_id !== userId) {
-      await conn.rollback();
-      conn.release();
-      return res.status(403).json({ message: "Not authorized to pay for this booking" });
-    }
-
-    // Insert payment record
-    const [payResult] = await conn.query(
-      "INSERT INTO payments (booking_id, amount, status, created_at, is_downpayment) VALUES (?, ?, ?, NOW(), ?)",
-      [bookingId, amount, is_downpayment ? 'downpayment' : 'full', is_downpayment ? 1 : 0]
+    // 2. Get total already paid
+    const [[payment]] = await conn.query(
+      `SELECT SUM(amount) AS total_paid 
+       FROM transactions 
+       WHERE related_id = ? AND type = 'booking' AND status = 'confirmed'`,
+      [bookingId]
     );
+    const total_paid = Number(payment.total_paid || 0);
 
-    // Create transaction reflection
-    const ref = reference || `BOOKING-${Math.random().toString(36).substring(2,9).toUpperCase()}`;
+    // 3. Create transaction reflection
+    const ref = reference || `BOOKING-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
     await conn.query(
       `INSERT INTO transactions
-       (user_id, reference_id, type, related_id, amount, payment_method, status, created_at)
-       VALUES (?, ?, 'booking', ?, ?, ?, 'confirmed', NOW())`,
+        (user_id, reference_id, type, related_id, amount, payment_method, status, created_at)
+        VALUES (?, ?, 'booking', ?, ?, ?, 'confirmed', NOW())`,
       [booking.user_id, ref, bookingId, amount, payment_method]
     );
 
-    // Optionally update booking status: if full payment then 'paid', if downpayment mark 'partial'
-    if (!is_downpayment) {
-      await conn.query("UPDATE bookings SET status = 'paid' WHERE id = ?", [bookingId]);
-    } else {
-      await conn.query("UPDATE bookings SET status = 'partial' WHERE id = ?", [bookingId]);
+    // 4. Determine new status
+    const new_total_paid = total_paid + Number(amount);
+    let new_status = 'partial';
+    if (new_total_paid >= total_price) {
+      new_status = 'paid'; // Set to 'paid' if full amount is covered
     }
+    
+    // Update booking status
+    await conn.query("UPDATE bookings SET status = ? WHERE id = ?", [new_status, bookingId]);
+
+    // NOTE: We don't need to insert into the 'payments' table anymore
+    // because the 'transactions' table is our single source of truth for payments.
+    // This simplifies the logic immensely.
 
     await conn.commit();
     conn.release();
 
-    return res.json({ message: "Payment recorded and transaction created", payment_id: payResult.insertId, reference: ref });
+    return res.json({ message: "Payment recorded and transaction created", reference: ref });
   } catch (err) {
     await conn.rollback();
     conn.release();
@@ -220,14 +328,13 @@ router.put("/:id/approve", authenticateToken, authorizeRoles("staff", "admin"), 
 
 /**
  * POST /api/bookings/:id/review
- * Customer adds feedback/review for a booking (rating + comment)
- * Reviews will be visible to admin via /api/admin/reviews or via transactions join.
+ * Customer adds feedback/review (NOW LINKED TO BOOKING_ID)
  */
 router.post("/:id/review", authenticateToken, async (req, res) => {
   try {
-    const bookingId = req.params.id;
+    const bookingId = req.params.id; // This is the booking_id
     const userId = req.user.id;
-    const { rating = null, comment = "" } = req.body;
+    const { rating = 5, comment = "" } = req.body;
 
     // fetch booking to ensure ownership and service_id
     const [bRows] = await dbPromise.query("SELECT user_id, service_id FROM bookings WHERE id = ? LIMIT 1", [bookingId]);
@@ -236,10 +343,10 @@ router.post("/:id/review", authenticateToken, async (req, res) => {
 
     const service_id = bRows[0].service_id || null;
 
-    // Insert into reviews table
+    // ✅ FIX: Insert into reviews table WITH the booking_id
     await dbPromise.query(
-      "INSERT INTO reviews (user_id, service_id, rating, comment, created_at) VALUES (?, ?, ?, ?, NOW())",
-      [userId, service_id, rating, comment]
+      "INSERT INTO reviews (user_id, service_id, booking_id, rating, comment, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+      [userId, service_id, bookingId, rating, comment]
     );
 
     return res.json({ message: "Review submitted. Thanks for the feedback!" });

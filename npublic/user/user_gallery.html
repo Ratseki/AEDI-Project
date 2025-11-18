@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Gallery — ProfilePIC</title>
+  <link rel="stylesheet" href="user_gallery.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo"><span>ProfilePIC</span></div>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/about.html">About Us</a>
+      <a href="#">Services ▼</a>
+      <a href="/gallery.html">Gallery</a>
+      <a href="/contact.html">Contact</a>
+    </nav>
+    <div class="account">
+      <span class="icon">👤</span> My Account
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <h3>User123</h3>
+      <section>
+        <h4>👤 My Account</h4>
+        <ul>
+          <li><a href="#">Banks & Cards</a></li>
+          <li><a href="#">Change Password</a></li>
+        </ul>
+      </section>
+      <section>
+        <h4>📁 My Gallery</h4>
+        <ul>
+          <li class="active">My Gallery</li>
+          <li>🖼 My Photos</li>
+          <li>📅 Bookings</li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- GALLERY CONTENT -->
+    <section class="content">
+      <div class="gallery-header">
+      <span id="gallery-date"></span>
+      <span>Remaining Downloads <span id="remaining-downloads">0</span>/<span id="total-downloads">0</span></span>
+      </div>
+
+      <div id="gallery-grid" class="gallery-grid">
+        <!-- Images loaded dynamically by JS -->
+      </div>
+
+      <!-- Payment Method Selector -->
+      <div class="payment-method">
+      <label for="payment-method-select">Select Payment Method:</label>
+      <select id="payment-method-select">
+        <option value="card">Credit / Debit Card</option>
+        <option value="gcash">GCash</option>
+        <option value="paymaya">PayMaya</option>
+      </select>
+    </div>
+
+
+      <button id="purchase-btn" class="purchase-btn">Purchase Photos</button>
+    </section>
+  </main>
+
+  <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("/api/auth/verify", {
+      method: "GET",
+      credentials: "include" // sends cookie
+    });
+    const data = await res.json();
+
+    if (!data.valid) {
+      alert("Please log in first");
+      window.location.href = "/login.html"; // redirect if not logged in
+    } else {
+      console.log("✅ User verified:", data.user);
+      document.querySelector(".sidebar h3").textContent = data.user.name || "User";
+    }
+  } catch (err) {
+    console.error(err);
+    window.location.href = "/login.html";
+  }
+});
+</script>
+
+
+  <script src="user_gallery.js"></script>
+</body>
+</html>

@@ -50,9 +50,9 @@ async function ensureDownloadsColumn() {
 }
 ensureDownloadsColumn().catch(() => {});
 
-// --------------------
-// Upload photos (staff/admin)
-// --------------------
+// ================================
+// 📤 Bulk Photo Upload (SMART FIX)
+// ================================
 router.post(
   "/upload",
   authenticateToken,
@@ -65,30 +65,52 @@ router.post(
       if (!req.files || req.files.length === 0) return res.status(400).json({ message: "Please upload at least one file." });
 
       const uploadedBy = req.user.id;
-      const values = req.files.map((file) => [
-        customer_id,
-        uploadedBy,
-        booking_id && booking_id !== "null" ? booking_id : null,
-        file.originalname,
-        `/uploads/${file.filename}`,
-        "available",
-        price || 100.0,
-        1,
-        new Date(),
-      ]);
-
-      await dbPromise.query(
-        `INSERT INTO photos
-         (user_id, uploaded_by, booking_id, file_name, file_path, status, price, is_published, created_at)
-         VALUES ?`,
-        [values]
-      );
+      const db = await dbPromise;
+      
+      let newPhotos = 0;
+      let skippedPhotos = 0;
+      
+      // We must loop and check one by one
+      for (const file of req.files) {
+      
+        // ✅ FIX: Check for duplicates
+        const [existing] = await db.query(
+          "SELECT id FROM photos WHERE user_id = ? AND file_name = ?",
+          [customer_id, file.originalname]
+        );
+        
+        if (existing.length > 0) {
+          // A photo with this name already exists for this user, skip it.
+          skippedPhotos++;
+        } else {
+          // This is a new photo, insert it.
+          const values = [
+            customer_id,
+            uploadedBy,
+            booking_id && booking_id !== "null" ? booking_id : null,
+            file.originalname,
+            `/uploads/${file.filename}`,
+            "available",
+            price || 100.0,
+            1,
+            new Date(),
+          ];
+          
+          await db.query(
+            `INSERT INTO photos
+              (user_id, uploaded_by, booking_id, file_name, file_path, status, price, is_published, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            values
+          );
+          newPhotos++;
+        }
+      }
 
       return res.json({
         success: true,
-        message: `${req.files.length} photo(s) uploaded successfully!`,
-        files: values.map(v => ({ file_name: v[3], file_path: v[4] }))
+        message: `${newPhotos} new photo(s) uploaded successfully! ${skippedPhotos} duplicate(s) were skipped.`,
       });
+
     } catch (err) {
       console.error("Upload error:", err);
       return res.status(500).json({ message: "Error uploading photos." });
@@ -281,18 +303,36 @@ router.get("/my-photos", authenticateToken, async (req, res) => {
 // --------------------
 // User gallery (watermarked previews, including download status)
 // --------------------
+// ==========================================================
+// User gallery (SMART FIX V3 - PREVENTS DUPLICATES)
+// ==========================================================
 router.get("/gallery/user", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
+    // ✅ FIX: This query now
+    // 1. Adds `WHERE p.user_id = ?` to only show this user's photos.
+    // 2. Adds `GROUP BY p.id` to ensure only one row per photo.
+    // 3. Uses MAX() to find the "best" status ('purchased' > 'pending' > 'active')
     const [photos] = await dbPromise.query(
-      `SELECT p.id, p.file_name, p.file_path, p.price, p.status,
-              pp.downloads_remaining, pp.expires_at
-       FROM photos p
-       LEFT JOIN photo_purchases pp ON pp.photo_id = p.id AND pp.user_id = ?
-       WHERE p.is_published = 1 AND p.status IN ('available','purchased')
-       ORDER BY p.created_at DESC`,
-      [userId]
+      `SELECT
+        p.id,
+        p.file_name,
+        p.file_path,
+        p.price,
+        -- Check for the "best" purchase status.
+        MAX(pp.status) AS purchase_status,
+        MAX(pp.downloads_remaining) AS downloads_remaining,
+        MAX(pp.expires_at) AS expires_at
+      FROM photos p
+      LEFT JOIN photo_purchases pp ON pp.photo_id = p.id AND pp.user_id = ?
+      WHERE
+        p.user_id = ? AND p.is_published = 1
+      GROUP BY
+        p.id
+      ORDER BY
+        p.created_at DESC`,
+      [userId, userId] // Pass userId for both placeholders
     );
 
     const WATERMARK_TEXT = "PROFILEPICMULTIMEDIA";
@@ -302,7 +342,7 @@ router.get("/gallery/user", authenticateToken, async (req, res) => {
       const inputPath = path.join(__dirname, "..", p.file_path);
       const outputPath = path.join(PREVIEW_DIR, `preview_${p.id}.jpg`);
 
-      if (!fs.existsSync(outputPath)) {
+      if (!fs.existsSync(outputPath) && fs.existsSync(inputPath)) {
         try {
           await sharp(inputPath)
             .resize(800)
@@ -317,12 +357,21 @@ router.get("/gallery/user", authenticateToken, async (req, res) => {
         } catch (err) { console.error("Watermark error", p.id, err.message); }
       }
 
+      // ✅ FIX: Use the new 'purchase_status' to decide what to show
+      let status_to_show = 'available';
+      if (p.purchase_status === 'active' || p.purchase_status === 'purchased') {
+         status_to_show = 'purchased';
+      } else if (p.purchase_status === 'expired') {
+         status_to_show = 'expired';
+      }
+      // If 'pending' or null, it remains 'available'
+
       return {
         photo_id: p.id,
         file_name: p.file_name,
         preview_path: `/uploads/previews/preview_${p.id}.jpg`,
         price: p.price,
-        status: p.status,
+        status: status_to_show, // This now shows the correct status
         downloads_remaining: p.downloads_remaining || 0,
         expired: p.expires_at && new Date(p.expires_at) <= now,
         purchased_at: p.expires_at ? p.expires_at : null
@@ -398,6 +447,91 @@ router.get("/customers", authenticateToken, authorizeRoles("staff", "admin"), as
     return res.status(500).json({ message: "Error loading customers." });
   }
 });
+
+// --------------------
+// Admin: Get specific customer's gallery (FIX)
+// --------------------
+// THIS IS THE NEW ROUTE THAT FIXES THE 'Route not found' ERROR
+router.get(
+  "/gallery/customer/:id",
+  authenticateToken,
+  authorizeRoles("admin", "staff"),
+  async (req, res) => {
+    try {
+      const { id: customerId } = req.params; // Get ID from URL param
+      if (!customerId) {
+        return res.status(400).json({ message: "Customer ID is required." });
+      }
+
+      // 1. Get all photos for this specific user
+      const [photos] = await dbPromise.query(
+        `SELECT id, file_name, file_path, price, status
+         FROM photos
+         WHERE user_id = ?
+         ORDER BY created_at DESC`,
+        [customerId]
+      );
+
+      // If no photos, return an empty array (which is fine)
+      if (!photos.length) {
+        return res.json([]);
+      }
+
+      // 2. Borrow your existing preview/watermark logic from the '/gallery/user' route
+      const WATERMARK_TEXT = "PROFILEPICMULTIMEDIA";
+
+      const previews = await Promise.all(
+        photos.map(async (p) => {
+          const inputPath = path.join(__dirname, "..", p.file_path);
+          const outputPath = path.join(PREVIEW_DIR, `preview_${p.id}.jpg`);
+
+          // Only create preview if it doesn't exist AND original exists
+          if (!fs.existsSync(outputPath) && fs.existsSync(inputPath)) {
+            try {
+              await sharp(inputPath)
+                .resize(800)
+                .composite([
+                  {
+                    input: Buffer.from(
+                      `<svg width="800" height="200">
+                        <text x="50%" y="50%" font-size="48" fill="rgba(255,255,255,0.3)" text-anchor="middle" dy=".3em" font-family="Arial" font-weight="bold">${WATERMARK_TEXT}</text>
+                      </svg>`
+                    ),
+                    gravity: "center",
+                  },
+                ])
+                .jpeg({ quality: 90 })
+                .toFile(outputPath);
+            } catch (err) {
+              console.error(
+                "Watermark error on admin gallery for photo",
+                p.id,
+                err.message
+              );
+            }
+          }
+
+          // 3. Return the object in the format dashboard.js expects
+          // We use 'url' to match the <img src="${p.url}"> in dashboard.js
+          return {
+            photo_id: p.id,
+            file_name: p.file_name,
+            url: `/uploads/previews/preview_${p.id}.jpg`,
+            price: p.price,
+            status: p.status,
+          };
+        })
+      );
+
+      return res.json(previews);
+    } catch (err) {
+      console.error("Error fetching admin customer gallery:", err);
+      return res
+        .status(500)
+        .json({ message: "Error fetching customer gallery." });
+    }
+  }
+);
 
 // Delete single photo
 router.delete("/:id", authenticateToken, authorizeRoles("staff", "admin"), async (req, res) => {

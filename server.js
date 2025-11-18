@@ -15,12 +15,6 @@ const authorizeRoles = require("./middleware/roleMiddleware");
 
 const app = express();
 
-// 1️⃣ Parse raw JSON for webhooks (before express.json())
-app.use("/api/webhooks/paymongo", express.raw({ type: "*/*" }));
-
-// 2️⃣ Mount the webhook router
-app.use("/api/webhooks", require("./routes/webhooks"));
-
 // ======================================================
 // === Middleware
 // ======================================================
@@ -28,16 +22,24 @@ app.use(cors({
   origin: "http://localhost:3000", // Node server origin
   credentials: true
 }));
- // frontend address
+
+// ======================================================
+// === ✅ WEBHOOK ROUTE (MUST BE FIRST)
+// ======================================================
+// We define the webhook route *before* the global express.json()
+app.use("/api/webhooks", require("./routes/webhooks"));
+
+// ======================================================
+// === Global Middleware (MUST BE AFTER WEBHOOKS)
+// ======================================================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 // Serve everything in public
 app.use(express.static(path.join(__dirname, "public")));
-
-// Optional: explicitly serve /user if needed
 app.use("/user", express.static(path.join(__dirname, "public/user")));
-app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // serve uploaded photos
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cookieParser());
 
 // ======================================================
@@ -58,8 +60,8 @@ const analyticsRoutes = require("./routes/analytics");
 const bookingExtrasRoutes = require("./routes/bookings_extras");
 const qrRoutes = require("./routes/qr");
 const galleryAccessRoutes = require("./routes/galleryAccess");
-const photoRoutes = require("./routes/photos"); // upload + gallery
-const photoPurchaseRoutes = require("./routes/photoPurchases"); // purchase + download
+const photoRoutes = require("./routes/photos");
+const photoPurchaseRoutes = require("./routes/photoPurchases");
 const transactionsRoutes = require("./routes/transactions");
 const profileRoutes = require("./routes/profile");
 const notificationRoutes = require("./routes/notifications");
@@ -79,11 +81,8 @@ app.use("/api/qr", qrRoutes);
 app.use("/api/gallery", galleryAccessRoutes);
 app.use("/api/photos", photoRoutes);
 app.use("/api/transactions", transactionsRoutes);
-
 app.use("/api/photo-purchases", photoPurchaseRoutes);
-
 app.use("/api/profile", profileRoutes);
-
 app.use("/api/notifications", notificationRoutes);
 
 // ======================================================

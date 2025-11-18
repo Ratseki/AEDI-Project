@@ -1,9 +1,29 @@
-to start the server using "node server.js"
+# Project Setup & Guide
 
-you need a .env file first which is located in the #resource channel
-on the AEDI discord server
+**Prerequisites:**
+* **Node.js** installed.
+* **.env file:** Located in the **#resource** channel on the AEDI Discord server.
+* **ngrok.exe:** You need the **AMD64 Windows version** placed inside the root `/AEDI` folder for payments to work.
 
-before commiting a push, you must remove the .env file otherwise it would fail
+---
+
+## 🚀 HOW TO START THE WEBSITE
+
+1.  Start **XAMPP** (Apache & MySQL).
+2.  Make a new file named `.env` and paste the contents from Discord.
+3.  Open Command Prompt or a separate terminal inside VS Code.
+4.  Run Ngrok:
+
+    ./ngrok http 3000
+
+5.  Open a second terminal and start the server:
+
+    node server.js
+
+
+## 💾 Git Push Instructions
+
+*⚠️ Note: Ensure `.env` is ignored (via .gitignore) before committing.*
 
 # Check what files are new/modified
 git status
@@ -11,12 +31,8 @@ git status
 # Add all new files
 git add .
 
-# Or add specific files
-git add services.html server.js
-
 # Commit with a message
-git commit -m "Add services page and route"
+git commit -m "Fixed payments, profile, gallery, and webhooks"
 
-# Push to GitHub
-git push origin main
-
+# Push to GitHub (Use your specific branch to be safe)
+git push origin fix-payment-and-profile

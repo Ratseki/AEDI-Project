@@ -1,7 +1,6 @@
 const express = require("express");
 const authenticateToken = require("../middleware/authMiddleware");
 const { dbPromise } = require("../config/db");
-const fetch = require("node-fetch");
 
 const router = express.Router();
 
@@ -12,51 +11,41 @@ const PAYMONGO_SECRET_KEY =
     : process.env.PAYMONGO_TEST_SECRET_KEY;
 
 // ============================
-// 1️⃣ Single photo purchase (PayMongo checkout)
+// 1️⃣ Single photo purchase (SMART FIX)
 // ============================
 router.post("/buy", authenticateToken, async (req, res) => {
   try {
+    // ✅ FIX: Dynamically import node-fetch
+    const fetch = (await import('node-fetch')).default;
+
     const { photo_id, method } = req.body;
     const user_id = req.user.id;
-
-    // Fetch photo info
+    // ... (rest of the function is identical) ...
     const [photoRows] = await dbPromise.query("SELECT * FROM photos WHERE id=?", [photo_id]);
     if (!photoRows.length) return res.status(404).json({ message: "Photo not found." });
     const photo = photoRows[0];
     const price = photo.price;
 
-    // PayMongo request body
-    const bodyData = {
-      data: {
-        attributes: {
-          line_items: [
-            {
-              name: `Photo #${photo_id}`,
-              amount: price * 100, // PayMongo expects amount in centavos
-              currency: "PHP",
-              quantity: 1,
-            },
-          ],
-          payment_method_types: ["gcash", "card"],
-          success_url: "http://localhost:3000/user/gallery?status=success",
-          cancel_url: "http://localhost:3000/user/gallery?status=cancelled",
-          description: `Photo #${photo_id}`,
-          metadata: {
-            user_id: user_id,
-            photo_id: photo_id,
-          },
-        },
-      },
-    };
-
-    // Send to PayMongo
     const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
       method: "POST",
       headers: {
         Authorization: "Basic " + Buffer.from(PAYMONGO_SECRET_KEY + ":").toString("base64"),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(bodyData),
+      body: JSON.stringify({
+        data: {
+          attributes: {
+            line_items: [
+              { name: `Photo #${photo_id}`, amount: price * 100, currency: "PHP", quantity: 1 }
+            ],
+            payment_method_types: [method],
+            success_url: "http://localhost:3000/user/gallery?status=success",
+            cancel_url: "http://localhost:3000/user/gallery?status=cancelled",
+            description: `Photo #${photo_id}`,
+            metadata: { user_id: user_id, photo_id: photo_id }, 
+          },
+        },
+      }),
     });
 
     const data = await response.json();
@@ -65,108 +54,17 @@ router.post("/buy", authenticateToken, async (req, res) => {
       return res.status(400).json({ message: "PayMongo error", data });
     }
 
-    // Save pending purchase in DB
+    const checkout_session_id = data.data.id;
+
     await dbPromise.query(
-      "INSERT INTO photo_purchases (photo_id, user_id, price, status) VALUES (?, ?, ?, 'pending')",
-      [photo_id, user_id, price]
+      "INSERT INTO photo_purchases (photo_id, user_id, price, status, checkout_session_id, downloads_remaining) VALUES (?, ?, ?, 'pending', ?, ?)",
+      [photo_id, user_id, price, checkout_session_id, 10]
     );
 
     res.json({ checkout_url: data.data.attributes.checkout_url });
   } catch (err) {
     console.error("Error creating checkout session:", err);
     res.status(500).json({ message: "Error creating checkout session." });
-  }
-});
-
-// ============================
-// 2️⃣ Webhook endpoint
-// ============================
-router.post("/webhook", express.raw({ type: "*/*" }), async (req, res) => {
-  try {
-    const payload = JSON.parse(req.body.toString());
-    const eventType = payload.data.type;
-    const attrs = payload.data.attributes;
-
-    if (eventType === "checkout_session.payment.paid") {
-      const description = attrs.description || "";
-      const expires_at = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-      // Single photo purchase
-      const photoMatch = description.match(/Photo #(\d+)/);
-      if (photoMatch) {
-        const photo_id = parseInt(photoMatch[1]);
-        const [[purchase]] = await dbPromise.query(
-          "SELECT user_id, price FROM photo_purchases WHERE photo_id=? AND status='pending' ORDER BY id DESC LIMIT 1",
-          [photo_id]
-        );
-
-        if (purchase) {
-          // Update photo_purchases
-          await dbPromise.query(
-            "UPDATE photo_purchases SET status='active', expires_at=?, purchase_date=NOW() WHERE photo_id=? AND status='pending'",
-            [expires_at, photo_id]
-          );
-
-          // Update photos table
-          await dbPromise.query(
-            "UPDATE photos SET status='purchased', purchased_at=NOW(), expires_at=? WHERE id=?",
-            [expires_at, photo_id]
-          );
-
-          // Insert transaction
-          await dbPromise.query(
-            `INSERT INTO transactions 
-             (user_id, reference_id, type, related_id, amount, payment_method, status, created_at)
-             VALUES (?, ?, 'photo', ?, ?, ?, 'confirmed', NOW())`,
-            [purchase.user_id, payload.data.id, photo_id, purchase.price, attrs.payment_method_used || 'unknown']
-          );
-
-          console.log(`✅ Photo #${photo_id} purchased by user ${purchase.user_id}`);
-        }
-      }
-
-      // Bulk purchase
-      const bulkMatch = description.match(/Bulk purchase for user #(\d+)/);
-      if (bulkMatch) {
-        const user_id = parseInt(bulkMatch[1]);
-        const [purchases] = await dbPromise.query(
-          "SELECT photo_id, price FROM photo_purchases WHERE user_id=? AND status='pending'",
-          [user_id]
-        );
-
-        if (purchases.length > 0) {
-          const photo_ids = purchases.map(p => p.photo_id);
-
-          // Update photo_purchases & photos
-          await dbPromise.query(
-            "UPDATE photo_purchases SET status='active', expires_at=?, purchase_date=NOW() WHERE user_id=? AND status='pending'",
-            [expires_at, user_id]
-          );
-
-          await dbPromise.query(
-            "UPDATE photos SET status='purchased', purchased_at=NOW(), expires_at=? WHERE id IN (?)",
-            [expires_at, photo_ids]
-          );
-
-          // Insert transactions
-          for (const p of purchases) {
-            await dbPromise.query(
-              `INSERT INTO transactions 
-               (user_id, reference_id, type, related_id, amount, payment_method, status, created_at)
-               VALUES (?, ?, 'photo', ?, ?, ?, 'confirmed', NOW())`,
-              [user_id, payload.data.id, p.photo_id, p.price, attrs.payment_method_used || 'unknown']
-            );
-          }
-
-          console.log(`✅ Bulk purchase completed for user ${user_id}`);
-        }
-      }
-    }
-
-    res.sendStatus(200);
-  } catch (err) {
-    console.error("Webhook error:", err);
-    res.status(400).send("Webhook error");
   }
 });
 
@@ -222,42 +120,41 @@ router.post("/purchase/:photoId", authenticateToken, async (req, res) => {
 });
 
 // ============================
-// 5️⃣ Bulk gallery purchase (manual / create pending + PayMongo)
+// 5️⃣ Bulk gallery purchase (SMART FIX V2)
 // ============================
 router.post("/purchase-bulk", authenticateToken, async (req, res) => {
   try {
+    // ✅ FIX: Dynamically import node-fetch
+    const fetch = (await import('node-fetch')).default;
+
     const user_id = req.user.id;
-    const { photo_ids, method } = req.body;
+    const { photo_ids, method, package_downloads } = req.body;
+    // ... (rest of the function is identical) ...
+    const downloadsAllowed = parseInt(package_downloads || 10, 10);
 
     if (!Array.isArray(photo_ids) || photo_ids.length === 0)
       return res.status(400).json({ message: "No photos selected." });
 
     const lineItems = [];
-    const pendingInserts = [];
+    const photoPrices = {}; 
 
     for (const id of photo_ids) {
       const [photoRows] = await dbPromise.query("SELECT price FROM photos WHERE id=?", [id]);
-      if (!photoRows.length) continue;
+      if (!photoRows.length) continue; 
+
+      const price = photoRows[0].price;
+      photoPrices[id] = price; 
 
       lineItems.push({
         name: `Photo #${id}`,
-        amount: Math.round(photoRows[0].price * 100),
+        amount: Math.round(price * 100),
         currency: "PHP",
         quantity: 1,
       });
-
-      pendingInserts.push([id, user_id, photoRows[0].price, 'pending']); // status pending
     }
 
     if (lineItems.length === 0) return res.status(400).json({ message: "No valid photos selected." });
 
-    // Insert pending purchases
-    await dbPromise.query(
-      "INSERT INTO photo_purchases (photo_id, user_id, price, status) VALUES ?",
-      [pendingInserts]
-    );
-
-    // Create PayMongo checkout session
     const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
       method: "POST",
       headers: {
@@ -271,8 +168,9 @@ router.post("/purchase-bulk", authenticateToken, async (req, res) => {
             description: `Bulk purchase for user #${user_id}`,
             payment_method_types: [method],
             line_items: lineItems,
-            success_url: "http://localhost:3000/gallery.html?status=success",
-            cancel_url: "http://localhost:3000/gallery.html?status=cancelled",
+            success_url: "http://localhost:3000/user/gallery?status=success",
+            cancel_url: "http://localhost:3000/user/gallery?status=cancelled",
+            metadata: { user_id: user_id } 
           },
         },
       }),
@@ -281,10 +179,27 @@ router.post("/purchase-bulk", authenticateToken, async (req, res) => {
     const data = await response.json();
     if (!response.ok) return res.status(400).json({ message: "PayMongo error", data });
 
+    const checkout_session_id = data.data.id;
+
+    const pendingInserts = Object.keys(photoPrices).map(id => [
+        id, 
+        user_id, 
+        photoPrices[id], 
+        'pending', 
+        downloadsAllowed, 
+        checkout_session_id 
+    ]);
+
+    await dbPromise.query(
+      "INSERT INTO photo_purchases (photo_id, user_id, price, status, downloads_remaining, checkout_session_id) VALUES ?",
+      [pendingInserts]
+    );
+
     res.json({ checkout_url: data.data.attributes.checkout_url });
+
   } catch (err) {
     console.error("Bulk purchase error:", err);
-    res.status(500).json({ message: "Error purchasing photos." });
+    res.status(5.00).json({ message: "Error purchasing photos." });
   }
 });
 
