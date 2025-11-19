@@ -3,18 +3,28 @@ const express = require("express");
 const router = express.Router();
 const { dbPromise } = require("../config/db");
 
-// This is the FINAL, WORKING webhook
-// We add the express.raw() middleware *here*
-router.post("/paymongo", express.raw({ type: "application/json" }), async (req, res) => {
+// ✅ FIX: Use type: "*/*" to force capture of ANY body (prevents undefined error)
+router.post("/paymongo", express.raw({ type: "*/*" }), async (req, res) => {
   try {
     let payload;
+    
+    // 1. Parse the body
     if (Buffer.isBuffer(req.body)) {
       payload = JSON.parse(req.body.toString("utf8"));
     } else {
       payload = req.body;
     }
 
+    // ✅ FIX: Safety check to stop crashes if payload is missing
+    if (!payload || !payload.data) {
+      console.error("❌ Webhook Error: Payload is undefined or missing data.");
+      return res.status(400).send("Invalid payload");
+    }
+
     console.log("🔔 Main Webhook Hit!");
+    
+    // 2. Get Event Type
+    // The structure is: payload.data.attributes.type
     const eventType = payload.data.attributes.type;
 
     if (eventType !== "checkout_session.payment.paid") {
@@ -26,6 +36,7 @@ router.post("/paymongo", express.raw({ type: "application/json" }), async (req, 
     const sessionData = payload.data.attributes.data;
     const sessionAttributes = sessionData.attributes;
     const checkout_session_id = sessionData.id; 
+
     const description = sessionAttributes.description || "";
     const paymentMethod = sessionAttributes.payment_method_used || "unknown";
     const ref_id = sessionAttributes.payments?.[0]?.id || payload.data.id;
@@ -61,9 +72,7 @@ router.post("/paymongo", express.raw({ type: "application/json" }), async (req, 
            VALUES (?, ?, 'photo', ?, ?, ?, 'confirmed', NOW())`,
           [user_id, ref_id, photo_id, amount, paymentMethod]
         );
-        console.log(`✅ Webhook: Single Photo #${photo_id} (Session: ${checkout_session_id}) purchased by user ${user_id}`);
-      } else {
-        console.log(`⚠️ Webhook: No matching *pending* purchase found for single photo ${photo_id} with session ${checkout_session_id}`);
+        console.log(`✅ Webhook: Single Photo #${photo_id} (Session: ${checkout_session_id}) purchased.`);
       }
     }
 
@@ -73,10 +82,6 @@ router.post("/paymongo", express.raw({ type: "application/json" }), async (req, 
     const bulkMatch = description.match(/Bulk purchase for user #(\d+)/);
     if (bulkMatch) {
       const user_id = sessionAttributes.metadata?.user_id; 
-      if (!user_id) {
-         console.log(`⚠️ Webhook: Bulk purchase has no user_id in metadata.`);
-         return res.status(400).send("Missing user_id in metadata");
-      }
       
       const total_amount = sessionAttributes.line_items.reduce((sum, item) => sum + item.amount, 0) / 100;
       
@@ -101,13 +106,48 @@ router.post("/paymongo", express.raw({ type: "application/json" }), async (req, 
            VALUES (?, ?, 'photo-bulk', NULL, ?, ?, 'confirmed', NOW())`,
           [user_id, ref_id, total_amount, paymentMethod]
         );
-        console.log(`✅ Webhook: Bulk purchase (Session: ${checkout_session_id}) of ${photo_ids.length} photos completed for user ${user_id}`);
-      } else {
-        console.log(`⚠️ Webhook: No matching *pending* purchases found for bulk session ${checkout_session_id}`);
+        console.log(`✅ Webhook: Bulk purchase of ${photo_ids.length} photos completed.`);
       }
     }
 
-    // ... (rest of the cases) ...
+    // ===================================
+    // CASE 3: BOOKING PAYMENT
+    // ===================================
+    const bookingMatch = description.match(/Payment for booking #(\d+)/);
+    if (bookingMatch) {
+      const booking_id = parseInt(bookingMatch[1]);
+      const amount = sessionAttributes.line_items[0].amount / 100;
+      
+      const [[booking]] = await dbPromise.query(
+        `SELECT b.user_id, s.price FROM bookings b
+         LEFT JOIN services s ON b.service_id = s.id
+         WHERE b.id = ?`, 
+         [booking_id]
+      );
+
+      if (booking) {
+        await dbPromise.query(
+          `INSERT INTO transactions (user_id, reference_id, type, related_id, amount, payment_method, status, created_at)
+           VALUES (?, ?, 'booking', ?, ?, ?, 'confirmed', NOW())`,
+          [booking.user_id, ref_id, booking_id, amount, paymentMethod]
+        );
+
+        const [[paymentStats]] = await dbPromise.query(
+          `SELECT SUM(amount) AS total_paid FROM transactions 
+           WHERE related_id = ? AND type = 'booking' AND status = 'confirmed'`,
+          [booking_id]
+        );
+        
+        const total_paid = Number(paymentStats.total_paid || 0);
+        const total_price = Number(booking.price || 0);
+
+        let new_status = 'partial';
+        if (total_paid >= total_price) new_status = 'paid';
+
+        await dbPromise.query("UPDATE bookings SET status = ? WHERE id = ?", [new_status, booking_id]);
+        console.log(`✅ Webhook: Booking #${booking_id} updated to '${new_status}'`);
+      }
+    }
 
     res.status(200).send("Webhook processed successfully");
 

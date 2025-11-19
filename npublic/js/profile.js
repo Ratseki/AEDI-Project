@@ -129,8 +129,14 @@ picForm.addEventListener("submit", async (e) => {
     });
 
     const data = await res.json();
-    profilePic.src = data.path || "/assets/default-avatar.png";
+    
+    // ✅ FIX: Add a random query param to force the browser to reload the image
+    // This prevents the "old image still showing" bug
+    profilePic.src = `${data.path}?t=${new Date().getTime()}`;
+    
     alert(data.message || "Profile picture updated!");
+    // Clear the file input
+    picInput.value = ""; 
   } catch (err) {
     console.error(err);
     alert("Failed to upload profile picture.");

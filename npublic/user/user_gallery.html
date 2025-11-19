@@ -5,9 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Gallery — ProfilePIC</title>
   <link rel="stylesheet" href="user_gallery.css" />
+  <style>
+    /* Fix cursor for clickable list items */
+    .sidebar li { cursor: pointer; }
+    /* Modal Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      position: relative;
+      max-width: 80vw;
+      max-height: 80vh;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .modal-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .modal-close {
+      position: absolute;
+      top: -15px; right: -15px;
+      font-size: 2rem;
+      color: white;
+      cursor: pointer;
+      background: #0A142D;
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      line-height: 38px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <!-- HEADER -->
   <header class="header">
     <div class="logo"><span>ProfilePIC</span></div>
     <nav class="nav">
@@ -23,75 +61,114 @@
   </header>
 
   <main class="main">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <h3>User123</h3>
+    <<aside class="sidebar">
+      <div style="text-align: center; margin-bottom: 15px;">
+        <img id="sidebar-profile-pic" src="/assets/default-avatar.png" 
+             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #eee;">
+        <h3 id="sidebar-username" style="margin-top: 10px; font-size: 1.1rem;">User</h3>
+      </div>
+
       <section>
         <h4>👤 My Account</h4>
         <ul>
-          <li><a href="#">Banks & Cards</a></li>
-          <li><a href="#">Change Password</a></li>
+          <li><a href="/profilepage.html" style="text-decoration:none; color:inherit; display:block;">Profile</a></li>
+          <li><a href="/profilepage.html?tab=banks" style="text-decoration:none; color:inherit; display:block;">Banks & Cards</a></li>
+          <li><a href="/profilepage.html?tab=password" style="text-decoration:none; color:inherit; display:block;">Change Password</a></li>
         </ul>
       </section>
+
       <section>
         <h4>📁 My Gallery</h4>
         <ul>
-          <li class="active">My Gallery</li>
-          <li>🖼 My Photos</li>
-          <li>📅 Bookings</li>
+          <li id="tab-gallery" class="active">My Gallery</li>
+          <li id="tab-bookings">My Bookings</li>
+          <li id="tab-transactions">My Transactions</li>
         </ul>
       </section>
     </aside>
 
-    <!-- GALLERY CONTENT -->
     <section class="content">
       <div class="gallery-header">
-      <span id="gallery-date"></span>
-      <span>Remaining Downloads <span id="remaining-downloads">0</span>/<span id="total-downloads">0</span></span>
+        <span id="gallery-date"></span>
+        <span>Remaining Downloads <span id="remaining-downloads">0</span>/<span id="total-downloads">0</span></span>
       </div>
 
       <div id="gallery-grid" class="gallery-grid">
-        <!-- Images loaded dynamically by JS -->
-      </div>
+        </div>
 
-      <!-- Payment Method Selector -->
       <div class="payment-method">
-      <label for="payment-method-select">Select Payment Method:</label>
-      <select id="payment-method-select">
-        <option value="card">Credit / Debit Card</option>
-        <option value="gcash">GCash</option>
-        <option value="paymaya">PayMaya</option>
-      </select>
-    </div>
-
+        <label for="payment-method-select">Select Payment Method:</label>
+        <select id="payment-method-select">
+          <option value="card">Credit / Debit Card</option>
+          <option value="gcash">GCash</option>
+          <option value="paymaya">PayMaya</option>
+        </select>
+      </div>
 
       <button id="purchase-btn" class="purchase-btn">Purchase Photos</button>
     </section>
+
+    <section id="bookings-content" class="content" style="display:none;">
+      <h2>My Bookings</h2>
+      <p id="bookings-loading">Loading booking history...</p>
+      <table class="bookings-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Package</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-table-body"></tbody>
+      </table>
+    </section>
+
+    <section id="transactions-content" class="content" style="display:none;">
+      <h2>My Transactions</h2>
+      <p id="transactions-loading">Loading transactions...</p>
+      <table class="bookings-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Reference</th>
+          </tr>
+        </thead>
+        <tbody id="transactions-table-body"></tbody>
+      </table>
+    </section>
+
   </main>
 
-  <script>
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch("/api/auth/verify", {
-      method: "GET",
-      credentials: "include" // sends cookie
-    });
-    const data = await res.json();
+  <div id="preview-modal" class="modal-overlay">
+    <span id="modal-close-btn" class="modal-close">&times;</span>
+    <div class="modal-content">
+      <img id="modal-image" src="" alt="Photo Preview" />
+    </div>
+  </div>
 
-    if (!data.valid) {
-      alert("Please log in first");
-      window.location.href = "/login.html"; // redirect if not logged in
-    } else {
-      console.log("✅ User verified:", data.user);
-      document.querySelector(".sidebar h3").textContent = data.user.name || "User";
-    }
-  } catch (err) {
-    console.error(err);
-    window.location.href = "/login.html";
-  }
-});
-</script>
-
+  <div id="review-modal" class="modal-overlay">
+    <div class="modal-content" style="width: 400px;">
+      <h3>Leave a Review</h3>
+      <p>How was your experience?</p>
+      <select id="review-rating" style="width:100%; padding: 8px; font-size: 1rem;">
+        <option value="5">⭐⭐⭐⭐⭐ (Excellent)</option>
+        <option value="4">⭐⭐⭐⭐ (Great)</option>
+        <option value="3">⭐⭐⭐ (Good)</option>
+        <option value="2">⭐⭐ (Fair)</option>
+        <option value="1">⭐ (Poor)</option>
+      </select>
+      <textarea id="review-comment" placeholder="Write your review here..." style="width: 100%; height: 100px; margin-top: 10px;" maxlength="500"></textarea>
+      <small id="char-counter" style="display: block; text-align: right; color: #777;">0 / 500</small>
+      <div style="margin-top: 10px;">
+        <button id="submit-review-btn" class="purchase-btn" style="background-color: #4CAF50;">Submit Review</button>
+        <button id="close-review-modal" class="purchase-btn" style="background-color: #777;">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <script src="user_gallery.js"></script>
 </body>

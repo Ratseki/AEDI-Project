@@ -1,29 +1,44 @@
-const track = document.querySelector('.testimonial-track');
-const slides = Array.from(track.children);
-const dots = document.querySelectorAll('.dot');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
+const tTrack = document.querySelector('.ntestimonial-track');
+const tBoxes = document.querySelectorAll('.ntestimonial-box');
+const tPrev = document.querySelector('.ntestimonial-arrow.left');
+const tNext = document.querySelector('.ntestimonial-arrow.right');
+const tDots = document.querySelectorAll('.ntestimonial-dots .ndot');
 
-let currentIndex = 0;
-const totalSlides = slides.length;
+let tIndex = 0;
 
-function updateSlide() {
-  track.style.transform = `translateX(-${currentIndex * 100}%)`;
-  dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+function updateTestimonial() {
+  tBoxes.forEach((box, i) => {
+    box.classList.toggle('active', i === tIndex);
+  });
+  
+  tDots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === tIndex);
+  });
+
+  tTrack.style.transform = `translateX(-${tIndex * 100}%)`;
 }
 
-prevBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
-  updateSlide();
+tNext.addEventListener('click', () => {
+  tIndex = (tIndex + 1) % tBoxes.length;
+  updateTestimonial();
 });
 
-nextBtn.addEventListener('click', () => {
-  currentIndex = (currentIndex + 1) % totalSlides;
-  updateSlide();
+tPrev.addEventListener('click', () => {
+  tIndex = (tIndex - 1 + tBoxes.length) % tBoxes.length;
+  updateTestimonial();
 });
 
-// Auto slide
+tDots.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    tIndex = i;
+    updateTestimonial();
+  });
+});
+
+// init
+updateTestimonial();
+
 setInterval(() => {
-  currentIndex = (currentIndex + 1) % totalSlides;
-  updateSlide();
-}, 5000); // every 5 seconds
+  tIndex = (tIndex + 1) % tBoxes.length;
+  updateTestimonial();
+}, 7000);

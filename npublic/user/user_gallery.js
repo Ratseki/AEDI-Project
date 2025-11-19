@@ -11,7 +11,14 @@ async function initGallery() {
     const data = await res.json();
     if (!data.valid) throw new Error('Invalid session');
 
+    // In initGallery function...
     userId = data.user.id;
+    
+    // ✅ FIX: Select by ID
+    const sidebarName = document.getElementById("sidebar-username");
+    const sidebarPic = document.getElementById("sidebar-profile-pic");
+
+    if (sidebarName) sidebarName.textContent = data.user.name || "User";
     document.querySelector(".sidebar h3").textContent = data.user.name || "User";
 
     await loadDownloadInfo();
@@ -35,10 +42,16 @@ async function loadDownloadInfo() {
     if (!res.ok) throw new Error('Failed to fetch downloads');
 
     const { remaining, total } = await res.json();
-    remainingDownloads = remaining;
+    
+    // ✅ FIX: Force the UI to match the server's truth
+    remainingDownloads = remaining; 
+    
+    const remainingElem = document.getElementById('remaining-downloads');
+    const totalElem = document.getElementById('total-downloads');
 
-    document.getElementById('remaining-downloads').textContent = remaining;
-    document.getElementById('total-downloads').textContent = total;
+    if (remainingElem) remainingElem.textContent = remaining;
+    if (totalElem) totalElem.textContent = total;
+    
   } catch (err) {
     console.error('Download info error:', err);
   }

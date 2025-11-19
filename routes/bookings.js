@@ -169,12 +169,20 @@ router.get("/:id", authenticateToken, async (req, res) => {
 
 /**
  * GET /api/bookings
- * Get all bookings for logged-in user
+ * Get all bookings for logged-in user (NOW INCLUDES PRICE)
  */
 router.get("/", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const [rows] = await dbPromise.query("SELECT * FROM bookings WHERE user_id = ? ORDER BY date DESC", [userId]);
+    // ✅ FIX: Join services to get the price so the "Pay" button knows the amount
+    const [rows] = await dbPromise.query(`
+      SELECT b.*, s.price 
+      FROM bookings b
+      LEFT JOIN services s ON b.service_id = s.id
+      WHERE b.user_id = ? 
+      ORDER BY b.date DESC`, 
+      [userId]
+    );
     res.json(rows);
   } catch (err) {
     console.error("Error fetching user bookings:", err);

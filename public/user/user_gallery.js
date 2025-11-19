@@ -1,45 +1,73 @@
 // ===============================
-// ✅ user_gallery.js (FINAL VERSION)
+// ✅ user_gallery.js (TOKEN AUTH FIXED)
 // ===============================
 
-// --- Declare variables (but don't assign them yet) ---
+const API_BASE = "http://localhost:3000";
+const token = localStorage.getItem("token");
+
+// --- Global Variables ---
 let currentReviewBookingId = null;
 let userId = null;
 let selectedPhotos = new Set();
 let remainingDownloads = 0;
 
-// --- Declare element variables ---
-let galleryContent, bookingsContent, tabGallery, tabBookings, reviewModal, closeReviewModalBtn, submitReviewBtn, previewModal, modalCloseBtn;
 
-// ✅ ADDED: Variables for the new Transactions Tab
+// --- Elements ---
+let galleryContent, bookingsContent, tabGallery, tabBookings, reviewModal, closeReviewModalBtn, submitReviewBtn, previewModal, modalCloseBtn;
 let transactionsContent, tabTransactions;
 
-
-// Initialize gallery
+// ===============================
+// 1. Initialize Gallery
+// ===============================
 async function initGallery() {
+  // 1. Check Token Existence
+  if (!token) {
+    alert("Please log in first.");
+    window.location.href = '/login.html';
+    return;
+  }
+
   try {
-    const res = await fetch('/api/auth/verify', { credentials: 'include' });
+    // 2. Verify Token with Backend (Auth Check)
+    const res = await fetch('/api/auth/verify', { 
+        headers: { "Authorization": `Bearer ${token}` } 
+    });
+    
     if (!res.ok) throw new Error('Not logged in');
 
     const data = await res.json();
     if (!data.valid) throw new Error('Invalid session');
 
     userId = data.user.id;
-    
-    // ✅ FIX: Update Name AND Profile Picture in Sidebar
-    const sidebarName = document.querySelector(".sidebar h3");
-    const sidebarPic = document.getElementById("sidebar-profile-pic");
 
-    if (sidebarName) sidebarName.textContent = data.user.name || "User";
-    
-    // Add a timestamp to force refresh the image (prevent caching)
-    if (sidebarPic && data.user.profile_pic) {
-        sidebarPic.src = `${data.user.profile_pic}?t=${new Date().getTime()}`;
+    // 3. Fetch Fresh Profile Data (Name & Pic)
+    try {
+        const profileRes = await fetch('/api/profile', {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        if (profileRes.ok) {
+            const profileData = await profileRes.json();
+            
+            // Update Sidebar Name
+            const sidebarName = document.getElementById("sidebar-username");
+            if (sidebarName) sidebarName.textContent = profileData.name || "User";
+
+            // Update Sidebar Picture (with timestamp to force refresh)
+            const sidebarPic = document.getElementById("sidebar-profile-pic");
+            if (sidebarPic && profileData.profile_pic) {
+                sidebarPic.src = `${profileData.profile_pic}?t=${Date.now()}`;
+            }
+        }
+    } catch (pErr) {
+        console.error("Could not sync profile data:", pErr);
     }
 
+    // 4. Load Content
     await loadDownloadInfo();
     await loadGallery();
 
+    // 5. Set Date
     const dateElem = document.getElementById('gallery-date');
     if (dateElem) {
       dateElem.textContent = new Date().toLocaleDateString('en-US', {
@@ -49,21 +77,28 @@ async function initGallery() {
 
   } catch (err) {
     console.error('Gallery init error:', err);
-    alert('Please log in first.');
+    alert('Session expired. Please log in again.');
+    localStorage.removeItem("token");
     window.location.href = '/login.html';
   }
 }
 
 async function loadDownloadInfo() {
   try {
-    const res = await fetch('/api/photos/downloads', { credentials: 'include' });
+    const res = await fetch('/api/photos/downloads', { 
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!res.ok) throw new Error('Failed to fetch downloads');
 
     const { remaining, total } = await res.json();
-    remainingDownloads = remaining;
+    remainingDownloads = remaining; 
+    
+    const remainingElem = document.getElementById('remaining-downloads');
+    const totalElem = document.getElementById('total-downloads');
 
-    document.getElementById('remaining-downloads').textContent = remaining;
-    document.getElementById('total-downloads').textContent = total;
+    if (remainingElem) remainingElem.textContent = remaining;
+    if (totalElem) totalElem.textContent = total;
+    
   } catch (err) {
     console.error('Download info error:', err);
   }
@@ -75,7 +110,9 @@ async function loadGallery(forUserId = null) {
       ? `/api/photos/gallery/customer/${forUserId}`
       : '/api/photos/gallery/user';
 
-    const res = await fetch(url, { credentials: 'include' });
+    const res = await fetch(url, { 
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!res.ok) throw new Error('Failed to load gallery');
 
     const data = await res.json();
@@ -128,12 +165,10 @@ async function loadGallery(forUserId = null) {
         btn.style.backgroundColor = '#CE6826';
         btn.style.color = '#fff';
         
-        // ✅ FIX: Disable button on click and pass it to the handler
         btn.onclick = (e) => { 
           e.stopPropagation(); 
           btn.disabled = true;
           btn.textContent = "Processing...";
-          // Pass the button element so it can be re-enabled on failure
           purchasePhoto(photo.photo_id, photo.price, btn); 
         };
 
@@ -173,7 +208,7 @@ function openPreviewModal(imageSrc) {
 function closePreviewModal() {
   if (previewModal) {
     previewModal.style.display = 'none';
-    document.getElementById('modal-image').src = "";
+    document.getElementById('modal-image').src = ""; 
   }
 }
 
@@ -187,8 +222,10 @@ async function purchasePhoto(photoId, price, btnElement) {
     const method = getSelectedPaymentMethod();
     const res = await fetch('/api/photo-purchases/buy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: { 
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ photo_id: photoId, method })
     });
 
@@ -197,7 +234,6 @@ async function purchasePhoto(photoId, price, btnElement) {
       window.location.href = data.checkout_url;
     } else {
       alert(data.message || 'Purchase failed');
-      // ✅ FIX: Re-enable the button if the API call fails
       if (btnElement) {
         btnElement.disabled = false;
         btnElement.textContent = `Buy ₱${price}`;
@@ -205,7 +241,6 @@ async function purchasePhoto(photoId, price, btnElement) {
     }
   } catch (err) {
     console.error('Purchase error:', err);
-    // ✅ FIX: Re-enable the button if the fetch fails
     if (btnElement) {
       btnElement.disabled = false;
       btnElement.textContent = `Buy ₱${price}`;
@@ -215,12 +250,10 @@ async function purchasePhoto(photoId, price, btnElement) {
 
 async function purchaseSelectedPhotos() {
   const purchaseBtn = document.getElementById('purchase-btn');
-  // Prevent double-clicks
   if (purchaseBtn.disabled) return; 
 
   if (!selectedPhotos.size) return alert('Select at least one photo.');
 
-  // ✅ FIX: Disable button on click
   purchaseBtn.disabled = true;
   purchaseBtn.textContent = "Processing...";
 
@@ -230,8 +263,10 @@ async function purchaseSelectedPhotos() {
   try {
     const res = await fetch('/api/photo-purchases/purchase-bulk', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
+      headers: { 
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`
+      },
       body: JSON.stringify({ 
         photo_ids: Array.from(selectedPhotos), 
         method,
@@ -244,14 +279,12 @@ async function purchaseSelectedPhotos() {
       window.location.href = data.checkout_url;
     } else {
       alert(data.message || 'Bulk purchase failed');
-      // ✅ FIX: Re-enable button on failure
       purchaseBtn.disabled = false;
       purchaseBtn.textContent = "Purchase Photos";
     }
   } catch (err) {
     console.error('Bulk purchase error:', err);
     alert('Error processing bulk purchase');
-    // ✅ FIX: Re-enable button on failure
     purchaseBtn.disabled = false;
     purchaseBtn.textContent = "Purchase Photos";
   }
@@ -261,7 +294,7 @@ async function downloadPhoto(photoId) {
   if (remainingDownloads <= 0) return alert('No remaining downloads left!');
   try {
     const res = await fetch(`/api/photos/download/${photoId}`, {
-      credentials: 'include'
+        headers: { "Authorization": `Bearer ${token}` }
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
@@ -271,12 +304,11 @@ async function downloadPhoto(photoId) {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `photo_${photoId}.zip`;
+    a.download = `photo_${photoId}.zip`; 
     document.body.appendChild(a);
     a.click();
     a.remove();
-    remainingDownloads--;
-    document.getElementById('remaining-downloads').textContent = remainingDownloads;
+    await loadDownloadInfo(); 
   } catch (err) {
     console.error('Download error:', err);
     alert('Error downloading photo.');
@@ -284,34 +316,28 @@ async function downloadPhoto(photoId) {
 }
 
 // ===================================
-// NEW BOOKING & REVIEW FUNCTIONS
+// BOOKING & REVIEW FUNCTIONS
 // ===================================
 
-// --- Tab Switching Logic ---
 function showGalleryTab() {
   if (galleryContent) galleryContent.style.display = 'block';
   if (bookingsContent) bookingsContent.style.display = 'none';
-  // ✅ ADDED: Hide Transactions
   if (transactionsContent) transactionsContent.style.display = 'none';
   if (tabGallery) tabGallery.classList.add('active');
   if (tabBookings) tabBookings.classList.remove('active');
-  // ✅ ADDED: Deactivate Transactions
   if (tabTransactions) tabTransactions.classList.remove('active');
 }
 
 function showBookingsTab() {
   if (galleryContent) galleryContent.style.display = 'none';
   if (bookingsContent) bookingsContent.style.display = 'block';
-  // ✅ ADDED: Hide Transactions
   if (transactionsContent) transactionsContent.style.display = 'none';
   if (tabGallery) tabGallery.classList.remove('active');
   if (tabBookings) tabBookings.classList.add('active');
-  // ✅ ADDED: Deactivate Transactions
   if (tabTransactions) tabTransactions.classList.remove('active');
   loadMyBookings();
 }
 
-// ✅ NEW: Function to show the transactions tab
 function showTransactionsTab() {
   if (galleryContent) galleryContent.style.display = 'none';
   if (bookingsContent) bookingsContent.style.display = 'none';
@@ -322,20 +348,20 @@ function showTransactionsTab() {
   loadMyTransactions();
 }
 
-// --- Load User's Bookings ---
 async function loadMyBookings() {
   const tableBody = document.getElementById('bookings-table-body');
   const loadingText = document.getElementById('bookings-loading');
-
   if (loadingText) loadingText.style.display = 'block';
-
+  
   try {
-    const res = await fetch('/api/bookings', { credentials: 'include' });
+    const res = await fetch('/api/bookings', { 
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!res.ok) throw new Error('Failed to load bookings');
-
+    
     const bookings = await res.json();
-    tableBody.innerHTML = '';
-
+    if (tableBody) tableBody.innerHTML = ''; 
+    
     if (!bookings.length) {
       if (loadingText) loadingText.textContent = 'No bookings found.';
       return;
@@ -343,44 +369,48 @@ async function loadMyBookings() {
 
     bookings.forEach(booking => {
       const row = document.createElement('tr');
-      let actionButton = '';
-      if (booking.status === 'confirmed' || booking.status === 'paid') {
-        actionButton = `<button onclick="openReviewModal(${booking.id})" class="purchase-btn" style="background-color:#007bff;">Leave Review</button>`;
-      } else {
-        actionButton = '<span>-</span>';
+      let actionButton = '-';
+
+      // ✅ NEW: Add Pay Button logic
+      if (booking.status === 'pending' || booking.status === 'partial') {
+          const price = parseFloat(booking.price || 0).toFixed(2);
+          // Passes ID and Price to the payment function
+          actionButton = `<button onclick="payForBooking(${booking.id}, ${price})" class="purchase-btn" style="background-color:#28a745; padding: 5px 10px; font-size: 0.9rem;">Pay ₱${price}</button>`;
+      } 
+      else if (booking.status === 'confirmed' || booking.status === 'paid') {
+        actionButton = `<button onclick="openReviewModal(${booking.id})" class="purchase-btn" style="background-color:#007bff; padding: 5px 10px; font-size: 0.9rem;">Leave Review</button>`;
       }
+
       row.innerHTML = `
         <td>${booking.package_name || 'N/A'}</td>
         <td>${new Date(booking.date).toLocaleDateString()}</td>
-        <td>${booking.status}</td>
+        <td style="text-transform:capitalize">${booking.status}</td>
         <td>${actionButton}</td>
       `;
-      tableBody.appendChild(row);
+      if (tableBody) tableBody.appendChild(row);
     });
-
     if (loadingText) loadingText.style.display = 'none';
-
   } catch (err) {
     console.error('Load bookings error:', err);
     if (loadingText) loadingText.textContent = 'Error loading bookings.';
   }
 }
 
-// ✅ NEW: Function to load user's transactions
 async function loadMyTransactions() {
   const tableBody = document.getElementById('transactions-table-body');
   const loadingText = document.getElementById('transactions-loading');
   loadingText.style.display = 'block';
 
   try {
-    // This route returns { bookings: [], transactions: [] }
-    const res = await fetch('/api/bookings/history/all', { credentials: 'include' });
+    const res = await fetch('/api/bookings/history/all', { 
+        headers: { "Authorization": `Bearer ${token}` }
+    });
     if (!res.ok) throw new Error('Failed to load history');
-
+    
     const history = await res.json();
     const transactions = history.transactions || [];
-    tableBody.innerHTML = '';
-
+    tableBody.innerHTML = ''; 
+    
     if (!transactions.length) {
       loadingText.textContent = 'No transactions found.';
       return;
@@ -397,29 +427,20 @@ async function loadMyTransactions() {
       `;
       tableBody.appendChild(row);
     });
-
     loadingText.style.display = 'none';
-
   } catch (err) {
     console.error('Load transactions error:', err);
     loadingText.textContent = 'Error loading transactions.';
   }
 }
 
-// --- Review Modal Functions ---
 function openReviewModal(bookingId) {
   currentReviewBookingId = bookingId;
-  if (reviewModal) {
-    reviewModal.style.display = 'flex';
-  } else {
-    console.error('reviewModal is null');
-  }
+  if (reviewModal) reviewModal.style.display = 'flex';
 }
 
 function closeReviewModal() {
-  if (reviewModal) {
-    reviewModal.style.display = 'none';
-  }
+  if (reviewModal) reviewModal.style.display = 'none';
   currentReviewBookingId = null;
   document.getElementById('review-rating').value = '5';
   document.getElementById('review-comment').value = '';
@@ -428,28 +449,25 @@ function closeReviewModal() {
 async function submitReview() {
   const rating = document.getElementById('review-rating').value;
   const comment = document.getElementById('review-comment').value;
-
-  if (!comment) {
-    alert('Please write a comment for your review.');
-    return;
-  }
+  if (!comment) return alert('Please write a comment for your review.');
   if (!currentReviewBookingId) return;
 
   try {
     const res = await fetch(`/api/bookings/${currentReviewBookingId}/review`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ rating, comment })
+      headers: { 
+          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({ rating, comment }) 
     });
-
+    
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Failed to submit review');
 
     alert('✅ Review submitted! Thank you.');
     closeReviewModal();
-    loadMyBookings();
-
+    loadMyBookings(); 
   } catch (err) {
     console.error('Submit review error:', err);
     alert(`Error: ${err.message}`);
@@ -457,16 +475,13 @@ async function submitReview() {
 }
 
 // ===================================
-// EVENT LISTENERS (UPDATED)
+// EVENT LISTENERS
 // ===================================
 document.addEventListener('DOMContentLoaded', () => {
-
-  // ✅ FIX: Assign all elements *after* the DOM is loaded
   galleryContent = document.getElementById('gallery-grid')?.closest('.content');
   bookingsContent = document.getElementById('bookings-content');
   tabGallery = document.getElementById('tab-gallery');
   tabBookings = document.getElementById('tab-bookings');
-  // ✅ ADDED: Assign Transactions Tab
   transactionsContent = document.getElementById('transactions-content');
   tabTransactions = document.getElementById('tab-transactions');
 
@@ -476,21 +491,15 @@ document.addEventListener('DOMContentLoaded', () => {
   previewModal = document.getElementById('preview-modal');
   modalCloseBtn = document.getElementById('modal-close-btn');
 
-  // Initial page load
   initGallery();
-
-  // --- Main gallery buttons ---
+  
   document.getElementById('purchase-btn')?.addEventListener('click', purchaseSelectedPhotos);
-
-  // --- Image preview modal ---
+  
   modalCloseBtn?.addEventListener('click', closePreviewModal);
   previewModal?.addEventListener('click', (e) => {
-    if (e.target.id === 'preview-modal') {
-      closePreviewModal();
-    }
+    if (e.target.id === 'preview-modal') closePreviewModal();
   });
 
-  // --- NEW Tab switching ---
   tabGallery?.addEventListener('click', (e) => {
     e.preventDefault();
     showGalleryTab();
@@ -499,23 +508,17 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     showBookingsTab();
   });
-
-  // ✅ ADDED: Event listener for Transactions Tab
   tabTransactions?.addEventListener('click', (e) => {
     e.preventDefault();
     showTransactionsTab();
   });
 
-  // --- NEW Review modal buttons ---
   submitReviewBtn?.addEventListener('click', submitReview);
   closeReviewModalBtn?.addEventListener('click', closeReviewModal);
   reviewModal?.addEventListener('click', (e) => {
-    if (e.target.id === 'review-modal') {
-      closeReviewModal();
-    }
+    if (e.target.id === 'review-modal') closeReviewModal();
   });
-
-  // ✅ NEW: Character counter logic
+  
   const reviewComment = document.getElementById('review-comment');
   const charCounter = document.getElementById('char-counter');
   if (reviewComment && charCounter) {
@@ -525,3 +528,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ✅ NEW: Function to handle booking payments
+async function payForBooking(bookingId, amount) {
+    if(!confirm(`Proceed to pay ₱${amount} for Booking #${bookingId}?`)) return;
+
+    try {
+      // Calls the route that creates the PayMongo link
+      const res = await fetch(`${API_BASE}/api/payments/create-checkout-session`, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ amount, booking_id: bookingId }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Payment session failed.");
+      
+      // Redirect to PayMongo
+      window.location.href = data.checkout_url;
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+}
+
+// Make it global so the HTML onclick="" can find it
+window.payForBooking = payForBooking;

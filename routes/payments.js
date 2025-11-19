@@ -51,54 +51,52 @@ router.get("/", authenticateToken, authorizeRoles("admin", "staff"), async (req,
 // Create PayMongo Checkout Session
 // ===========================================
 router.post("/create-checkout-session", authenticateToken, async (req, res) => {
-    console.log("✅ Received payment request:", req.body);
-  try {
-    const { amount, booking_id, method } = req.body;
+    console.log("✅ Received payment request:", req.body);
+  try {
+    const { amount, booking_id } = req.body;
 
-    if (!amount || amount <= 0) return res.status(400).json({ message: "Invalid amount." });
-    if (!booking_id) return res.status(400).json({ message: "Missing booking ID." });
-    if (!method) return res.status(400).json({ message: "Missing payment method." });
+    if (!amount || amount <= 0) return res.status(400).json({ message: "Invalid amount." });
+    if (!booking_id) return res.status(400).json({ message: "Missing booking ID." });
 
-    const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
-      method: "POST",
-      headers: {
-        "Authorization": "Basic " + Buffer.from(SECRET_KEY + ":").toString("base64"),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: {
-          attributes: {
-            send_email_receipt: true,
-            description: `Payment for booking #${booking_id}`,
-            payment_method_types: [method],
-            line_items: [
-              {
-                name: `Booking #${booking_id}`,
-                amount: amount * 100, // in centavos
-                currency: "PHP",
-                quantity: 1
-              }
-            ],
-            // ✅ FIX: Point to the user gallery
-            success_url: "http://localhost:3000/user/gallery?status=success",
-            cancel_url: "http://localhost:3000/user/gallery?status=cancelled"
-          }
-        }
-      })
-    });
+    const response = await fetch("https://api.paymongo.com/v1/checkout_sessions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Basic " + Buffer.from(SECRET_KEY + ":").toString("base64"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          attributes: {
+            send_email_receipt: true,
+            description: `Payment for booking #${booking_id}`,
+            // ✅ FIX: Change 'grabpay' to 'grab_pay'
+            payment_method_types: ["card", "gcash", "paymaya", "grab_pay"], 
+            line_items: [
+              {
+                name: `Booking #${booking_id}`,
+                amount: amount * 100, // in centavos
+                currency: "PHP",
+                quantity: 1
+              }
+            ],
+            success_url: "http://localhost:3000/user/gallery?status=success",
+            cancel_url: "http://localhost:3000/user/gallery?status=cancelled"
+          }
+        }
+      })
+    });
 
-    const data = await response.json();
+    const data = await response.json();
 
-    if (data.errors) {
-      console.error("❌ PayMongo API error:", data.errors);
-      return res.status(400).json({ message: data.errors[0].detail });
-    }
+    if (data.errors) {
+      console.error("❌ PayMongo API error:", data.errors);
+      return res.status(400).json({ message: data.errors[0].detail });
+    }
 
-    res.json({ checkout_url: data.data.attributes.checkout_url });
-  } catch (err) {
-    console.error("❌ Payment route error:", err);
-    res.status(500).json({ message: "Server error creating checkout session." });
-  }
+    res.json({ checkout_url: data.data.attributes.checkout_url });
+  } catch (err) {
+    console.error("❌ Payment route error:", err);
+    res.status(500).json({ message: "Server error creating checkout session." });
+  }
 });
-
 module.exports = router;

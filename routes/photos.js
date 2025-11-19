@@ -300,29 +300,26 @@ router.get("/my-photos", authenticateToken, async (req, res) => {
   }
 });
 
-// --------------------
-// User gallery (watermarked previews, including download status)
-// --------------------
 // ==========================================================
-// User gallery (SMART FIX V3 - PREVENTS DUPLICATES)
+// User gallery (FINAL FIX - STATUS PRIORITY)
 // ==========================================================
 router.get("/gallery/user", authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // ✅ FIX: This query now
-    // 1. Adds `WHERE p.user_id = ?` to only show this user's photos.
-    // 2. Adds `GROUP BY p.id` to ensure only one row per photo.
-    // 3. Uses MAX() to find the "best" status ('purchased' > 'pending' > 'active')
     const [photos] = await dbPromise.query(
       `SELECT
         p.id,
         p.file_name,
         p.file_path,
         p.price,
-        -- Check for the "best" purchase status.
-        MAX(pp.status) AS purchase_status,
-        MAX(pp.downloads_remaining) AS downloads_remaining,
+        -- ✅ FIX: Prioritize 'active' status over 'pending'
+        CASE 
+            WHEN SUM(CASE WHEN pp.status = 'active' THEN 1 ELSE 0 END) > 0 THEN 'active'
+            ELSE MAX(pp.status) 
+        END AS purchase_status,
+        -- ✅ FIX: Only count downloads from ACTIVE purchases
+        SUM(CASE WHEN pp.status = 'active' THEN pp.downloads_remaining ELSE 0 END) AS downloads_remaining,
         MAX(pp.expires_at) AS expires_at
       FROM photos p
       LEFT JOIN photo_purchases pp ON pp.photo_id = p.id AND pp.user_id = ?
@@ -332,7 +329,7 @@ router.get("/gallery/user", authenticateToken, async (req, res) => {
         p.id
       ORDER BY
         p.created_at DESC`,
-      [userId, userId] // Pass userId for both placeholders
+      [userId, userId]
     );
 
     const WATERMARK_TEXT = "PROFILEPICMULTIMEDIA";
@@ -356,22 +353,20 @@ router.get("/gallery/user", authenticateToken, async (req, res) => {
             .toFile(outputPath);
         } catch (err) { console.error("Watermark error", p.id, err.message); }
       }
-
-      // ✅ FIX: Use the new 'purchase_status' to decide what to show
+      
       let status_to_show = 'available';
-      if (p.purchase_status === 'active' || p.purchase_status === 'purchased') {
+      if (p.purchase_status === 'active') {
          status_to_show = 'purchased';
       } else if (p.purchase_status === 'expired') {
          status_to_show = 'expired';
       }
-      // If 'pending' or null, it remains 'available'
 
       return {
         photo_id: p.id,
         file_name: p.file_name,
         preview_path: `/uploads/previews/preview_${p.id}.jpg`,
         price: p.price,
-        status: status_to_show, // This now shows the correct status
+        status: status_to_show, 
         downloads_remaining: p.downloads_remaining || 0,
         expired: p.expires_at && new Date(p.expires_at) <= now,
         purchased_at: p.expires_at ? p.expires_at : null

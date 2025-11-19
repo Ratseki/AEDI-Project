@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Serve everything in public
+// ✅ FIX: Point back to 'public' folder
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/user", express.static(path.join(__dirname, "public/user")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -100,14 +100,14 @@ cron.schedule("0 0 * * *", async () => {
 });
 
 // ======================================================
-// === Serve Staff Login Page (static from /public)
+// === Serve Staff Login Page
 // ======================================================
 app.get("/staff/login.html", (req, res) => {
   res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
 // ======================================================
-// === Protected Staff Dashboard Route (Final Version)
+// === Protected Staff Dashboard Route
 // ======================================================
 app.get(
   "/staff/dashboard-secure",
@@ -119,7 +119,9 @@ app.get(
   }
 );
 
-// Protected User Gallery
+// ======================================================
+// === Protected User Gallery
+// ======================================================
 app.get('/user/gallery', authenticateToken, (req, res) => {
   res.sendFile(path.join(__dirname, 'public/user/user_gallery.html'));
 });
